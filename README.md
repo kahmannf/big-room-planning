@@ -50,7 +50,7 @@ TODO: describe
 - a supported version of Node.js & a package manager like npm or yarn
 - Docker
 
-## Starting
+## Complie & Run
 
 ### Initial
 
@@ -62,9 +62,15 @@ TODO: describe
 Run the "Container (Dockerfile)" launch configuration.
 This will build frontend and backend and create a docker image. You will have to restart the debugging aufter you made changes to the frontend.
 
-### Commandline
+### Command Line
 
-I never used this so i am not sure this works. But you would have to
+#### With Docker
+
+Use the Dockerfile under `BigRoomPlanningBoardBackend` to create an image. I have not tried this, maybe you have to be one directory higher? Visual Studio seems to do some kind of nonsense with the base path in the Dockerfile.
+
+#### Without docker
+
+I have also never tried this so i am not sure this works. But you would have to
 
 - build the frontend with `ng build` (under `BigRoomPlanningBoardBackend/ng-big-room-planning`).
 - create the Folder `wwwroot` under `BigRoomPlanningBoardBackend` if it does not exist already.
