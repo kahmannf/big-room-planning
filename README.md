@@ -3,8 +3,8 @@
 ## Introduction
 
 The last big room planning my squad/team had to attend to was planned using draw.io.
-While that is a versatile tool (if you live under a rock) its really not build for that kind of thing.
-There are multiple paid tools that can do this a lot better, but noone is willing to spend that money if draw.io "gets the job done" (sort of at least).
+While draw.io is a versatile tool for other use cases, its really not build for that kind of thing.
+There are multiple paid tools that can do this a lot better, but no one is willing to spend that money if draw.io "gets the job done" (sort of at least).
 
 
 ## Goal of this Software
