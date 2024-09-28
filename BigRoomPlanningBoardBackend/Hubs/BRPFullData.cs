@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace BigRoomPlanningBoardBackend.Hubs
 {
+    /// <summary>
+    /// DTO for sending a Snpashot of the current Data to the client.
+    /// </summary>
     public class BRPFullData
     {
         public List<Squad> Squads { get; set; }

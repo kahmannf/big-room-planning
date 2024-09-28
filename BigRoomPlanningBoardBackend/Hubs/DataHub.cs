@@ -32,6 +32,15 @@ namespace BigRoomPlanningBoardBackend.Hubs
             Clients.Caller.RecieveFullData(fullData);
         }
 
+        /// <summary>
+        /// Can be called by a client with an event id. Server will check how many events have been created between this event id and now.
+        /// Server then doen one of the folloeiwing things:
+        /// <list type="bullet">
+        ///     <item>If the configured threshold is NOT met, it send new Events to the client via the RecieveEvents-Method</item>
+        ///     <item>If the configured threshold is met, it send a Snapshot of the complete Data to the client via the RecieveFullData-Method</item>
+        /// </list>
+        /// </summary>
+        /// <param name="lastKnownEventId"></param>
         public void GetUpdated(int lastKnownEventId)
         {
             var maxUpdates = apiSettingOptions.Value.MaxEventsPerUpdate;
@@ -57,6 +66,10 @@ namespace BigRoomPlanningBoardBackend.Hubs
             Clients.Caller.RecieveEvents(bigRoomPlanningContext.Events.Where(x => x.EventId > lastKnownEventId && x.IsProcessed));
         }
 
+        /// <summary>
+        /// Adds a new Event to the Database and schedules it for processing
+        /// </summary>
+        /// <param name="event"></param>
         public void AddEvent(Event @event)
         {
             @event.RecievedAt = DateTime.Now;
@@ -64,6 +77,7 @@ namespace BigRoomPlanningBoardBackend.Hubs
             bigRoomPlanningContext.Add(@event);
             bigRoomPlanningContext.SaveChanges();
         }
+
 
         public Session GetSession(string id)
         {
