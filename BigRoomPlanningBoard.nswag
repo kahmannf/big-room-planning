@@ -24,7 +24,7 @@
       "moduleName": "",
       "namespace": "",
       "typeScriptVersion": 4.3,
-      "template": "Aurelia",
+      "template": "Fetch",
       "promiseType": "Promise",
       "httpClass": "HttpClient",
       "withCredentials": false,
