@@ -6,6 +6,6 @@ namespace BigRoomPlanningBoardBackend
     {
         public int SquadBoardId { get; set; }
         public int SquadId { get; set; }
-        public int QuarterYearId { get; set; }
+        public int PlannedPeriodId { get; set; }
     }
 }

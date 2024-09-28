@@ -10,7 +10,7 @@ namespace BigRoomPlanningBoardBackend
     {
         public DbSet<Squad> Squads { get; set; }
         public DbSet<SquadBoard> SquadBoards { get; set; }
-        public DbSet<QuarterYear> QuarterYears { get; set; }
+        public DbSet<PlannedPeriod> PlannedPeriods { get; set; }
         public DbSet<Dependency> Dependencies { get; set; }
         public DbSet<DependencyBoard> DependencyBoards { get; set; }
         public DbSet<Ticket> Tickets { get; set; }

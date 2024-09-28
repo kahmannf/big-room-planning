@@ -8,10 +8,6 @@
 /* eslint-disable */
 // ReSharper disable InconsistentNaming
 
-import { inject } from 'aurelia-framework';
-import { HttpClient, RequestInit } from 'aurelia-fetch-client';
-
-@inject(String, HttpClient)
 export class DummyClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
@@ -273,7 +269,7 @@ export class BRPFullData implements IBRPFullData {
     squads?: Squad[] | undefined;
     squadBoards?: SquadBoard[] | undefined;
     tickets?: Ticket[] | undefined;
-    quarterYears?: QuarterYear[] | undefined;
+    plannedPeriods?: PlannedPeriod[] | undefined;
     dependencies?: Dependency[] | undefined;
     dependencyBoards?: DependencyBoard[] | undefined;
     lastEventId?: number;
@@ -304,10 +300,10 @@ export class BRPFullData implements IBRPFullData {
                 for (let item of _data["tickets"])
                     this.tickets!.push(Ticket.fromJS(item));
             }
-            if (Array.isArray(_data["quarterYears"])) {
-                this.quarterYears = [] as any;
-                for (let item of _data["quarterYears"])
-                    this.quarterYears!.push(QuarterYear.fromJS(item));
+            if (Array.isArray(_data["plannedPeriods"])) {
+                this.plannedPeriods = [] as any;
+                for (let item of _data["plannedPeriods"])
+                    this.plannedPeriods!.push(PlannedPeriod.fromJS(item));
             }
             if (Array.isArray(_data["dependencies"])) {
                 this.dependencies = [] as any;
@@ -347,10 +343,10 @@ export class BRPFullData implements IBRPFullData {
             for (let item of this.tickets)
                 data["tickets"].push(item.toJSON());
         }
-        if (Array.isArray(this.quarterYears)) {
-            data["quarterYears"] = [];
-            for (let item of this.quarterYears)
-                data["quarterYears"].push(item.toJSON());
+        if (Array.isArray(this.plannedPeriods)) {
+            data["plannedPeriods"] = [];
+            for (let item of this.plannedPeriods)
+                data["plannedPeriods"].push(item.toJSON());
         }
         if (Array.isArray(this.dependencies)) {
             data["dependencies"] = [];
@@ -371,7 +367,7 @@ export interface IBRPFullData {
     squads?: Squad[] | undefined;
     squadBoards?: SquadBoard[] | undefined;
     tickets?: Ticket[] | undefined;
-    quarterYears?: QuarterYear[] | undefined;
+    plannedPeriods?: PlannedPeriod[] | undefined;
     dependencies?: Dependency[] | undefined;
     dependencyBoards?: DependencyBoard[] | undefined;
     lastEventId?: number;
@@ -420,7 +416,7 @@ export interface ISquad {
 export class SquadBoard implements ISquadBoard {
     squadBoardId?: number;
     squadId?: number;
-    quarterYearId?: number;
+    plannedPeriodId?: number;
 
     constructor(data?: ISquadBoard) {
         if (data) {
@@ -435,7 +431,7 @@ export class SquadBoard implements ISquadBoard {
         if (_data) {
             this.squadBoardId = _data["squadBoardId"];
             this.squadId = _data["squadId"];
-            this.quarterYearId = _data["quarterYearId"];
+            this.plannedPeriodId = _data["plannedPeriodId"];
         }
     }
 
@@ -450,7 +446,7 @@ export class SquadBoard implements ISquadBoard {
         data = typeof data === 'object' ? data : {};
         data["squadBoardId"] = this.squadBoardId;
         data["squadId"] = this.squadId;
-        data["quarterYearId"] = this.quarterYearId;
+        data["plannedPeriodId"] = this.plannedPeriodId;
         return data;
     }
 }
@@ -458,7 +454,7 @@ export class SquadBoard implements ISquadBoard {
 export interface ISquadBoard {
     squadBoardId?: number;
     squadId?: number;
-    quarterYearId?: number;
+    plannedPeriodId?: number;
 }
 
 export class Ticket implements ITicket {
@@ -529,13 +525,13 @@ export interface ITicket {
     targetIds?: number[] | undefined;
 }
 
-export class QuarterYear implements IQuarterYear {
-    quarterYearId?: number;
+export class PlannedPeriod implements IPlannedPeriod {
+    plannedPeriodId?: number;
     startDay?: Date;
     endDay?: Date;
     bigRoomPlanningAt?: Date;
 
-    constructor(data?: IQuarterYear) {
+    constructor(data?: IPlannedPeriod) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -546,23 +542,23 @@ export class QuarterYear implements IQuarterYear {
 
     init(_data?: any) {
         if (_data) {
-            this.quarterYearId = _data["quarterYearId"];
+            this.plannedPeriodId = _data["plannedPeriodId"];
             this.startDay = _data["startDay"] ? new Date(_data["startDay"].toString()) : <any>undefined;
             this.endDay = _data["endDay"] ? new Date(_data["endDay"].toString()) : <any>undefined;
             this.bigRoomPlanningAt = _data["bigRoomPlanningAt"] ? new Date(_data["bigRoomPlanningAt"].toString()) : <any>undefined;
         }
     }
 
-    static fromJS(data: any): QuarterYear {
+    static fromJS(data: any): PlannedPeriod {
         data = typeof data === 'object' ? data : {};
-        let result = new QuarterYear();
+        let result = new PlannedPeriod();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["quarterYearId"] = this.quarterYearId;
+        data["plannedPeriodId"] = this.plannedPeriodId;
         data["startDay"] = this.startDay ? this.startDay.toISOString() : <any>undefined;
         data["endDay"] = this.endDay ? this.endDay.toISOString() : <any>undefined;
         data["bigRoomPlanningAt"] = this.bigRoomPlanningAt ? this.bigRoomPlanningAt.toISOString() : <any>undefined;
@@ -570,8 +566,8 @@ export class QuarterYear implements IQuarterYear {
     }
 }
 
-export interface IQuarterYear {
-    quarterYearId?: number;
+export interface IPlannedPeriod {
+    plannedPeriodId?: number;
     startDay?: Date;
     endDay?: Date;
     bigRoomPlanningAt?: Date;
@@ -615,7 +611,7 @@ export interface IDependency {
 
 export class DependencyBoard implements IDependencyBoard {
     dependencyBoardId?: number;
-    quarterYearId?: number;
+    plannedPeriodId?: number;
 
     constructor(data?: IDependencyBoard) {
         if (data) {
@@ -629,7 +625,7 @@ export class DependencyBoard implements IDependencyBoard {
     init(_data?: any) {
         if (_data) {
             this.dependencyBoardId = _data["dependencyBoardId"];
-            this.quarterYearId = _data["quarterYearId"];
+            this.plannedPeriodId = _data["plannedPeriodId"];
         }
     }
 
@@ -643,14 +639,14 @@ export class DependencyBoard implements IDependencyBoard {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["dependencyBoardId"] = this.dependencyBoardId;
-        data["quarterYearId"] = this.quarterYearId;
+        data["plannedPeriodId"] = this.plannedPeriodId;
         return data;
     }
 }
 
 export interface IDependencyBoard {
     dependencyBoardId?: number;
-    quarterYearId?: number;
+    plannedPeriodId?: number;
 }
 
 export class Session implements ISession {

@@ -15,7 +15,7 @@ namespace BigRoomPlanningBoardBackend.Hubs
 
         public List<Ticket> Tickets { get; set; }
 
-        public List<QuarterYear> QuarterYears { get; set; }
+        public List<PlannedPeriod> PlannedPeriods { get; set; }
 
         public List<Dependency> Dependencies { get; set; }
         public List<DependencyBoard> DependencyBoards { get; set; }
@@ -28,7 +28,7 @@ namespace BigRoomPlanningBoardBackend.Hubs
             Squads = [.. bigRoomPlanningContext.Squads],
             SquadBoards = [.. bigRoomPlanningContext.SquadBoards],
             Tickets = [.. bigRoomPlanningContext.Tickets],
-            QuarterYears = [.. bigRoomPlanningContext.QuarterYears],
+            PlannedPeriods = [.. bigRoomPlanningContext.PlannedPeriods],
             Dependencies = [.. bigRoomPlanningContext.Dependencies],
             DependencyBoards = [.. bigRoomPlanningContext.DependencyBoards]
         };

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace BigRoomPlanningBoardBackend
 {
-    public class QuarterYear
+    public class PlannedPeriod
     {
-        public int QuarterYearId { get; set; }
+        public int PlannedPeriodId { get; set; }
         public DateTime StartDay { get; set; }
         public DateTime EndDay { get; set; }
 

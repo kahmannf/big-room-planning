@@ -1,12 +1,12 @@
 import { createReducer, on } from "@ngrx/store";
-import { Dependency, DependencyBoard, QuarterYear, Session, Squad, SquadBoard, Ticket } from "../client"
+import { Dependency, DependencyBoard, PlannedPeriod, Session, Squad, SquadBoard, Ticket } from "../client"
 import { applyFullData, connectionStateChange, setCreateSessionFailed, eventAddSession, eventAddSquad, initializCurrentSeesion as initializCurrentSession } from "./app.actions";
 
 export interface AppState {
     squads: Squad[];
     sqaudBoards: SquadBoard[];
     tickets: Ticket[];
-    quarterYears: QuarterYear[];
+    plannedPeriods: PlannedPeriod[];
     dependencies: Dependency[];
     dependencyBoards: DependencyBoard[];
     lastEventId: number;
@@ -22,7 +22,7 @@ export const initialAppState: AppState = {
     dependencies: [],
     dependencyBoards: [],
     lastEventId: 0,
-    quarterYears: [],
+    plannedPeriods: [],
     sqaudBoards: [],
     tickets: [],
     knownSessions: {},
@@ -36,7 +36,7 @@ export const appReducer = createReducer(
         ...state,
         dependencies: action.fullData.dependencies ?? [],
         dependencyBoards: action.fullData.dependencyBoards ?? [],
-        quarterYears: action.fullData.quarterYears ?? [],
+        quarterYears: action.fullData.plannedPeriods ?? [],
         sqaudBoards: action.fullData.squadBoards ?? [],
         squads: action.fullData.squads ?? [],
         tickets: action.fullData.tickets ?? []
