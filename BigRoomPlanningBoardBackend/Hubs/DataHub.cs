@@ -22,6 +22,16 @@ namespace BigRoomPlanningBoardBackend.Hubs
             this.apiSettingOptions = apiSettingOptions;
         }
 
+        /// <summary>
+        /// Can be called by the client to get the full data.
+        /// This is used in case of an error while processing events on th client.
+        /// </summary>
+        public void RequestFullData()
+        {
+            BRPFullData fullData = BRPFullData.FromContext(bigRoomPlanningContext);
+            Clients.Caller.RecieveFullData(fullData);
+        }
+
         public void GetUpdated(int lastKnownEventId)
         {
             var maxUpdates = apiSettingOptions.Value.MaxEventsPerUpdate;

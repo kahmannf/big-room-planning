@@ -113,12 +113,23 @@ export class DataService {
   private async processQueue() {
     this.isProcessingQueue = true;
 
-    this.log('[Queue] Start processing')
+    let lastQueueItem: IEvent | undefined;
 
-    while (this.queue.length() > 0) {
-      const item = this.queue.get();
-      this.log('[Queue] processing item', item)
-      await this.processEventService.processEvent(item, this.sessionId, this.connection);
+    try {
+      this.log('[Queue] Start processing')
+  
+      while (this.queue.length() > 0) {
+        const item = this.queue.get();
+        lastQueueItem = item;
+        this.log('[Queue] processing item', item)
+        await this.processEventService.processEvent(item, this.sessionId, this.connection);
+      }
+    } catch (err) {
+      console.error('Failed to process events. Dropping queue and requesting full data. Last event bevor error occurred: ', lastQueueItem);
+      console.error(err);
+
+      await this.connection.invoke('RequestFullData');
+      this.queue.clear();
     }
 
     this.log('[Queue] Stop processing')
