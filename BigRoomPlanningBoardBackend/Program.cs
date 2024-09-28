@@ -1,4 +1,3 @@
-
 using BigRoomPlanningBoardBackend.Events;
 using BigRoomPlanningBoardBackend.Hubs;
 using Microsoft.AspNetCore.Builder;
@@ -30,6 +29,8 @@ namespace BigRoomPlanningBoardBackend
 
             builder.Services.AddControllers();
             builder.Services.AddOpenApiDocument();
+
+
 
             builder.Services.AddTransient<BigRoomPlanningContext>();
             builder.Services

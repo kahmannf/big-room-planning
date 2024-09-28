@@ -18,7 +18,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.8" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageReference Include="MongoDB.EntityFrameworkCore" Version="8.1.1" />
     <PackageReference Include="NJsonSchema.NewtonsoftJson" Version="11.0.2" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.8" />
     <PackageReference Include="NSwag.AspNetCore" Version="14.1.0" />
   </ItemGroup>
 
