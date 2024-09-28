@@ -35,25 +35,51 @@ TBD
 - a supported version of Node.js & a package manager like npm or yarn
 - Docker
 
-### Starting
+## Starting
 
-#### Initial
+### Initial
 
-- run `npm install` or `yarn install` in `ng-big-room-planning`.
+- run `npm install` or `yarn install` in `BigRoomPlanningBoardBackend/ng-big-room-planning`.
 - restore nuget package for `BigRoomPlanningBoardBackend\BigRoomPlanningBoardBackend.csproj` (either using visual studio or the dotnet command line tool) 
 
-#### Visual Studio (recommended)
+### Visual Studio (recommended)
 
 Run the "Container (Dockerfile)" launch configuration.
 This will build frontend and backend and create a docker image. You will have to restart the debugging aufter you made changes to the frontend.
 
-#### Commandline
+### Commandline
 
 I never used this so i am not sure this works. But you would have to
 
-- build the frontend with `ng build` (under `ng-big-room-planning`).
-- create the Folder `wwwroot` under `BigRoomPlanningBoardBackend` if it soes not exist already.
-- copy the content of `ng-big-room-planning/dist/browser` into the folder `BigRoomPlanningBoardBackend/wwwroot`.
+- build the frontend with `ng build` (under `BigRoomPlanningBoardBackend/ng-big-room-planning`).
+- create the Folder `wwwroot` under `BigRoomPlanningBoardBackend` if it does not exist already.
+- copy the content of `BigRoomPlanningBoardBackend/ng-big-room-planning/dist/browser` into the folder `BigRoomPlanningBoardBackend/wwwroot`.
     - unless you automate that task or somehow mangage to teach `ng b --watch` to not create that stupid `browser` folder and change the output paht in the angular.json, you will have to do this every time after you make changes to the frontend. Sorry about that. (If you manage to do so you are welcome to create a PR and change this documentation)
 
 Then start the backend with `dotnet run` under `BigRoomPlanningBoardBackend`
+
+## Requirements for Developing
+
+Depending on the changes  you make you might need
+- The Entity Framework dotnet tool installed globally (install with `dotnet tool install --global dotnet-ef`)
+- Nswag Studio or a equivalent excecutable that can generate client code from `BigRoomPlanningBoard.nswag`
+
+## Developing
+
+Changes to any Class that is an Entity for Entity Framework require a Migration to be created.
+
+Changes to any class that is exposed to the client (See `BigRoomPlanningBoardBackend/Controllers/DummyController.cs`) requires the client code to be updated, so does Exposing a new class via the controller (Nswag does not support creation of client classes through SignalR-Hubs, which is why the dummy controller is required.)
+
+### Create a [EF Migration](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli) an apply it to the Debug-Database (BigRoomPlanningBoardBackend/debug.db) after changes to Entities
+
+Under `BigRoomPlanningBoardBackend` run:
+- dotnet ef migrations add <YOUR-MIGRATION-NAME>
+    - Pick an meaningfull migration name like "AddNewEntityMyEntity" or "AddPropertyNameToMyEntity"
+- dotnet ef database update --connection "Data Source=debug.db"
+    - This will apply your changes to the debug.db file which is used during debugging
+
+### Update client.ts after changes to classes exposed to the client
+
+Note: Your must stop debugging before using Nswag Studio - it will recompile the project.
+
+Open BigRoomPlanningBoard.nswag with NSwag-Studio and click "Generate files".
