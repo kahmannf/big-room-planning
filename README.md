@@ -94,9 +94,9 @@ Changes to any class that is exposed to the client (See `BigRoomPlanningBoardBac
 ### Create a [EF Migration](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli) an apply it to the Debug-Database (BigRoomPlanningBoardBackend/debug.db) after changes to Entities
 
 Under `BigRoomPlanningBoardBackend` run:
-- dotnet ef migrations add <YOUR-MIGRATION-NAME>
+- `dotnet ef migrations add <YOUR-MIGRATION-NAME>`
     - Pick an meaningfull migration name like "AddNewEntityMyEntity" or "AddPropertyNameToMyEntity"
-- dotnet ef database update --connection "Data Source=debug.db"
+- `dotnet ef database update --connection "Data Source=debug.db"`
     - This will apply your changes to the debug.db file which is used during debugging
 
 ### Update client.ts after changes to classes exposed to the client
