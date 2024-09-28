@@ -1,0 +1,18 @@
+<div class="mat-app-background container">
+    @if (!error){
+        <div i18n>
+            Trying to connect to the server...
+        </div>
+    } @else {
+        <div style="margin-bottom: 2rem;" i18n>
+            Failed to connecto to the server:
+        </div>
+        <div style="overflow: hidden; max-height: 250px;">
+            {{ error }}
+        </div>
+
+        <button mat-flat-button style="margin-top: 1rem;" (click)="reconnect()">
+            Reconnect
+        </button>
+    }
+</div>

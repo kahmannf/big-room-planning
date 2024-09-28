@@ -1,0 +1,14 @@
+<div class="app-root-container">
+  @if (isDisconnected$ | async) {
+    <div class="overlay">
+      <app-connection-lost [error]="connectionError$ | async"></app-connection-lost>
+    </div>
+  }
+  @if(currentSession$ | async) {
+    Hello {{ (currentSession$ | async)?.username }}
+  } @else {
+    <div class="create-session">
+      <app-create-session></app-create-session>
+    </div>
+  }
+</div>

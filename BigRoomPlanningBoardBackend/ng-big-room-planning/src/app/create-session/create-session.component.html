@@ -1,0 +1,34 @@
+<div class="d-flex flex-column form-column floating-card">
+    @if(!submitted || (failed$ | async)) {
+    <div i18n style="font-size: 1.2rem; margin-bottom: .5rem;">
+        Hello!
+    </div>
+    <div i18n style="margin-bottom: 1rem;">
+        Please enter your name below.
+        Your name will be visible to others.
+    </div>
+    @if ((failed$ | async)) {
+        <div class="form-column">
+            <mat-error class="w-100" style="margin-bottom: 1rem;" i18n>
+                An unknown error occured while creating a session for you.
+                Please try again. If the error persists, please try again later
+            </mat-error>
+        </div>
+    }
+    <form class="form-column" [formGroup]="formGroup" (ngSubmit)="startSession()">
+        <mat-form-field class="w-100">
+            <input type="text" matInput [formControlName]="'name'">
+            @if (formGroup.hasError('required', 'name')) {
+            <mat-error i18n>Required</mat-error>
+            }
+        </mat-form-field>
+    </form>
+    <button mat-flat-button style="margin-left: auto;" (click)="startSession()" i18n>
+        Start
+    </button>
+    } @else if (submitted) {
+    <div i18n>
+        Creating session...
+    </div>
+    }
+</div>

@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"name": "ng-big-room-planning",
+			"path": "BigRoomPlanningBoardBackend/ng-big-room-planning"
+		},
+		{
+			"path": "BigRoomPlanningBoardBackend"
+		},
+		{
+			"name": "root",
+			"path": "."
+		}
+	],
+	"settings": {}
+}
