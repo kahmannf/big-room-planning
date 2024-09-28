@@ -29,6 +29,21 @@ Provide a free, self-hostable web-application that can be used to conduct a Big 
 ## Installation
 TBD
 
+## Structure
+
+The software has two main parts:
+- backend developt using ASP.NET on .NET 8.0
+- frontend developt using angular 18
+
+Communication between backend and frontend is realised using [SignalR](https://learn.microsoft.com/en-us/aspnet/signalr/overview/getting-started/introduction-to-signalr) (because i wanted to play with that technology). The client code ist automatically generated using [NSwag](https://github.com/RicoSuter/NSwag). Because NSwag does not support SignalR hubs for client code generation, a DummyController exposes all classes used by the Hubs to the client by having them as return types.
+
+TODO: describe
+- Database used (Sqlite for now)
+- Events (and how to create new events i ndeveloping section)
+    - backend (EventProcessor and logic)
+    - frontend (create-event.service.ts, process-event.service.ts, data.service.ts)
+
+
 ## Requirements for building
 
 - .NET 8.0 SDK
@@ -62,13 +77,13 @@ Then start the backend with `dotnet run` under `BigRoomPlanningBoardBackend`
 
 Depending on the changes  you make you might need
 - The Entity Framework dotnet tool installed globally (install with `dotnet tool install --global dotnet-ef`)
-- Nswag Studio or a equivalent excecutable that can generate client code from `BigRoomPlanningBoard.nswag`
+- NSwag Studio or a equivalent excecutable that can generate client code from `BigRoomPlanningBoard.nswag`
 
 ## Developing
 
 Changes to any Class that is an Entity for Entity Framework require a Migration to be created.
 
-Changes to any class that is exposed to the client (See `BigRoomPlanningBoardBackend/Controllers/DummyController.cs`) requires the client code to be updated, so does Exposing a new class via the controller (Nswag does not support creation of client classes through SignalR-Hubs, which is why the dummy controller is required.)
+Changes to any class that is exposed to the client (See `BigRoomPlanningBoardBackend/Controllers/DummyController.cs`) requires the client code to be updated, so does Exposing a new class via the DummyController (See [Structure](#structure) for reasons)
 
 ### Create a [EF Migration](https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=dotnet-core-cli) an apply it to the Debug-Database (BigRoomPlanningBoardBackend/debug.db) after changes to Entities
 
@@ -80,6 +95,6 @@ Under `BigRoomPlanningBoardBackend` run:
 
 ### Update client.ts after changes to classes exposed to the client
 
-Note: Your must stop debugging before using Nswag Studio - it will recompile the project.
+Note: Your must stop debugging before using NSwag Studio - it will recompile the project.
 
 Open BigRoomPlanningBoard.nswag with NSwag-Studio and click "Generate files".
