@@ -15,6 +15,7 @@ namespace BigRoomPlanningBoardBackend
         public DbSet<DependencyBoard> DependencyBoards { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Session> Sessions { get; set; }
+        public DbSet<Sprint> Sprints { get; set; }
 
 
         public DbSet<Event> Events { get; set; }
