@@ -19,6 +19,9 @@
                     <mat-chip-set style="margin-left: 16px;">
                         <mat-chip>{{ period.startDay?.toDateString() }}</mat-chip>
                         <mat-chip>{{ period.endDay?.toDateString() }}</mat-chip>
+                        @if(period?.bigRoomPlanningAt) {
+                            <mat-chip i18n>Planning: {{ period?.bigRoomPlanningAt?.toDateString() }}</mat-chip>
+                        }
                     </mat-chip-set>
                 </mat-card-footer>
                 <mat-card-actions>

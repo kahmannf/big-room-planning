@@ -27,7 +27,6 @@ import {
   filter,
   map,
   Observable,
-  of,
   switchMap,
 } from 'rxjs';
 
@@ -70,6 +69,8 @@ export class PlannedPeriodOverviewComponent implements OnInit {
 
   squads$: Observable<Squad[]>;
 
+  plannedPeriodId$: Observable<number>;
+
   plannedPeriod$: Observable<PlannedPeriod>;
 
   returnUrl$: Observable<string>;
@@ -94,27 +95,23 @@ export class PlannedPeriodOverviewComponent implements OnInit {
       ])))
     )
 
-    this.plannedPeriod$ = this.activatedRoute.parent.params.pipe(
-      switchMap(params => {
+    this.plannedPeriodId$ = this.activatedRoute.parent.params.pipe(
+      map(params => {
         let id: string | number = params['plannedPeriodId']; 
-
-        if(!id) {
-          return of(undefined);
-        }
 
         if(typeof id !== 'number') {
           id = parseInt(id, 10);
         }
 
-        if (Number.isNaN(id)) {
-          return of(undefined);
-        }
+        return id;
+      })
+    );
 
-        return this.store$.pipe(
-          select(getPlannedPeriods),
-          map(periods => periods.find(period => period.plannedPeriodId === id))
-        )
-      }),
+    this.plannedPeriod$ = this.plannedPeriodId$.pipe(
+      switchMap(id => this.store$.pipe(
+        select(getPlannedPeriods),
+        map(periods => periods.find(period => period.plannedPeriodId === id))
+      )),
       filter(x => !!x)
     )
   }
