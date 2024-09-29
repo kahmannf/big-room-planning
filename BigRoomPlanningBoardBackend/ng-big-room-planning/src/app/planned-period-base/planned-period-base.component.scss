@@ -34,6 +34,10 @@
             align-items: center;
             width: 180px;
 
+            mat-icon {
+                margin-right: .5rem;
+            }
+
             &:not(.active) {
                 cursor: pointer;
             }

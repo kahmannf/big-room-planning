@@ -12,9 +12,11 @@
             <span class="nav-item-text" i18n>Overview</span>
         </div>
         <div class="nav-item" [routerLinkActive]="'active'" [routerLink]="[ '/planned-period', (plannedPeriod$ | async).plannedPeriodId, 'dependencies' ]">
+            <mat-icon>compare_arrows</mat-icon>
             <span class="nav-item-text" i18n>Dependencies</span>
         </div>
         <div *ngFor="let squad of squads$ | async" class="nav-item" [routerLinkActive]="'active'" [routerLink]="[ '/planned-period', (plannedPeriod$ | async).plannedPeriodId, 'squad', squad.squadId]">
+            <mat-icon>groups</mat-icon>
             <span class="nav-item-text" i18n>
                 {{squad.name}}
             </span>
