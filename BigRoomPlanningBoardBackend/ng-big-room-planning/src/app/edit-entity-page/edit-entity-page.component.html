@@ -1,0 +1,20 @@
+<div class="create-entity-container">
+    <div class="create-entity-content">
+        <div class="header">
+            <button class="back-button" mat-icon-button (click)="backClick()">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <div class="title">{{ title }}</div>
+            <button class="save-button" mat-flat-button (click)="saveClick()">
+                @if(isNew) {
+                    <ng-container i18n>Create</ng-container>
+                } @else {
+                    <ng-container i18n>Apply Changes</ng-container>
+                }
+            </button>
+        </div>
+        <div class="content">
+            <ng-content></ng-content>
+        </div>
+    </div>
+</div>

@@ -84,9 +84,14 @@ namespace BigRoomPlanningBoardBackend.Hubs
             var session = bigRoomPlanningContext.Sessions.Find(id);
             return session;
         }
-        public Squad GetSqaud(string id)
+
+        public Squad GetSquad(int id)
         {
             return bigRoomPlanningContext.Squads.Find(id);
+        }
+        public PlannedPeriod GetPlannedPeriod(int id)
+        {
+            return bigRoomPlanningContext.PlannedPeriods.Find(id);
         }
     }
 }

@@ -26,8 +26,10 @@ namespace BigRoomPlanningBoardBackend
 
         #region Event Types
 
+        public DbSet<AddPlannedPeriodEvent> AddPlannedPeriodEvents { get; set; }
         public DbSet<AddSessionEvent> AddSessionEvents { get; set; }
         public DbSet<AddSquadEvent> AddSquadEvents { get; set; }
+        public DbSet<EditPlannedPeriodEvent> EditPlannedPeriodEvents { get; set; }
 
 
         #endregion

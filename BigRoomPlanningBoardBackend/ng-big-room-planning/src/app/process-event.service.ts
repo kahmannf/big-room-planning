@@ -1,9 +1,36 @@
 import { Injectable } from '@angular/core';
-import { IEvent, Event, AddSessionEvent, Session, ISession, AddSquadEvent, ISquad, Squad } from './client';
-import { select, Store } from '@ngrx/store';
-import { setCreateSessionFailed, eventAddSession, eventAddSquad, initializCurrentSeesion } from './store/app.actions';
-import { HubConnection } from '@microsoft/signalr';
+import { Router } from '@angular/router';
+
 import { firstValueFrom } from 'rxjs';
+
+import { HubConnection } from '@microsoft/signalr';
+import {
+  select,
+  Store,
+} from '@ngrx/store';
+
+import {
+  AddPlannedPeriodEvent,
+  AddSessionEvent,
+  AddSquadEvent,
+  EditPlannedPeriodEvent,
+  Event,
+  IEvent,
+  IPlannedPeriod,
+  ISession,
+  ISquad,
+  PlannedPeriod,
+  Session,
+  Squad,
+} from './client';
+import {
+  eventAddPlannedPeriod,
+  eventAddSession,
+  eventAddSquad,
+  eventEditPlannedPeriod,
+  initializCurrentSeesion,
+  setCreateSessionFailed,
+} from './store/app.actions';
 import { getLastEventId } from './store/app.selectors';
 
 @Injectable({
@@ -12,7 +39,8 @@ import { getLastEventId } from './store/app.selectors';
 export class ProcessEventService {
 
   constructor(
-    private store$: Store<any>
+    private store$: Store<any>,
+    private router: Router
   ) { }
 
   async processEvent(event: IEvent, currentSessionId: string, connection: HubConnection) {
@@ -26,6 +54,8 @@ export class ProcessEventService {
       return;
     }
 
+    // this one is first, because of the special !isSuccessful event branch. Every other event is sorted alphabetically below
+    // the general !isSuccessful check
     if (instance instanceof AddSessionEvent) {
 
       if (!instance.isSuccessful) {
@@ -35,17 +65,55 @@ export class ProcessEventService {
         return;
       }
 
-      const session: ISession = await connection.invoke('GetSession', instance.sessionId);
-      this.store$.dispatch(eventAddSession({ session: new Session(session), eventId: event.eventId }))
+      const isession: ISession = await connection.invoke('GetSession', instance.sessionId);
+      const session = new Session();
+      session.init(isession);
+      this.store$.dispatch(eventAddSession({ session, eventId: event.eventId }))
 
       if (session.sessionId === currentSessionId) {
-        this.store$.dispatch(initializCurrentSeesion({ session: new Session(session) }))
+        this.store$.dispatch(initializCurrentSeesion({ session }))
       } 
+
+      return;
+    }
+
+    if (!instance.isSuccessful) {
+      return;
+    }
+
+    if (instance instanceof AddPlannedPeriodEvent) {
+      const iplannedPeriod: IPlannedPeriod = await connection.invoke('GetPlannedPeriod', instance.plannedPeriodId);
+      const plannedPeriod = new PlannedPeriod();
+      plannedPeriod.init(iplannedPeriod);
+      this.store$.dispatch(eventAddPlannedPeriod({ plannedPeriod, eventId: event.eventId }));
+
+      this.router.navigate([
+        '/planned-period',
+        plannedPeriod.plannedPeriodId
+      ]);
+
+      return;
     }
 
     if (instance instanceof AddSquadEvent) {
-      const squad: ISquad = await connection.invoke('GetSquad', instance.squadId);
+      const isquad: ISquad = await connection.invoke('GetSquad', instance.squadId);
+      const squad = new Squad();
+      squad.init(isquad);
       this.store$.dispatch(eventAddSquad({ squad: new Squad(squad), eventId: event.eventId }))
+      return;
+    }
+
+    if (instance instanceof EditPlannedPeriodEvent) {
+      const iplannedPeriod: IPlannedPeriod = await connection.invoke('GetPlannedPeriod', instance.plannedPeriodId);
+      const plannedPeriod = new PlannedPeriod();
+      plannedPeriod.init(iplannedPeriod);
+      this.store$.dispatch(eventEditPlannedPeriod({ plannedPeriod, eventId: event.eventId }));
+      
+      this.router.navigate([
+        '/planned-period',
+        plannedPeriod.plannedPeriodId
+      ]);
+      return;
     }
 
   }

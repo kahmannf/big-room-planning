@@ -8,6 +8,7 @@ import { AsyncPipe } from '@angular/common';
 import { ConnectionLostComponent } from "./connection-lost/connection-lost.component";
 import { CreateSessionComponent } from "./create-session/create-session.component";
 import { DataService } from './data.service';
+import { HomeComponent } from "./home/home.component";
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,9 @@ import { DataService } from './data.service';
   imports: [
     AsyncPipe,
     ConnectionLostComponent,
-    CreateSessionComponent
+    CreateSessionComponent,
+    HomeComponent,
+    RouterOutlet
 ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'

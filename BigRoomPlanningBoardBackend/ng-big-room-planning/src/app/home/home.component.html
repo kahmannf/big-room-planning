@@ -1,0 +1,31 @@
+<div class="home-container">
+    <div class="home-content">
+        <div class="greeting" i18n>
+            Hello {{ (session$ | async)?.username }}!
+        </div>
+
+        @if(hasNoPeriods$ | async) {
+            <div i18n>
+                You seem to be the first one here. Start by <a [routerLink]="[ '/create-planned-period' ]">adding a Planned Period</a>.
+            </div>
+        } @else {
+            <div i18n>
+                Select a Planned Period to view or <a [routerLink]="[ '/create-planned-period' ]">add a new Planned Period</a>.
+            </div>
+            <mat-card class="period-card" *ngFor="let period of periods$ | async" appearance="outlined">
+                <mat-card-header class="card-header">{{ period | periodName }}</mat-card-header>
+                <mat-card-content></mat-card-content>
+                <mat-card-footer>
+                    <mat-chip-set style="margin-left: 16px;">
+                        <mat-chip>{{ period.startDay?.toDateString() }}</mat-chip>
+                        <mat-chip>{{ period.endDay?.toDateString() }}</mat-chip>
+                    </mat-chip-set>
+                </mat-card-footer>
+                <mat-card-actions>
+                    <button mat-button [routerLink]="[ '/planned-period' , period.plannedPeriodId]" i18n>View</button>
+                    <button mat-button [routerLink]="[ '/edit-planned-period' , period.plannedPeriodId]" i18n>Edit</button>
+                </mat-card-actions>
+            </mat-card>
+        }
+    </div>
+</div>

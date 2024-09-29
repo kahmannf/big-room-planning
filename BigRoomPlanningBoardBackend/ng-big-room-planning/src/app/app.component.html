@@ -5,7 +5,7 @@
     </div>
   }
   @if(currentSession$ | async) {
-    Hello {{ (currentSession$ | async)?.username }}
+    <router-outlet></router-outlet>
   } @else {
     <div class="create-session">
       <app-create-session></app-create-session>

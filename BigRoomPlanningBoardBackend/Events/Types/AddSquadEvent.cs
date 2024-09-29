@@ -6,6 +6,9 @@ namespace BigRoomPlanningBoardBackend.Events.Types
     {
         public string SquadName { get; set; }
 
+        /// <summary>
+        /// Will be filled when the Event is processed
+        /// </summary>
         public int? SquadId { get; set; }
 
         public override bool Process(BigRoomPlanningContext bigRoomPlanningContext)

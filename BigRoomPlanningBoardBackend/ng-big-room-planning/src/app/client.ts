@@ -156,6 +156,11 @@ export abstract class Event implements IEvent {
 
     static fromJS(data: any): Event {
         data = typeof data === 'object' ? data : {};
+        if (data["discriminator"] === "AddPlannedPeriodEvent") {
+            let result = new AddPlannedPeriodEvent();
+            result.init(data);
+            return result;
+        }
         if (data["discriminator"] === "AddSessionEvent") {
             let result = new AddSessionEvent();
             result.init(data);
@@ -163,6 +168,11 @@ export abstract class Event implements IEvent {
         }
         if (data["discriminator"] === "AddSquadEvent") {
             let result = new AddSquadEvent();
+            result.init(data);
+            return result;
+        }
+        if (data["discriminator"] === "EditPlannedPeriodEvent") {
+            let result = new EditPlannedPeriodEvent();
             result.init(data);
             return result;
         }
@@ -191,6 +201,56 @@ export interface IEvent {
     processedAt?: Date;
     isProcessed?: boolean;
     isSuccessful?: boolean;
+}
+
+export class AddPlannedPeriodEvent extends Event implements IAddPlannedPeriodEvent {
+    plannedPeriodId?: number | undefined;
+    name?: string | undefined;
+    startDay?: Date;
+    endDay?: Date;
+    bigRoomPlanningAt?: Date | undefined;
+
+    constructor(data?: IAddPlannedPeriodEvent) {
+        super(data);
+        this._discriminator = "AddPlannedPeriodEvent";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.plannedPeriodId = _data["plannedPeriodId"];
+            this.name = _data["name"];
+            this.startDay = _data["startDay"] ? new Date(_data["startDay"].toString()) : <any>undefined;
+            this.endDay = _data["endDay"] ? new Date(_data["endDay"].toString()) : <any>undefined;
+            this.bigRoomPlanningAt = _data["bigRoomPlanningAt"] ? new Date(_data["bigRoomPlanningAt"].toString()) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): AddPlannedPeriodEvent {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddPlannedPeriodEvent();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["plannedPeriodId"] = this.plannedPeriodId;
+        data["name"] = this.name;
+        data["startDay"] = this.startDay ? this.startDay.toISOString() : <any>undefined;
+        data["endDay"] = this.endDay ? this.endDay.toISOString() : <any>undefined;
+        data["bigRoomPlanningAt"] = this.bigRoomPlanningAt ? this.bigRoomPlanningAt.toISOString() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IAddPlannedPeriodEvent extends IEvent {
+    plannedPeriodId?: number | undefined;
+    name?: string | undefined;
+    startDay?: Date;
+    endDay?: Date;
+    bigRoomPlanningAt?: Date | undefined;
 }
 
 export class AddSessionEvent extends Event implements IAddSessionEvent {
@@ -263,6 +323,56 @@ export class AddSquadEvent extends Event implements IAddSquadEvent {
 export interface IAddSquadEvent extends IEvent {
     squadName?: string | undefined;
     squadId?: number | undefined;
+}
+
+export class EditPlannedPeriodEvent extends Event implements IEditPlannedPeriodEvent {
+    plannedPeriodId?: number;
+    name?: string | undefined;
+    startDay?: Date;
+    endDay?: Date;
+    bigRoomPlanningAt?: Date | undefined;
+
+    constructor(data?: IEditPlannedPeriodEvent) {
+        super(data);
+        this._discriminator = "EditPlannedPeriodEvent";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.plannedPeriodId = _data["plannedPeriodId"];
+            this.name = _data["name"];
+            this.startDay = _data["startDay"] ? new Date(_data["startDay"].toString()) : <any>undefined;
+            this.endDay = _data["endDay"] ? new Date(_data["endDay"].toString()) : <any>undefined;
+            this.bigRoomPlanningAt = _data["bigRoomPlanningAt"] ? new Date(_data["bigRoomPlanningAt"].toString()) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): EditPlannedPeriodEvent {
+        data = typeof data === 'object' ? data : {};
+        let result = new EditPlannedPeriodEvent();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["plannedPeriodId"] = this.plannedPeriodId;
+        data["name"] = this.name;
+        data["startDay"] = this.startDay ? this.startDay.toISOString() : <any>undefined;
+        data["endDay"] = this.endDay ? this.endDay.toISOString() : <any>undefined;
+        data["bigRoomPlanningAt"] = this.bigRoomPlanningAt ? this.bigRoomPlanningAt.toISOString() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IEditPlannedPeriodEvent extends IEvent {
+    plannedPeriodId?: number;
+    name?: string | undefined;
+    startDay?: Date;
+    endDay?: Date;
+    bigRoomPlanningAt?: Date | undefined;
 }
 
 export class BRPFullData implements IBRPFullData {
@@ -460,9 +570,8 @@ export interface ISquadBoard {
 export class Ticket implements ITicket {
     ticketId?: number;
     squadId?: number;
-    squardBoardId?: number;
-    requirementIds?: number[] | undefined;
-    targetIds?: number[] | undefined;
+    plannedPeriodId!: number;
+    sprintId?: number | undefined;
 
     constructor(data?: ITicket) {
         if (data) {
@@ -477,17 +586,8 @@ export class Ticket implements ITicket {
         if (_data) {
             this.ticketId = _data["ticketId"];
             this.squadId = _data["squadId"];
-            this.squardBoardId = _data["squardBoardId"];
-            if (Array.isArray(_data["requirementIds"])) {
-                this.requirementIds = [] as any;
-                for (let item of _data["requirementIds"])
-                    this.requirementIds!.push(item);
-            }
-            if (Array.isArray(_data["targetIds"])) {
-                this.targetIds = [] as any;
-                for (let item of _data["targetIds"])
-                    this.targetIds!.push(item);
-            }
+            this.plannedPeriodId = _data["plannedPeriodId"];
+            this.sprintId = _data["sprintId"];
         }
     }
 
@@ -502,17 +602,8 @@ export class Ticket implements ITicket {
         data = typeof data === 'object' ? data : {};
         data["ticketId"] = this.ticketId;
         data["squadId"] = this.squadId;
-        data["squardBoardId"] = this.squardBoardId;
-        if (Array.isArray(this.requirementIds)) {
-            data["requirementIds"] = [];
-            for (let item of this.requirementIds)
-                data["requirementIds"].push(item);
-        }
-        if (Array.isArray(this.targetIds)) {
-            data["targetIds"] = [];
-            for (let item of this.targetIds)
-                data["targetIds"].push(item);
-        }
+        data["plannedPeriodId"] = this.plannedPeriodId;
+        data["sprintId"] = this.sprintId;
         return data;
     }
 }
@@ -520,16 +611,16 @@ export class Ticket implements ITicket {
 export interface ITicket {
     ticketId?: number;
     squadId?: number;
-    squardBoardId?: number;
-    requirementIds?: number[] | undefined;
-    targetIds?: number[] | undefined;
+    plannedPeriodId: number;
+    sprintId?: number | undefined;
 }
 
 export class PlannedPeriod implements IPlannedPeriod {
     plannedPeriodId?: number;
+    name?: string | undefined;
     startDay?: Date;
     endDay?: Date;
-    bigRoomPlanningAt?: Date;
+    bigRoomPlanningAt?: Date | undefined;
 
     constructor(data?: IPlannedPeriod) {
         if (data) {
@@ -543,6 +634,7 @@ export class PlannedPeriod implements IPlannedPeriod {
     init(_data?: any) {
         if (_data) {
             this.plannedPeriodId = _data["plannedPeriodId"];
+            this.name = _data["name"];
             this.startDay = _data["startDay"] ? new Date(_data["startDay"].toString()) : <any>undefined;
             this.endDay = _data["endDay"] ? new Date(_data["endDay"].toString()) : <any>undefined;
             this.bigRoomPlanningAt = _data["bigRoomPlanningAt"] ? new Date(_data["bigRoomPlanningAt"].toString()) : <any>undefined;
@@ -559,6 +651,7 @@ export class PlannedPeriod implements IPlannedPeriod {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["plannedPeriodId"] = this.plannedPeriodId;
+        data["name"] = this.name;
         data["startDay"] = this.startDay ? this.startDay.toISOString() : <any>undefined;
         data["endDay"] = this.endDay ? this.endDay.toISOString() : <any>undefined;
         data["bigRoomPlanningAt"] = this.bigRoomPlanningAt ? this.bigRoomPlanningAt.toISOString() : <any>undefined;
@@ -568,9 +661,10 @@ export class PlannedPeriod implements IPlannedPeriod {
 
 export interface IPlannedPeriod {
     plannedPeriodId?: number;
+    name?: string | undefined;
     startDay?: Date;
     endDay?: Date;
-    bigRoomPlanningAt?: Date;
+    bigRoomPlanningAt?: Date | undefined;
 }
 
 export class Dependency implements IDependency {

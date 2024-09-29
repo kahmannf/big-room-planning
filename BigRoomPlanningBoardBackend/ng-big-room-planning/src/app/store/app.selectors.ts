@@ -16,3 +16,5 @@ export const getConnectionError = createSelector(appStateSelector, state => stat
 export const getLastEventId = createSelector(appStateSelector, state => state.lastEventId);
 
 export const getCreateSessionFailed = createSelector(appStateSelector, state => state.createSessionFailed);
+
+export const getPlannedPeriods = createSelector(appStateSelector, state => state.plannedPeriods);

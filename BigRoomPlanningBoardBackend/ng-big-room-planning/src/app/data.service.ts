@@ -1,12 +1,36 @@
 import { Injectable } from '@angular/core';
-import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { select, Store } from '@ngrx/store';
-import { applyFullData, connectionStateChange } from './store/app.actions';
-import { AddSessionEvent, Event, IEvent, BRPFullData, IBRPFullData } from './client';
-import { interval, map, Observable, switchMap } from 'rxjs';
-import { Queue } from './queue';
-import { getLastEventId } from './store/app.selectors';
+
+import {
+  interval,
+  map,
+  Observable,
+  switchMap,
+} from 'rxjs';
+
+import {
+  HubConnection,
+  HubConnectionBuilder,
+  HubConnectionState,
+} from '@microsoft/signalr';
+import {
+  select,
+  Store,
+} from '@ngrx/store';
+
+import {
+  AddSessionEvent,
+  BRPFullData,
+  Event,
+  IBRPFullData,
+  IEvent,
+} from './client';
 import { ProcessEventService } from './process-event.service';
+import { Queue } from './queue';
+import {
+  applyFullData,
+  connectionStateChange,
+} from './store/app.actions';
+import { getLastEventId } from './store/app.selectors';
 
 const pingInterval = 100;
 
@@ -19,9 +43,13 @@ export class DataService {
 
   connection: HubConnection;
 
+  get sessionId(): string {
+    return this._sessionId;
+  } 
+
   private pingTrigger$: Observable<void>;
 
-  private sessionId: string;
+  private _sessionId: string;
 
   private queue = new Queue<IEvent>();
 
@@ -76,12 +104,16 @@ export class DataService {
       switchMap(() => this.store$.pipe(
         select(getLastEventId)
       )) 
-    ).subscribe((eventId) => this.connection.invoke('GetUpdated', eventId))
+    ).subscribe((eventId) => {
+      if(this.connection.state === HubConnectionState.Connected) {
+        this.connection.invoke('GetUpdated', eventId)
+      }
+    });
   }
 
   sendEvent(event: Event) {
     if (event instanceof AddSessionEvent) {
-      this.sessionId = event.sessionId;
+      this._sessionId = event.sessionId;
     }
 
     this.connection.invoke('AddEvent', event);
@@ -122,7 +154,7 @@ export class DataService {
         const item = this.queue.get();
         lastQueueItem = item;
         this.log('[Queue] processing item', item)
-        await this.processEventService.processEvent(item, this.sessionId, this.connection);
+        await this.processEventService.processEvent(item, this._sessionId, this.connection);
       }
     } catch (err) {
       console.error('Failed to process events. Dropping queue and requesting full data. Last event bevor error occurred: ', lastQueueItem);

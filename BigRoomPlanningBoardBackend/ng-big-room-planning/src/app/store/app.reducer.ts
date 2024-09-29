@@ -1,6 +1,27 @@
-import { createReducer, on } from "@ngrx/store";
-import { Dependency, DependencyBoard, PlannedPeriod, Session, Squad, SquadBoard, Ticket } from "../client"
-import { applyFullData, connectionStateChange, setCreateSessionFailed, eventAddSession, eventAddSquad, initializCurrentSeesion as initializCurrentSession } from "./app.actions";
+import {
+  createReducer,
+  on,
+} from '@ngrx/store';
+
+import {
+  Dependency,
+  DependencyBoard,
+  PlannedPeriod,
+  Session,
+  Squad,
+  SquadBoard,
+  Ticket,
+} from '../client';
+import {
+  applyFullData,
+  connectionStateChange,
+  eventAddPlannedPeriod,
+  eventAddSession,
+  eventAddSquad,
+  eventEditPlannedPeriod,
+  initializCurrentSeesion as initializCurrentSession,
+  setCreateSessionFailed,
+} from './app.actions';
 
 export interface AppState {
     squads: Squad[];
@@ -44,7 +65,15 @@ export const appReducer = createReducer(
     on(connectionStateChange, (state, action) => ({
         ...state,
         connectionError: action.error,
-        isConnected: action.isConnected  
+        isConnected: action.isConnected
+    })),
+    on(eventAddPlannedPeriod, (state, action) => ({
+        ...state,
+        lastEventId: action.eventId,
+        plannedPeriods: [
+            ...state.plannedPeriods,
+            action.plannedPeriod
+        ]
     })),
     on(eventAddSession, (state, action) => ({
         ...state,
@@ -61,6 +90,16 @@ export const appReducer = createReducer(
             ...state.squads,
             action.squad
         ]
+    })),
+    on(eventEditPlannedPeriod, (state, action) => ({
+        ...state,
+        lastEventId: action.eventId,
+        plannedPeriods: state.plannedPeriods
+            .map(x =>
+                x.plannedPeriodId === action.plannedPeriod.plannedPeriodId
+                    ? action.plannedPeriod
+                    : x
+            )
     })),
     on(initializCurrentSession, (state, action) => ({
         ...state,

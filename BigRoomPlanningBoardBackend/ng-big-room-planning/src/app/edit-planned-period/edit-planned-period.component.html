@@ -1,0 +1,61 @@
+<app-edit-entity-page [isNew]="isNew" [title]="title">
+    @if(!isInitialized) {
+        <div i18n>Loading...</div>
+    } @else {
+        <form class="form-column" [formGroup]="formGroup" (ngSubmit)="ngSubmit()">
+            <mat-form-field class="w-100">
+                <mat-label i18n>
+                    Name
+                </mat-label>
+                <input type="text" matInput [formControlName]="'name'">
+                @if (formGroup.hasError('required', 'name')) {
+                    <mat-error i18n>Required</mat-error>
+                }
+            </mat-form-field>
+            <mat-form-field class="w-100">
+                <mat-label i18n>
+                    Starting at
+                </mat-label>
+                <input matInput [formControlName]="'startDay'" [matDatepicker]="pickerStart">
+                <mat-datepicker-toggle matIconSuffix [for]="pickerStart"></mat-datepicker-toggle>
+                <mat-datepicker #pickerStart></mat-datepicker>
+                @if (formGroup.hasError('required', 'startDay')) {
+                    <mat-error i18n>Required</mat-error>
+                }
+            </mat-form-field>
+            <mat-form-field class="w-100">
+                <mat-label i18n>
+                    Ending at
+                </mat-label>
+                <input matInput [formControlName]="'endDay'" [matDatepicker]="pickerEnd">
+                <mat-datepicker-toggle matIconSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+                <mat-datepicker #pickerEnd></mat-datepicker>
+                @if (formGroup.hasError('required', 'endDay')) {
+                    <mat-error i18n>Required</mat-error>
+                }
+            </mat-form-field>
+            <mat-form-field class="w-100">
+                <mat-label i18n>
+                    Big Room Planning at
+                </mat-label>
+                <input matInput [formControlName]="'bigRoomPlanningAt'" [matDatepicker]="pickerBRP">
+                <mat-datepicker-toggle matIconSuffix [for]="pickerBRP"></mat-datepicker-toggle>
+                <mat-datepicker #pickerBRP></mat-datepicker>
+                @if (formGroup.hasError('required', 'bigRoomPlanningAt')) {
+                    <mat-error i18n>Required</mat-error>
+                }
+            </mat-form-field>
+
+            @if (formGroup.controls.startDay.value && formGroup.controls.endDay.value && formGroup.controls.startDay.value?.getTime() === formGroup.controls.endDay.value?.getTime()) {
+                <mat-error i18n>
+                    Start and end day cannot be on the same date.
+                </mat-error>
+            }
+            @if (formGroup.controls.startDay.value && formGroup.controls.endDay.value && formGroup.controls.startDay.value?.getTime() > formGroup.controls.endDay.value?.getTime()) {
+                <mat-error i18n>
+                    Start day cannot be after end day.
+                </mat-error>
+            }
+        </form>
+    }
+</app-edit-entity-page>
