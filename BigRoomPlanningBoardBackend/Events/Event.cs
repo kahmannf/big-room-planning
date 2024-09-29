@@ -13,6 +13,7 @@ namespace BigRoomPlanningBoardBackend.Events
     [KnownType(typeof(AddSprintEvent))]
     [KnownType(typeof(AddSquadEvent))]
     [KnownType(typeof(AddTicketEvent))]
+    [KnownType(typeof(DeleteTicketEvent))]
     [KnownType(typeof(EditPlannedPeriodEvent))]
     [KnownType(typeof(EditSprintEvent))]
     [KnownType(typeof(EditSquadEvent))]

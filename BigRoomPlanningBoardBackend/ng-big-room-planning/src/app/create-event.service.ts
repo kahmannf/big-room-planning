@@ -6,6 +6,7 @@ import {
   AddSprintEvent,
   AddSquadEvent,
   AddTicketEvent,
+  DeleteTicketEvent,
   EditPlannedPeriodEvent,
   EditSprintEvent,
   EditSquadEvent,
@@ -103,6 +104,13 @@ export class CreatEventService {
     event.plannedPeriodId = ticket.plannedPeriodId;
     event.sprintId = ticket.sprintId;
     event.title = ticket.title;
+
+    this.dataService.sendEvent(event);
+  }
+
+  deleteTicket (ticketId: number) {
+    const event = this.getBaseEvent(DeleteTicketEvent)
+    event.ticketId = ticketId;
 
     this.dataService.sendEvent(event);
   }

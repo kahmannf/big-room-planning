@@ -11,6 +11,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 
 import { Ticket } from '../../client';
+import { CreatEventService } from '../../create-event.service';
 import {
   EditTicketDialogComponent,
 } from '../edit-ticket-dialog/edit-ticket-dialog.component';
@@ -33,7 +34,8 @@ export class TicketCardComponent {
   ticket: Ticket;
 
   constructor (
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private createEventServie: CreatEventService
   ) {
 
   }
@@ -43,5 +45,9 @@ export class TicketCardComponent {
       data: this.ticket,
       disableClose: true
     })
+  }
+  
+  delete() {
+    this.createEventServie.deleteTicket(this.ticket.ticketId);
   }
 }

@@ -1,4 +1,7 @@
-import { AsyncPipe } from '@angular/common';
+import {
+  AsyncPipe,
+  NgFor,
+} from '@angular/common';
 import {
   Component,
   OnInit,
@@ -8,8 +11,19 @@ import { ActivatedRoute } from '@angular/router';
 import {
   map,
   Observable,
+  switchMap,
 } from 'rxjs';
 
+import {
+  select,
+  Store,
+} from '@ngrx/store';
+
+import { Sprint } from '../../client';
+import {
+  getPlannedPeriods,
+  getSprints,
+} from '../../store/app.selectors';
 import {
   BacklogColumnComponent,
 } from '../backlog-column/backlog-column.component';
@@ -19,7 +33,8 @@ import {
   standalone: true,
   imports: [
     BacklogColumnComponent,
-    AsyncPipe
+    AsyncPipe,
+    NgFor
   ],
   templateUrl: './squad-board.component.html',
   styleUrl: './squad-board.component.scss'
@@ -27,11 +42,14 @@ import {
 export class SquadBoardComponent implements OnInit {
 
   squadId$: Observable<number>;
-  
+
   plannedPeriodId$: Observable<number>;
+
+  sprints$: Observable<Sprint[]>;
 
   constructor(
     private activatedRoute: ActivatedRoute,
+    private store$: Store<any>
   ) {
 
   }
@@ -61,6 +79,22 @@ export class SquadBoardComponent implements OnInit {
         return id;
       })
     );
+
+    const plannedPeriod$ = this.plannedPeriodId$.pipe(
+      switchMap(id => this.store$.pipe(
+        select(getPlannedPeriods),
+        map(periods => periods.find(x =>  x.plannedPeriodId === id))
+      ))
+    )
+
+    this.sprints$ = plannedPeriod$.pipe(
+      map(period => ({ start: period.startDay.getTime(), end: period.endDay.getTime() })),
+      switchMap(({ start, end }) => this.store$.pipe(
+        select(getSprints),
+        map(sprints => sprints.filter(s => start <= s.endsAt.getTime() && end >= s.endsAt.getTime()))
+      ))
+    )
+
   }
 
 }

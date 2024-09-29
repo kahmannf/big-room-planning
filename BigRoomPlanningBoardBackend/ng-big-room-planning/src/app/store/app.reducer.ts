@@ -21,6 +21,7 @@ import {
   eventAddSprint,
   eventAddSquad,
   eventAddTicket,
+  eventDeleteTicket,
   eventEditPlannedPeriod,
   eventEditSprint,
   eventEditSquad,
@@ -116,6 +117,11 @@ export const appReducer = createReducer(
             ...state.tickets,
             action.ticket
         ]
+    })),
+    on(eventDeleteTicket, (state, action) => ({
+        ...state,
+        lastEventId: action.eventId,
+        tickets: state.tickets.filter(x => x.ticketId !== action.ticketId)
     })),
     on(eventEditPlannedPeriod, (state, action) => ({
         ...state,

@@ -26,6 +26,8 @@ export const eventAddSquad = createAction('eventAddSquad', props<{ squad: Squad,
 
 export const eventAddTicket = createAction('eventAddTicket', props<{ ticket: Ticket, eventId: number }>());
 
+export const eventDeleteTicket = createAction('eventDeleteTicket', props<{ ticketId: number, eventId: number }>());
+
 export const eventEditPlannedPeriod = createAction('eventEditPlannedPeriod', props<{ plannedPeriod: PlannedPeriod, eventId: number }>());
 
 export const eventEditSprint = createAction('eventEditSprint', props<{ sprint: Sprint, eventId: number }>());

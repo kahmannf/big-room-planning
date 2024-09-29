@@ -15,6 +15,7 @@ import {
   AddSprintEvent,
   AddSquadEvent,
   AddTicketEvent,
+  DeleteTicketEvent,
   EditPlannedPeriodEvent,
   EditSprintEvent,
   EditSquadEvent,
@@ -39,6 +40,7 @@ import {
   eventAddSprint,
   eventAddSquad,
   eventAddTicket,
+  eventDeleteTicket,
   eventEditPlannedPeriod,
   eventEditSprint,
   eventEditSquad,
@@ -146,6 +148,11 @@ export class ProcessEventService {
       const ticket = new Ticket();
       ticket.init(iticket);
       this.store$.dispatch(eventAddTicket({ ticket, eventId: event.eventId }))
+      return;
+    }
+
+    if (instance instanceof DeleteTicketEvent) {
+      this.store$.dispatch(eventDeleteTicket({ ticketId: instance.ticketId, eventId: event.eventId }))
       return;
     }
 

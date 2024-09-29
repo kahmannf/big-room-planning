@@ -16,7 +16,9 @@ namespace BigRoomPlanningBoardBackend.Migrations
                 columns: table => new
                 {
                     DependencyId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DependantTicketId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DependencyTicketId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,6 +68,7 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     AddTicketEvent_PlannedPeriodId = table.Column<int>(type: "INTEGER", nullable: true),
                     AddTicketEvent_SprintId = table.Column<int>(type: "INTEGER", nullable: true),
                     Title = table.Column<string>(type: "TEXT", nullable: true),
+                    DeleteTicketEvent_TicketId = table.Column<int>(type: "INTEGER", nullable: true),
                     EditPlannedPeriodEvent_PlannedPeriodId = table.Column<int>(type: "INTEGER", nullable: true),
                     EditPlannedPeriodEvent_Name = table.Column<string>(type: "TEXT", nullable: true),
                     EditPlannedPeriodEvent_StartDay = table.Column<DateTime>(type: "TEXT", nullable: true),

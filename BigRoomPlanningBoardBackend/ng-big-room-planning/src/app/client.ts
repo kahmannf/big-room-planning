@@ -215,6 +215,11 @@ export abstract class Event implements IEvent {
             result.init(data);
             return result;
         }
+        if (data["discriminator"] === "DeleteTicketEvent") {
+            let result = new DeleteTicketEvent();
+            result.init(data);
+            return result;
+        }
         if (data["discriminator"] === "EditPlannedPeriodEvent") {
             let result = new EditPlannedPeriodEvent();
             result.init(data);
@@ -478,6 +483,40 @@ export interface IAddTicketEvent extends IEvent {
     plannedPeriodId?: number;
     sprintId?: number | undefined;
     title?: string | undefined;
+}
+
+export class DeleteTicketEvent extends Event implements IDeleteTicketEvent {
+    ticketId?: number;
+
+    constructor(data?: IDeleteTicketEvent) {
+        super(data);
+        this._discriminator = "DeleteTicketEvent";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.ticketId = _data["ticketId"];
+        }
+    }
+
+    static override fromJS(data: any): DeleteTicketEvent {
+        data = typeof data === 'object' ? data : {};
+        let result = new DeleteTicketEvent();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["ticketId"] = this.ticketId;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IDeleteTicketEvent extends IEvent {
+    ticketId?: number;
 }
 
 export class EditPlannedPeriodEvent extends Event implements IEditPlannedPeriodEvent {

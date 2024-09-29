@@ -23,6 +23,12 @@ namespace BigRoomPlanningBoardBackend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("DependantTicketId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DependencyTicketId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("DependencyId");
 
                     b.ToTable("Dependencies");
@@ -301,6 +307,22 @@ namespace BigRoomPlanningBoardBackend.Migrations
                         });
 
                     b.HasDiscriminator().HasValue("AddTicketEvent");
+                });
+
+            modelBuilder.Entity("BigRoomPlanningBoardBackend.Events.Types.DeleteTicketEvent", b =>
+                {
+                    b.HasBaseType("BigRoomPlanningBoardBackend.Events.Event");
+
+                    b.Property<int>("TicketId")
+                        .HasColumnType("INTEGER");
+
+                    b.ToTable("Events", t =>
+                        {
+                            t.Property("TicketId")
+                                .HasColumnName("DeleteTicketEvent_TicketId");
+                        });
+
+                    b.HasDiscriminator().HasValue("DeleteTicketEvent");
                 });
 
             modelBuilder.Entity("BigRoomPlanningBoardBackend.Events.Types.EditPlannedPeriodEvent", b =>
