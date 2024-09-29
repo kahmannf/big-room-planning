@@ -32,7 +32,7 @@ namespace BigRoomPlanningBoardBackend
                 CreatedAt = DateTime.Now,
                 RecievedAt = DateTime.Now,
                 Name = "Future",
-                EndDay = new DateTime(2025, 3, 29),
+                EndDay = new DateTime(2025, 3, 28),
                 StartDay = new DateTime(2025, 1, 6)
             });
 
@@ -53,6 +53,8 @@ namespace BigRoomPlanningBoardBackend
                 {
                     context.Add(new AddSprintEvent()
                     {
+                        CreatedAt = DateTime.Now,
+                        RecievedAt = DateTime.Now,
                         StartsAt = startDate,
                         EndsAt = startDate.AddDays(11),
                         Name = "Iteration " + iterationCount
@@ -62,7 +64,48 @@ namespace BigRoomPlanningBoardBackend
                     startDate = startDate.AddDays(14);
                 }
             }
-            
+
+            context.Add(new AddSquadEvent()
+            {
+                CreatedAt = DateTime.Now,
+                RecievedAt = DateTime.Now,
+                Name = "Mike Shinoda"
+            });
+
+            context.Add(new AddSquadEvent()
+            {
+                CreatedAt = DateTime.Now,
+                RecievedAt = DateTime.Now,
+                Name = "Emily Armstrong"
+            });
+
+            context.Add(new AddSquadEvent()
+            {
+                CreatedAt = DateTime.Now,
+                RecievedAt = DateTime.Now,
+                Name = "Brad Delson"
+            });
+
+            context.Add(new AddSquadEvent()
+            {
+                CreatedAt = DateTime.Now,
+                RecievedAt = DateTime.Now,
+                Name = "Dave „Phoenix“ Farrell"
+            });
+
+            context.Add(new AddSquadEvent()
+            {
+                CreatedAt = DateTime.Now,
+                RecievedAt = DateTime.Now,
+                Name = "Joe Hahn"
+            });
+
+            context.Add(new AddSquadEvent()
+            {
+                CreatedAt = DateTime.Now,
+                RecievedAt = DateTime.Now,
+                Name = "Colin Brittain"
+            });
 
 
             context.SaveChanges();
