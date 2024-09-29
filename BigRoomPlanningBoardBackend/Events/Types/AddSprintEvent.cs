@@ -19,6 +19,7 @@ namespace BigRoomPlanningBoardBackend.Events.Types
                 (StartsAt <= x.StartsAt && EndsAt >= x.StartsAt)
                 || (StartsAt <= x.EndsAt && EndsAt >= x.EndsAt)
                 || (StartsAt <= x.StartsAt && EndsAt >= x.EndsAt)
+                || (StartsAt >= x.StartsAt && EndsAt <= x.EndsAt)
             ))
             {
                 return false;

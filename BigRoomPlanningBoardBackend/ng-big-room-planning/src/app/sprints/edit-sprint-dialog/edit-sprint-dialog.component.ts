@@ -196,6 +196,7 @@ export class EditSprintDialogComponent implements OnInit, OnDestroy {
         (startsAtTime <= x.startsAt.getTime() && endsAtTime >=  x.startsAt.getTime())
         || (startsAtTime <= x.endsAt.getTime() && endsAtTime >= x.endsAt.getTime())
         || (startsAtTime <= x.startsAt.getTime() && endsAtTime >= x.endsAt.getTime())
+        || (startsAtTime >= x.startsAt.getTime() && endsAtTime <= x.endsAt.getTime())
       )
   }
 
@@ -206,7 +207,7 @@ export class EditSprintDialogComponent implements OnInit, OnDestroy {
     }
 
     const endTime = this.formGroup.controls.endsAt.value.getTime();
-    const period = this.allPlannedPeriods.find(x => x.startDay.getTime() < endTime && x.endDay.getTime() > endTime);
+    const period = this.allPlannedPeriods.find(x => x.startDay.getTime() <= endTime && x.endDay.getTime() >= endTime);
 
     if (!period) {
       this.plannedPeriod = undefined;

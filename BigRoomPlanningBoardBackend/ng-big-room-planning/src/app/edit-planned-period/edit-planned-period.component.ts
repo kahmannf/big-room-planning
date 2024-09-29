@@ -19,6 +19,7 @@ import {
 
 import {
   first,
+  map,
   Subscription,
 } from 'rxjs';
 
@@ -27,7 +28,10 @@ import {
   Store,
 } from '@ngrx/store';
 
-import { IPlannedPeriod } from '../client';
+import {
+  IPlannedPeriod,
+  PlannedPeriod,
+} from '../client';
 import { CreatEventService } from '../create-event.service';
 import {
   EditEntityComponent,
@@ -72,9 +76,14 @@ export class EditPlannedPeriodComponent extends EditEntityComponent implements O
 
   title = '';
 
+  isTimeRangeValid = true;
+
   ngSubmitCallback: () => void = () => {};
 
   private subscription: Subscription;
+
+  private allOtherPlannedPeriods: PlannedPeriod[];
+  private allOtherPlannedPeriodsSubscription: Subscription;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -88,6 +97,9 @@ export class EditPlannedPeriodComponent extends EditEntityComponent implements O
 
   ngOnInit(): void {
     this.subscription = new Subscription();
+
+    this.subscription.add(this.formGroup.controls.startDay.valueChanges.subscribe(() => this.updateTimeRangeValid()));
+    this.subscription.add(this.formGroup.controls.endDay.valueChanges.subscribe(() => this.updateTimeRangeValid()));
     
     this.subscription.add(
       this.activatedRoute.params.subscribe(params => {
@@ -99,6 +111,7 @@ export class EditPlannedPeriodComponent extends EditEntityComponent implements O
           this.title = $localize`Create new Planned Period`;
 
           this.isInitialized = true;
+          this.subscribeToOtherPeriods();
           return;
         }
 
@@ -133,6 +146,7 @@ export class EditPlannedPeriodComponent extends EditEntityComponent implements O
               startDay: target.startDay ?? null
             });
             this.isInitialized = true;
+            this.subscribeToOtherPeriods();
           }
         });
       })
@@ -141,13 +155,16 @@ export class EditPlannedPeriodComponent extends EditEntityComponent implements O
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
+    this.allOtherPlannedPeriodsSubscription?.unsubscribe()
   }
 
 
   override checkValidAndTouch(): boolean {
     this.formGroup.markAllAsTouched();
 
-    return this.formGroup.valid && this.formGroup.controls.startDay.value.getTime() < this.formGroup.controls.endDay.value.getTime();
+    return this.formGroup.valid
+      && this.isTimeRangeValid
+      && this.formGroup.controls.startDay.value.getTime() < this.formGroup.controls.endDay.value.getTime();
   }
 
   override saveAndClose(): void {
@@ -176,4 +193,31 @@ export class EditPlannedPeriodComponent extends EditEntityComponent implements O
     this.ngSubmitCallback();
   }
 
+  private subscribeToOtherPeriods() {
+    this.allOtherPlannedPeriodsSubscription?.unsubscribe();
+
+    this.allOtherPlannedPeriodsSubscription = this.store$.pipe(
+      select(getPlannedPeriods),
+      map(periods => periods.filter(x => x.plannedPeriodId !== this.editId))
+    ).subscribe(periods => {
+      this.allOtherPlannedPeriods = periods;
+      this.updateTimeRangeValid();
+    })
+  }
+
+  private updateTimeRangeValid() {
+    const startsAtTime = this.formGroup.controls.startDay.value?.getTime();
+    const endsAtTime = this.formGroup.controls.endDay.value?.getTime();
+
+    this.isTimeRangeValid =
+      !this.allOtherPlannedPeriods?.length
+      || !startsAtTime
+      || !endsAtTime
+      || !this.allOtherPlannedPeriods.some(x => 
+        (startsAtTime <= x.startDay.getTime() && endsAtTime >=  x.startDay.getTime())
+        || (startsAtTime <= x.endDay.getTime() && endsAtTime >= x.endDay.getTime())
+        || (startsAtTime <= x.startDay.getTime() && endsAtTime >= x.endDay.getTime())
+        || (startsAtTime >= x.startDay.getTime() && endsAtTime <= x.endDay.getTime())
+      )
+  }
 }

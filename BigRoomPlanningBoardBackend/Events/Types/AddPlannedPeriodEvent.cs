@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace BigRoomPlanningBoardBackend.Events.Types
 {
@@ -15,6 +16,17 @@ namespace BigRoomPlanningBoardBackend.Events.Types
 
         public override bool Process(BigRoomPlanningContext bigRoomPlanningContext)
         {
+            if (bigRoomPlanningContext.PlannedPeriods.Any(x =>
+                (StartDay <= x.StartDay && EndDay >= x.StartDay)
+                || (StartDay <= x.EndDay && EndDay >= x.EndDay)
+                || (StartDay <= x.StartDay && EndDay >= x.EndDay)
+                || (StartDay >= x.StartDay && EndDay <= x.EndDay)
+            ))
+            {
+                return false;
+            }
+
+
             var item = new PlannedPeriod
             {
                 BigRoomPlanningAt = BigRoomPlanningAt,

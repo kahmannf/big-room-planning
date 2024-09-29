@@ -56,6 +56,11 @@
                     Start day cannot be after end day.
                 </mat-error>
             }
+            @if(!isTimeRangeValid) {
+                <mat-error>
+                    The current range intersect with another existing Planned Period.
+                </mat-error>
+            }
         </form>
     }
 </app-edit-entity-page>

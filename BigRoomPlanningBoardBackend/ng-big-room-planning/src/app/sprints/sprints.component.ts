@@ -132,7 +132,7 @@ export class SprintsComponent implements OnInit {
           continue;
         }
 
-        if (sprintEndTime > periodStart && sprintEndTime < periodEnd) {
+        if (sprintEndTime >= periodStart && sprintEndTime <= periodEnd) {
           displayItem.plannedPeriod = plannedPeriod;
           break;
         }
