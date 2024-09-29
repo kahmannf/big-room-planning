@@ -30,6 +30,7 @@ namespace BigRoomPlanningBoardBackend
         public DbSet<AddSessionEvent> AddSessionEvents { get; set; }
         public DbSet<AddSquadEvent> AddSquadEvents { get; set; }
         public DbSet<EditPlannedPeriodEvent> EditPlannedPeriodEvents { get; set; }
+        public DbSet<EditSquadEvent> EditSquadEvents { get; set; }
 
 
         #endregion

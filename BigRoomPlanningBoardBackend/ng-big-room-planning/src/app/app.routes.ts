@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import {
   EditPlannedPeriodComponent,
 } from './edit-planned-period/edit-planned-period.component';
+import { EditSquadComponent } from './edit-squad/edit-squad.component';
 import { HomeComponent } from './home/home.component';
 import {
   DependencyBoardComponent,
@@ -19,7 +20,9 @@ import {
 
 export const routes: Routes = [
     { path: 'create-planned-period', component: EditPlannedPeriodComponent },
+    { path: 'create-squad', component: EditSquadComponent },
     { path: 'edit-planned-period/:id', component: EditPlannedPeriodComponent },
+    { path: 'edit-squad/:id', component: EditSquadComponent },
     { path: 'home', component: HomeComponent },
     { 
         path: 'planned-period/:plannedPeriodId',

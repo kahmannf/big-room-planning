@@ -1,0 +1,16 @@
+<app-edit-entity-page [isNew]="isNew" [title]="title">
+    @if(!isInitialized) {
+        <div i18n>Loading...</div>
+    }
+    @else {
+        <form class="form-column" [formGroup]="formGroup" (ngSubmit)="onSubmit()" >
+            <mat-form-field class="w-100">
+                <mat-label i18n>Name</mat-label>
+                <input type="text" matInput [formControlName]="'name'">
+                @if (formGroup.hasError('required', 'name')) {
+                    <mat-error i18n>Required</mat-error>
+                }
+            </mat-form-field>
+        </form>
+    }
+</app-edit-entity-page>

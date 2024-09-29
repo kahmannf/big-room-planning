@@ -3,6 +3,7 @@ using System;
 using BigRoomPlanningBoardBackend;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BigRoomPlanningBoardBackend.Migrations
 {
     [DbContext(typeof(BigRoomPlanningContext))]
-    partial class BigRoomPlanningContextModelSnapshot : ModelSnapshot
+    [Migration("20240929031810_EditSquadEvent")]
+    partial class EditSquadEvent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
@@ -223,17 +226,11 @@ namespace BigRoomPlanningBoardBackend.Migrations
                 {
                     b.HasBaseType("BigRoomPlanningBoardBackend.Events.Event");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
                     b.Property<int?>("SquadId")
                         .HasColumnType("INTEGER");
 
-                    b.ToTable("Events", t =>
-                        {
-                            t.Property("Name")
-                                .HasColumnName("AddSquadEvent_Name");
-                        });
+                    b.Property<string>("SquadName")
+                        .HasColumnType("TEXT");
 
                     b.HasDiscriminator().HasValue("AddSquadEvent");
                 });

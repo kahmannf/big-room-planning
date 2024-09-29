@@ -19,6 +19,7 @@ import {
   eventAddSession,
   eventAddSquad,
   eventEditPlannedPeriod,
+  eventEditSquad,
   initializCurrentSeesion as initializCurrentSession,
   setCreateSessionFailed,
 } from './app.actions';
@@ -98,6 +99,16 @@ export const appReducer = createReducer(
             .map(x =>
                 x.plannedPeriodId === action.plannedPeriod.plannedPeriodId
                     ? action.plannedPeriod
+                    : x
+            )
+    })),
+    on(eventEditSquad, (state, action) => ({
+        ...state,
+        lastEventId: action.eventId,
+        squads: state.squads
+            .map(x => 
+                x.squadId === action.squad.squadId
+                    ? action.squad
                     : x
             )
     })),

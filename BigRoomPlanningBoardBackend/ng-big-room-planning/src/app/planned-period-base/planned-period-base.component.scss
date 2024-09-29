@@ -23,13 +23,19 @@
         }
 
         .nav-item {
-
-
-            .nav-item-text {
-
-            }
+            
+            border-bottom-width: 5px;
+            border-bottom-style: solid;
+            border-bottom-color: transparent;
+            height: calc(#{$navbar-height} - 5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 180px;
 
             &.active {
+
+                border-bottom-color: rgb(255, 180, 171);
                 .nav-item-text {
                     font-style: italic;
                 }

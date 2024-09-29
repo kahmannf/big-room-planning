@@ -12,6 +12,7 @@ namespace BigRoomPlanningBoardBackend.Events
     [KnownType(typeof(AddSessionEvent))]
     [KnownType(typeof(AddSquadEvent))]
     [KnownType(typeof(EditPlannedPeriodEvent))]
+    [KnownType(typeof(EditSquadEvent))]
     public abstract class Event
     {
         public int EventId { get; set; }

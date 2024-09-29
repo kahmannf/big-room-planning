@@ -4,7 +4,7 @@ namespace BigRoomPlanningBoardBackend.Events.Types
 {
     public class AddSquadEvent : Event
     {
-        public string SquadName { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Will be filled when the Event is processed
@@ -13,7 +13,7 @@ namespace BigRoomPlanningBoardBackend.Events.Types
 
         public override bool Process(BigRoomPlanningContext bigRoomPlanningContext)
         {
-            if (string.IsNullOrWhiteSpace(SquadName) || bigRoomPlanningContext.Squads.Any(x => x.Name == SquadName))
+            if (string.IsNullOrWhiteSpace(Name) || bigRoomPlanningContext.Squads.Any(x => x.Name == Name))
             {
                 return false;
             }
@@ -21,7 +21,7 @@ namespace BigRoomPlanningBoardBackend.Events.Types
 
 
             var squad = new Squad();
-            squad.Name = SquadName;
+            squad.Name = Name;
             bigRoomPlanningContext.Add(squad);
             bigRoomPlanningContext.SaveChanges();
             SquadId = squad.SquadId;

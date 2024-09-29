@@ -1,0 +1,15 @@
+.overview-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    .overview-content {
+        width: 800px;
+        display: flex;
+        flex-direction: column;
+
+        mat-card + mat-card {
+            margin-top: 2rem;
+        }
+    }
+}

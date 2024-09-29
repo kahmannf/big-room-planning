@@ -176,6 +176,11 @@ export abstract class Event implements IEvent {
             result.init(data);
             return result;
         }
+        if (data["discriminator"] === "EditSquadEvent") {
+            let result = new EditSquadEvent();
+            result.init(data);
+            return result;
+        }
         throw new Error("The abstract class 'Event' cannot be instantiated.");
     }
 
@@ -288,7 +293,7 @@ export interface IAddSessionEvent extends IEvent {
 }
 
 export class AddSquadEvent extends Event implements IAddSquadEvent {
-    squadName?: string | undefined;
+    name?: string | undefined;
     squadId?: number | undefined;
 
     constructor(data?: IAddSquadEvent) {
@@ -299,7 +304,7 @@ export class AddSquadEvent extends Event implements IAddSquadEvent {
     override init(_data?: any) {
         super.init(_data);
         if (_data) {
-            this.squadName = _data["squadName"];
+            this.name = _data["name"];
             this.squadId = _data["squadId"];
         }
     }
@@ -313,7 +318,7 @@ export class AddSquadEvent extends Event implements IAddSquadEvent {
 
     override toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["squadName"] = this.squadName;
+        data["name"] = this.name;
         data["squadId"] = this.squadId;
         super.toJSON(data);
         return data;
@@ -321,7 +326,7 @@ export class AddSquadEvent extends Event implements IAddSquadEvent {
 }
 
 export interface IAddSquadEvent extends IEvent {
-    squadName?: string | undefined;
+    name?: string | undefined;
     squadId?: number | undefined;
 }
 
@@ -373,6 +378,44 @@ export interface IEditPlannedPeriodEvent extends IEvent {
     startDay?: Date;
     endDay?: Date;
     bigRoomPlanningAt?: Date | undefined;
+}
+
+export class EditSquadEvent extends Event implements IEditSquadEvent {
+    name?: string | undefined;
+    squadId?: number;
+
+    constructor(data?: IEditSquadEvent) {
+        super(data);
+        this._discriminator = "EditSquadEvent";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.name = _data["name"];
+            this.squadId = _data["squadId"];
+        }
+    }
+
+    static override fromJS(data: any): EditSquadEvent {
+        data = typeof data === 'object' ? data : {};
+        let result = new EditSquadEvent();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["squadId"] = this.squadId;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IEditSquadEvent extends IEvent {
+    name?: string | undefined;
+    squadId?: number;
 }
 
 export class BRPFullData implements IBRPFullData {

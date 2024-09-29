@@ -14,6 +14,7 @@ import {
   AddSessionEvent,
   AddSquadEvent,
   EditPlannedPeriodEvent,
+  EditSquadEvent,
   Event,
   IEvent,
   IPlannedPeriod,
@@ -28,6 +29,7 @@ import {
   eventAddSession,
   eventAddSquad,
   eventEditPlannedPeriod,
+  eventEditSquad,
   initializCurrentSeesion,
   setCreateSessionFailed,
 } from './store/app.actions';
@@ -102,6 +104,12 @@ export class ProcessEventService {
       const squad = new Squad();
       squad.init(isquad);
       this.store$.dispatch(eventAddSquad({ squad: new Squad(squad), eventId: event.eventId }))
+
+      if (event.sessionId === currentSessionId) {
+        const returnUrl = this.getReturnUrl();
+        this.router.navigate(JSON.parse(returnUrl));
+      }
+
       return;
     }
 
@@ -120,8 +128,39 @@ export class ProcessEventService {
       return;
     }
 
+    if (instance instanceof EditPlannedPeriodEvent) {
+      const iplannedPeriod: IPlannedPeriod = await connection.invoke('GetPlannedPeriod', instance.plannedPeriodId);
+      const plannedPeriod = new PlannedPeriod();
+      plannedPeriod.init(iplannedPeriod);
+      this.store$.dispatch(eventEditPlannedPeriod({ plannedPeriod, eventId: event.eventId }));
+      
+      if (event.sessionId === currentSessionId) {
+        this.router.navigate([
+          '/planned-period',
+          plannedPeriod.plannedPeriodId
+        ]);
+      }
+      return;
+    }
+
+    if(instance instanceof EditSquadEvent) {
+      const isquad: ISquad = await connection.invoke('GetSquad', instance.squadId);
+      const squad = new Squad();
+      squad.init(isquad);
+      this.store$.dispatch(eventEditSquad({ squad, eventId: event.eventId }));
+
+      if (event.sessionId === currentSessionId) {
+        const returnUrl = this.getReturnUrl();
+        this.router.navigate(JSON.parse(returnUrl));
+      }
+    }
+
   }
 
+  private getReturnUrl() {
+    const query = new URLSearchParams(window.location.search);
+    return decodeURI(query.get('returnUrl'));
+  }
 
 
 }
