@@ -1,1 +1,7 @@
-<p>ticket-card works! {{ ticket?.title }}</p>
+
+<mat-card appearance="outlined">
+    <mat-card-header>{{ ticket?.title }}</mat-card-header>
+    <mat-card-actions>
+        <button mat-button (click)="edit()" i18n>Edit</button>
+    </mat-card-actions>
+</mat-card>

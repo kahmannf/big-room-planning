@@ -5,7 +5,19 @@
     position: relative;
 
 
-    .new-button {
+    .header {
+        // sticky is not working...
         position: sticky;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .title {
+            font-size: 1.2rem;
+        }
+    }
+
+    app-ticket-card {
+        margin-top: 1rem;
     }
 }

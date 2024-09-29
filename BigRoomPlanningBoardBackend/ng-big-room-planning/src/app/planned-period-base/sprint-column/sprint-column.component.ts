@@ -10,5 +10,7 @@ import { Component } from '@angular/core';
 export class SprintColumnComponent {
 
   // TODO: Risks
+  // TODO: Capacity
+  // TODO: Background Noise
 
 }

@@ -108,6 +108,88 @@ namespace BigRoomPlanningBoardBackend
             });
 
 
+            List<string> meteora = [
+                "Foreword",
+                "Don't Stay",
+                "Somewhere I Belong",
+                "Lying from You",
+                "Hit the Floor",
+                "Easier to Run",
+                "Faint",
+                "Figure.09",
+                "Breaking the Habit",
+                "From the Inside",
+                "Nobody's Listening",
+                "Session",
+                "Numb"
+            ];
+
+            foreach (var song in meteora)
+            {
+                context.Add(new AddTicketEvent
+                {
+                    CreatedAt = DateTime.Now,
+                    RecievedAt = DateTime.Now,
+                    PlannedPeriodId = 3, // Future
+                    SquadId = 5, // joe
+                    Title = song
+                });
+            }
+
+            List<string> hybridTheory = [
+                "Papercut",
+                "One Step Closer",
+                "With You",
+                "Points aof Authority",
+                "Crawling",
+                "Runaway",
+                "By Mywself",
+                "In the End",
+                "A Place for My Head",
+                "Forgotten",
+                "Cure for the Itch",
+                "Pushing Me Away",
+                "Opening",
+                "Pts.OF.Athrty",
+                "Enth E Nd",
+                "[Chali]",
+                "Frgt/10",
+                "P5hng Mw A*wy",
+                "Plc. 4 Mie Haed",
+                "X-Ecutioner Style",
+                "H1 Vltg3",
+                "[Riff Raff]",
+                "Wth>You",
+                "Ntr\\Mssion",
+                "PPR:KUT",
+                "Rnw@Y",
+                "My<Dsmbr",
+                "Stef",
+                "By_Myslf",
+                "Kyur4 th Ich",
+                "1stp  Klosr",
+                "Krwlng",
+                "Carousel",
+                "Technique",
+                "Step Up",
+                "And One",
+                "High Voltage",
+                "Part of Me"
+            ];
+
+            foreach (var song in hybridTheory)
+            {
+                context.Add(new AddTicketEvent
+                {
+                    CreatedAt = DateTime.Now,
+                    RecievedAt = DateTime.Now,
+                    PlannedPeriodId = 3, // Future
+                    SquadId = 1, // mike
+                    Title = song
+                });
+            }
+
+
             context.SaveChanges();
         }
     }
