@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,9 +27,9 @@ namespace BigRoomPlanningBoardBackend.Hubs
         /// Can be called by the client to get the full data.
         /// This is used in case of an error while processing events on th client.
         /// </summary>
-        public void RequestFullData()
+        public void RequestFullData(string sessionId)
         {
-            BRPFullData fullData = BRPFullData.FromContext(bigRoomPlanningContext);
+            BRPFullData fullData = BRPFullData.FromContext(bigRoomPlanningContext, sessionId);
             Clients.Caller.RecieveFullData(fullData);
         }
 
@@ -41,7 +42,7 @@ namespace BigRoomPlanningBoardBackend.Hubs
         /// </list>
         /// </summary>
         /// <param name="lastKnownEventId"></param>
-        public void GetUpdated(int lastKnownEventId)
+        public void GetUpdated(int lastKnownEventId, string sessionId)
         {
             var maxUpdates = apiSettingOptions.Value.MaxEventsPerUpdate;
 
@@ -58,7 +59,7 @@ namespace BigRoomPlanningBoardBackend.Hubs
 
             if (count >= maxUpdates)
             {
-                BRPFullData fullData = BRPFullData.FromContext(bigRoomPlanningContext);
+                BRPFullData fullData = BRPFullData.FromContext(bigRoomPlanningContext, sessionId);
                 Clients.Caller.RecieveFullData(fullData);
                 return;
             }

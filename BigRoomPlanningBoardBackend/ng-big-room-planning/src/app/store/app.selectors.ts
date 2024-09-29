@@ -26,3 +26,5 @@ export const getPlannedPeriods = createSelector(appStateSelector, state => state
 export const getSprints = createSelector(appStateSelector, state => state.sprints);
 
 export const getTickets = createSelector(appStateSelector, state => state.tickets);
+
+export const getSquadSprintStats = createSelector(appStateSelector, state => state.squadSprintStats);

@@ -119,40 +119,6 @@ export class DummyClient {
         }
         return Promise.resolve<Session>(null as any);
     }
-
-    dummySprint(): Promise<Sprint> {
-        let url_ = this.baseUrl + "/api/Dummy/DummySprint";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-
-        return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processDummySprint(_response);
-        });
-    }
-
-    protected processDummySprint(response: Response): Promise<Sprint> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = Sprint.fromJS(resultData200);
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<Sprint>(null as any);
-    }
 }
 
 export abstract class Event implements IEvent {
@@ -190,6 +156,11 @@ export abstract class Event implements IEvent {
 
     static fromJS(data: any): Event {
         data = typeof data === 'object' ? data : {};
+        if (data["discriminator"] === "AddOrUpdateSquadSprintStatsEvent") {
+            let result = new AddOrUpdateSquadSprintStatsEvent();
+            result.init(data);
+            return result;
+        }
         if (data["discriminator"] === "AddPlannedPeriodEvent") {
             let result = new AddPlannedPeriodEvent();
             result.init(data);
@@ -265,6 +236,52 @@ export interface IEvent {
     processedAt?: Date;
     isProcessed?: boolean;
     isSuccessful?: boolean;
+}
+
+export class AddOrUpdateSquadSprintStatsEvent extends Event implements IAddOrUpdateSquadSprintStatsEvent {
+    squadId?: number;
+    sprintId?: number;
+    capacity?: number;
+    backgroundNoise?: number;
+
+    constructor(data?: IAddOrUpdateSquadSprintStatsEvent) {
+        super(data);
+        this._discriminator = "AddOrUpdateSquadSprintStatsEvent";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.squadId = _data["squadId"];
+            this.sprintId = _data["sprintId"];
+            this.capacity = _data["capacity"];
+            this.backgroundNoise = _data["backgroundNoise"];
+        }
+    }
+
+    static override fromJS(data: any): AddOrUpdateSquadSprintStatsEvent {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddOrUpdateSquadSprintStatsEvent();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["squadId"] = this.squadId;
+        data["sprintId"] = this.sprintId;
+        data["capacity"] = this.capacity;
+        data["backgroundNoise"] = this.backgroundNoise;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IAddOrUpdateSquadSprintStatsEvent extends IEvent {
+    squadId?: number;
+    sprintId?: number;
+    capacity?: number;
+    backgroundNoise?: number;
 }
 
 export class AddPlannedPeriodEvent extends Event implements IAddPlannedPeriodEvent {
@@ -705,12 +722,13 @@ export interface IEditTicketEvent extends IEvent {
 
 export class BRPFullData implements IBRPFullData {
     squads?: Squad[] | undefined;
-    squadBoards?: SquadBoard[] | undefined;
     tickets?: Ticket[] | undefined;
     plannedPeriods?: PlannedPeriod[] | undefined;
     dependencies?: Dependency[] | undefined;
     dependencyBoards?: DependencyBoard[] | undefined;
     sprints?: Sprint[] | undefined;
+    squadSprintStats?: SquadSprintStats[] | undefined;
+    ownSession?: Session | undefined;
     lastEventId?: number;
 
     constructor(data?: IBRPFullData) {
@@ -728,11 +746,6 @@ export class BRPFullData implements IBRPFullData {
                 this.squads = [] as any;
                 for (let item of _data["squads"])
                     this.squads!.push(Squad.fromJS(item));
-            }
-            if (Array.isArray(_data["squadBoards"])) {
-                this.squadBoards = [] as any;
-                for (let item of _data["squadBoards"])
-                    this.squadBoards!.push(SquadBoard.fromJS(item));
             }
             if (Array.isArray(_data["tickets"])) {
                 this.tickets = [] as any;
@@ -759,6 +772,12 @@ export class BRPFullData implements IBRPFullData {
                 for (let item of _data["sprints"])
                     this.sprints!.push(Sprint.fromJS(item));
             }
+            if (Array.isArray(_data["squadSprintStats"])) {
+                this.squadSprintStats = [] as any;
+                for (let item of _data["squadSprintStats"])
+                    this.squadSprintStats!.push(SquadSprintStats.fromJS(item));
+            }
+            this.ownSession = _data["ownSession"] ? Session.fromJS(_data["ownSession"]) : <any>undefined;
             this.lastEventId = _data["lastEventId"];
         }
     }
@@ -776,11 +795,6 @@ export class BRPFullData implements IBRPFullData {
             data["squads"] = [];
             for (let item of this.squads)
                 data["squads"].push(item.toJSON());
-        }
-        if (Array.isArray(this.squadBoards)) {
-            data["squadBoards"] = [];
-            for (let item of this.squadBoards)
-                data["squadBoards"].push(item.toJSON());
         }
         if (Array.isArray(this.tickets)) {
             data["tickets"] = [];
@@ -807,6 +821,12 @@ export class BRPFullData implements IBRPFullData {
             for (let item of this.sprints)
                 data["sprints"].push(item.toJSON());
         }
+        if (Array.isArray(this.squadSprintStats)) {
+            data["squadSprintStats"] = [];
+            for (let item of this.squadSprintStats)
+                data["squadSprintStats"].push(item.toJSON());
+        }
+        data["ownSession"] = this.ownSession ? this.ownSession.toJSON() : <any>undefined;
         data["lastEventId"] = this.lastEventId;
         return data;
     }
@@ -814,12 +834,13 @@ export class BRPFullData implements IBRPFullData {
 
 export interface IBRPFullData {
     squads?: Squad[] | undefined;
-    squadBoards?: SquadBoard[] | undefined;
     tickets?: Ticket[] | undefined;
     plannedPeriods?: PlannedPeriod[] | undefined;
     dependencies?: Dependency[] | undefined;
     dependencyBoards?: DependencyBoard[] | undefined;
     sprints?: Sprint[] | undefined;
+    squadSprintStats?: SquadSprintStats[] | undefined;
+    ownSession?: Session | undefined;
     lastEventId?: number;
 }
 
@@ -861,50 +882,6 @@ export class Squad implements ISquad {
 export interface ISquad {
     squadId?: number;
     name?: string | undefined;
-}
-
-export class SquadBoard implements ISquadBoard {
-    squadBoardId?: number;
-    squadId?: number;
-    plannedPeriodId?: number;
-
-    constructor(data?: ISquadBoard) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.squadBoardId = _data["squadBoardId"];
-            this.squadId = _data["squadId"];
-            this.plannedPeriodId = _data["plannedPeriodId"];
-        }
-    }
-
-    static fromJS(data: any): SquadBoard {
-        data = typeof data === 'object' ? data : {};
-        let result = new SquadBoard();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["squadBoardId"] = this.squadBoardId;
-        data["squadId"] = this.squadId;
-        data["plannedPeriodId"] = this.plannedPeriodId;
-        return data;
-    }
-}
-
-export interface ISquadBoard {
-    squadBoardId?: number;
-    squadId?: number;
-    plannedPeriodId?: number;
 }
 
 export class Ticket implements ITicket {
@@ -1013,6 +990,8 @@ export interface IPlannedPeriod {
 
 export class Dependency implements IDependency {
     dependencyId?: number;
+    dependantTicketId?: number;
+    dependencyTicketId?: number;
 
     constructor(data?: IDependency) {
         if (data) {
@@ -1026,6 +1005,8 @@ export class Dependency implements IDependency {
     init(_data?: any) {
         if (_data) {
             this.dependencyId = _data["dependencyId"];
+            this.dependantTicketId = _data["dependantTicketId"];
+            this.dependencyTicketId = _data["dependencyTicketId"];
         }
     }
 
@@ -1039,12 +1020,16 @@ export class Dependency implements IDependency {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["dependencyId"] = this.dependencyId;
+        data["dependantTicketId"] = this.dependantTicketId;
+        data["dependencyTicketId"] = this.dependencyTicketId;
         return data;
     }
 }
 
 export interface IDependency {
     dependencyId?: number;
+    dependantTicketId?: number;
+    dependencyTicketId?: number;
 }
 
 export class DependencyBoard implements IDependencyBoard {
@@ -1133,6 +1118,54 @@ export interface ISprint {
     name?: string | undefined;
     startsAt?: Date;
     endsAt?: Date;
+}
+
+export class SquadSprintStats implements ISquadSprintStats {
+    squadId?: number;
+    sprintId?: number;
+    capacity?: number;
+    backgroundNoise?: number;
+
+    constructor(data?: ISquadSprintStats) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.squadId = _data["squadId"];
+            this.sprintId = _data["sprintId"];
+            this.capacity = _data["capacity"];
+            this.backgroundNoise = _data["backgroundNoise"];
+        }
+    }
+
+    static fromJS(data: any): SquadSprintStats {
+        data = typeof data === 'object' ? data : {};
+        let result = new SquadSprintStats();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["squadId"] = this.squadId;
+        data["sprintId"] = this.sprintId;
+        data["capacity"] = this.capacity;
+        data["backgroundNoise"] = this.backgroundNoise;
+        return data;
+    }
+}
+
+export interface ISquadSprintStats {
+    squadId?: number;
+    sprintId?: number;
+    capacity?: number;
+    backgroundNoise?: number;
 }
 
 export class Session implements ISession {

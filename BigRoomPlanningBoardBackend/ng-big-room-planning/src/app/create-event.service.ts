@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import {
+  AddOrUpdateSquadSprintStatsEvent,
   AddPlannedPeriodEvent,
   AddSessionEvent,
   AddSprintEvent,
@@ -16,6 +17,7 @@ import {
   IPlannedPeriod,
   ISprint,
   ISquad,
+  ISquadSprintStats,
   ITicket,
 } from './client';
 import { DataService } from './data.service';
@@ -36,6 +38,16 @@ export class CreatEventService {
     })
 
     event.sessionName = name;
+
+    this.dataService.sendEvent(event);
+  }
+
+  addOrUpdateSquadSprintStats (squadSprintStats: ISquadSprintStats) {
+    const event = this.getBaseEvent(AddOrUpdateSquadSprintStatsEvent)
+    event.squadId = squadSprintStats.squadId;
+    event.sprintId = squadSprintStats.sprintId;
+    event.capacity = squadSprintStats.capacity;
+    event.backgroundNoise = squadSprintStats.backgroundNoise;
 
     this.dataService.sendEvent(event);
   }

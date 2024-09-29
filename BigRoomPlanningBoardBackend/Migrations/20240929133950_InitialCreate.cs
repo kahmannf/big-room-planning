@@ -51,18 +51,22 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     IsProcessed = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsSuccessful = table.Column<bool>(type: "INTEGER", nullable: false),
                     Discriminator = table.Column<string>(type: "TEXT", maxLength: 34, nullable: false),
+                    SquadId = table.Column<int>(type: "INTEGER", nullable: true),
+                    SprintId = table.Column<int>(type: "INTEGER", nullable: true),
+                    Capacity = table.Column<double>(type: "REAL", nullable: true),
+                    BackgroundNoise = table.Column<double>(type: "REAL", nullable: true),
                     PlannedPeriodId = table.Column<int>(type: "INTEGER", nullable: true),
                     Name = table.Column<string>(type: "TEXT", nullable: true),
                     StartDay = table.Column<DateTime>(type: "TEXT", nullable: true),
                     EndDay = table.Column<DateTime>(type: "TEXT", nullable: true),
                     BigRoomPlanningAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     SessionName = table.Column<string>(type: "TEXT", nullable: true),
-                    SprintId = table.Column<int>(type: "INTEGER", nullable: true),
+                    AddSprintEvent_SprintId = table.Column<int>(type: "INTEGER", nullable: true),
                     AddSprintEvent_Name = table.Column<string>(type: "TEXT", nullable: true),
                     StartsAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     EndsAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     AddSquadEvent_Name = table.Column<string>(type: "TEXT", nullable: true),
-                    SquadId = table.Column<int>(type: "INTEGER", nullable: true),
+                    AddSquadEvent_SquadId = table.Column<int>(type: "INTEGER", nullable: true),
                     TicketId = table.Column<int>(type: "INTEGER", nullable: true),
                     AddTicketEvent_SquadId = table.Column<int>(type: "INTEGER", nullable: true),
                     AddTicketEvent_PlannedPeriodId = table.Column<int>(type: "INTEGER", nullable: true),
@@ -136,20 +140,6 @@ namespace BigRoomPlanningBoardBackend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SquadBoards",
-                columns: table => new
-                {
-                    SquadBoardId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    SquadId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PlannedPeriodId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SquadBoards", x => x.SquadBoardId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Squads",
                 columns: table => new
                 {
@@ -160,6 +150,20 @@ namespace BigRoomPlanningBoardBackend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Squads", x => x.SquadId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SquadSprintStats",
+                columns: table => new
+                {
+                    SquadId = table.Column<int>(type: "INTEGER", nullable: false),
+                    SprintId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Capacity = table.Column<double>(type: "REAL", nullable: false),
+                    BackgroundNoise = table.Column<double>(type: "REAL", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SquadSprintStats", x => new { x.SquadId, x.SprintId });
                 });
 
             migrationBuilder.CreateTable(
@@ -201,10 +205,10 @@ namespace BigRoomPlanningBoardBackend.Migrations
                 name: "Sprints");
 
             migrationBuilder.DropTable(
-                name: "SquadBoards");
+                name: "Squads");
 
             migrationBuilder.DropTable(
-                name: "Squads");
+                name: "SquadSprintStats");
 
             migrationBuilder.DropTable(
                 name: "Tickets");

@@ -10,6 +10,7 @@ import {
 } from '@ngrx/store';
 
 import {
+  AddOrUpdateSquadSprintStatsEvent,
   AddPlannedPeriodEvent,
   AddSessionEvent,
   AddSprintEvent,
@@ -31,10 +32,12 @@ import {
   Session,
   Sprint,
   Squad,
+  SquadSprintStats,
   Ticket,
 } from './client';
 import { HandleErrorService } from './handle-error.service';
 import {
+  eventAddOrUpdateSquadSprintStats,
   eventAddPlannedPeriod,
   eventAddSession,
   eventAddSprint,
@@ -102,6 +105,17 @@ export class ProcessEventService {
       }
 
       this.store$.dispatch(setLastEventId({ lastEventId: event.eventId }));
+      return;
+    }
+
+    if (instance instanceof AddOrUpdateSquadSprintStatsEvent) {
+      const squadSprintStats = new SquadSprintStats();
+      squadSprintStats.squadId = instance.squadId;
+      squadSprintStats.sprintId = instance.sprintId;
+      squadSprintStats.capacity = instance.capacity;
+      squadSprintStats.backgroundNoise = instance.backgroundNoise;
+
+      this.store$.dispatch(eventAddOrUpdateSquadSprintStats({ squadSprintStats, eventId: event.eventId }));
       return;
     }
 

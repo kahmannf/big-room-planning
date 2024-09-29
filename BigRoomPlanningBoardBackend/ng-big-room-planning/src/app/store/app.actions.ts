@@ -9,12 +9,15 @@ import {
   Session,
   Sprint,
   Squad,
+  SquadSprintStats,
   Ticket,
 } from '../client';
 
 export const applyFullData = createAction('applyFullData', props<{ fullData: BRPFullData }>())
 
 export const connectionStateChange = createAction('connectionStateChange', props<{ isConnected: boolean, error?: string }>());
+
+export const eventAddOrUpdateSquadSprintStats = createAction('eventAddOrUpdateSquadSprintStats', props<{ squadSprintStats: SquadSprintStats, eventId: number }>());
 
 export const eventAddPlannedPeriod = createAction('eventAddPlannedPeriod', props<{ plannedPeriod: PlannedPeriod, eventId: number }>());
 

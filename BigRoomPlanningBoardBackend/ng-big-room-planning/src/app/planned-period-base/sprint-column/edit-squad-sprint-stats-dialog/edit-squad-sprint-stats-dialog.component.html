@@ -1,0 +1,17 @@
+<h2 mat-dialog-title i18n>Edit Capacity & Background Noise</h2>
+<mat-dialog-content>
+    <form class="d-flex flex-column form-column" style="margin-top: 1rem;" [formGroup]="formGroup" (ngSubmit)="saveClick()">
+        <div i18n>Capacity</div>
+        <mat-slider [step]="0.5" [min]="0" [max]="100" discrete [displayWith]="formatLabel">
+            <input matSliderThumb [formControlName]="'capacity'">
+        </mat-slider>
+        <div i18n>Background Noise</div>
+        <mat-slider [step]="0.5" [min]="0" [max]="100" discrete [displayWith]="formatLabel">
+            <input matSliderThumb [formControlName]="'backgroundNoise'">
+        </mat-slider>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button (click)="cancelClick()" i18n>Cancel</button>
+    <button mat-flat-button (click)="saveClick()" i18n>Save</button>
+</mat-dialog-actions>

@@ -14,19 +14,20 @@ namespace BigRoomPlanningBoardBackend
         private readonly IOptions<ApiSettings> apiSettingsOptions;
 
         public DbSet<Squad> Squads { get; set; }
-        public DbSet<SquadBoard> SquadBoards { get; set; }
         public DbSet<PlannedPeriod> PlannedPeriods { get; set; }
         public DbSet<Dependency> Dependencies { get; set; }
         public DbSet<DependencyBoard> DependencyBoards { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Sprint> Sprints { get; set; }
+        public DbSet<SquadSprintStats> SquadSprintStats { get; set; }
 
 
         public DbSet<Event> Events { get; set; }
 
         #region Event Types
 
+        public DbSet<AddOrUpdateSquadSprintStatsEvent> AddOrUpdateSquadSprintStatsEvents { get; set; }
         public DbSet<AddPlannedPeriodEvent> AddPlannedPeriodEvents { get; set; }
         public DbSet<AddSessionEvent> AddSessionEvents { get; set; }
         public DbSet<AddSprintEvent> AddSprintEvents { get; set; }
@@ -40,7 +41,6 @@ namespace BigRoomPlanningBoardBackend
 
 
         #endregion
-
 
 
         public BigRoomPlanningContext(IOptions<ApiSettings> apiSettingsOptions)

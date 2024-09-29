@@ -32,7 +32,7 @@ import {
 } from './store/app.actions';
 import { getLastEventId } from './store/app.selectors';
 
-const pingInterval = 100;
+const pingInterval = 500;
 
 const enableLogging = true;
 
@@ -54,6 +54,8 @@ export class DataService {
   private queue = new Queue<IEvent>();
 
   private isProcessingQueue = false;
+
+  private isPingRunning = false;
 
   constructor(
     private store$: Store<any>,
@@ -100,23 +102,35 @@ export class DataService {
     this.connection.on('RecieveEvents', (events) => this.recieveEvents(events));
     this.connection.on('RecieveFullData', (data) => this.recieveFullData(data));
 
+  }
+
+  startPingTimer() {
+    if (this.isPingRunning) {
+      return;
+    }
+
     this.pingTrigger$.pipe(
       switchMap(() => this.store$.pipe(
         select(getLastEventId)
       )) 
     ).subscribe((eventId) => {
       if(this.connection.state === HubConnectionState.Connected) {
-        this.connection.invoke('GetUpdated', eventId)
+        this.connection.invoke('GetUpdated', eventId, this.sessionId)
       }
     });
+
+    this.isPingRunning = true;
   }
 
   sendEvent(event: Event) {
-    if (event instanceof AddSessionEvent) {
-      this._sessionId = event.sessionId;
-    }
 
     this.connection.invoke('AddEvent', event);
+
+
+    if (event instanceof AddSessionEvent) {
+      this._sessionId = event.sessionId;
+      this.startPingTimer();
+    }
   }
 
   private recieveEvents(events: IEvent[]) {
@@ -135,6 +149,8 @@ export class DataService {
 
   private recieveFullData(fullData: IBRPFullData) {
     this.queue.clear();
+
+    this.log('REcieved full data package: ', fullData);
 
     const instance = BRPFullData.fromJS(fullData);
 
@@ -160,7 +176,7 @@ export class DataService {
       console.error('Failed to process events. Dropping queue and requesting full data. Last event bevor error occurred: ', lastQueueItem);
       console.error(err);
 
-      await this.connection.invoke('RequestFullData');
+      await this.connection.invoke('RequestFullData', this.sessionId);
       this.queue.clear();
     }
 

@@ -1,0 +1,25 @@
+
+
+.stats {
+    display: flex;
+    flex-direction: column;
+
+    button {
+        margin-top: 1rem;
+    }
+
+    .stat {
+        display: flex;
+        flex-direction: row;
+        margin-top: .5rem;
+
+        font-size: 1.2rem;
+        .stat-name {
+            width: 300px;
+        }
+        .stat-value {
+            text-align: end;
+            font-weight: bold;
+        }
+    }
+}

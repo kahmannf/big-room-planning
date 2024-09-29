@@ -10,12 +10,13 @@ import {
   Session,
   Sprint,
   Squad,
-  SquadBoard,
+  SquadSprintStats,
   Ticket,
 } from '../client';
 import {
   applyFullData,
   connectionStateChange,
+  eventAddOrUpdateSquadSprintStats,
   eventAddPlannedPeriod,
   eventAddSession,
   eventAddSprint,
@@ -33,12 +34,12 @@ import {
 
 export interface AppState {
     squads: Squad[];
-    sqaudBoards: SquadBoard[];
     tickets: Ticket[];
     plannedPeriods: PlannedPeriod[];
     dependencies: Dependency[];
     dependencyBoards: DependencyBoard[];
     sprints: Sprint[];
+    squadSprintStats: SquadSprintStats[];
     lastEventId: number;
     currentSession?: Session;
     knownSessions: { [sessionId: string]: Session };
@@ -53,9 +54,9 @@ export const initialAppState: AppState = {
     dependencyBoards: [],
     lastEventId: 0,
     plannedPeriods: [],
-    sqaudBoards: [],
     tickets: [],
     sprints: [],
+    squadSprintStats: [],
     knownSessions: {},
     isConnected: false,
     createSessionFailed: false
@@ -68,15 +69,26 @@ export const appReducer = createReducer(
         dependencies: action.fullData.dependencies ?? [],
         dependencyBoards: action.fullData.dependencyBoards ?? [],
         quarterYears: action.fullData.plannedPeriods ?? [],
-        sqaudBoards: action.fullData.squadBoards ?? [],
         squads: action.fullData.squads ?? [],
         tickets: action.fullData.tickets ?? [],
-        sprints: action.fullData.sprints ?? []
+        sprints: action.fullData.sprints ?? [],
+        plannedPeriods: action.fullData.plannedPeriods ?? [],
+        squadSprintStats: action.fullData.squadSprintStats ?? [],
+        currentSession: state.currentSession ?? action.fullData.ownSession,
+        lastEventId: action.fullData.lastEventId
     })),
     on(connectionStateChange, (state, action) => ({
         ...state,
         connectionError: action.error,
         isConnected: action.isConnected
+    })),
+    on(eventAddOrUpdateSquadSprintStats, (state, action) => ({
+        ...state,
+        lastEventId: action.eventId,
+        squadSprintStats: [
+            ...state.squadSprintStats.filter(x => x.sprintId !== action.squadSprintStats.sprintId || x.squadId !== action.squadSprintStats.squadId),
+            action.squadSprintStats
+        ]
     })),
     on(eventAddPlannedPeriod, (state, action) => ({
         ...state,

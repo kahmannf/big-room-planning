@@ -27,6 +27,9 @@ import {
 import {
   BacklogColumnComponent,
 } from '../backlog-column/backlog-column.component';
+import {
+  SprintColumnComponent,
+} from '../sprint-column/sprint-column.component';
 
 @Component({
   selector: 'app-squad-board',
@@ -34,7 +37,8 @@ import {
   imports: [
     BacklogColumnComponent,
     AsyncPipe,
-    NgFor
+    NgFor,
+    SprintColumnComponent
   ],
   templateUrl: './squad-board.component.html',
   styleUrl: './squad-board.component.scss'

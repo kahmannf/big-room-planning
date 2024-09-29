@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BigRoomPlanningBoardBackend.Migrations
 {
     [DbContext(typeof(BigRoomPlanningContext))]
-    [Migration("20240929104942_InitialCreate")]
+    [Migration("20240929133950_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -162,21 +162,23 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     b.ToTable("Squads");
                 });
 
-            modelBuilder.Entity("BigRoomPlanningBoardBackend.SquadBoard", b =>
+            modelBuilder.Entity("BigRoomPlanningBoardBackend.SquadSprintStats", b =>
                 {
-                    b.Property<int>("SquadBoardId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PlannedPeriodId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("SquadId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("SquadBoardId");
+                    b.Property<int>("SprintId")
+                        .HasColumnType("INTEGER");
 
-                    b.ToTable("SquadBoards");
+                    b.Property<double>("BackgroundNoise")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Capacity")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("SquadId", "SprintId");
+
+                    b.ToTable("SquadSprintStats");
                 });
 
             modelBuilder.Entity("BigRoomPlanningBoardBackend.Ticket", b =>
@@ -200,6 +202,25 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     b.HasKey("TicketId");
 
                     b.ToTable("Tickets");
+                });
+
+            modelBuilder.Entity("BigRoomPlanningBoardBackend.Events.Types.AddOrUpdateSquadSprintStatsEvent", b =>
+                {
+                    b.HasBaseType("BigRoomPlanningBoardBackend.Events.Event");
+
+                    b.Property<double>("BackgroundNoise")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("Capacity")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("SprintId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SquadId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasDiscriminator().HasValue("AddOrUpdateSquadSprintStatsEvent");
                 });
 
             modelBuilder.Entity("BigRoomPlanningBoardBackend.Events.Types.AddPlannedPeriodEvent", b =>
@@ -254,6 +275,9 @@ namespace BigRoomPlanningBoardBackend.Migrations
                         {
                             t.Property("Name")
                                 .HasColumnName("AddSprintEvent_Name");
+
+                            t.Property("SprintId")
+                                .HasColumnName("AddSprintEvent_SprintId");
                         });
 
                     b.HasDiscriminator().HasValue("AddSprintEvent");
@@ -273,6 +297,9 @@ namespace BigRoomPlanningBoardBackend.Migrations
                         {
                             t.Property("Name")
                                 .HasColumnName("AddSquadEvent_Name");
+
+                            t.Property("SquadId")
+                                .HasColumnName("AddSquadEvent_SquadId");
                         });
 
                     b.HasDiscriminator().HasValue("AddSquadEvent");

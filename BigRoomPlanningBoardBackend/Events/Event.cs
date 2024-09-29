@@ -8,6 +8,7 @@ using System.Runtime.Serialization;
 namespace BigRoomPlanningBoardBackend.Events
 {
     [JsonConverter(typeof(JsonInheritanceConverter), "discriminator")]
+    [KnownType(typeof(AddOrUpdateSquadSprintStatsEvent))]
     [KnownType(typeof(AddPlannedPeriodEvent))]
     [KnownType(typeof(AddSessionEvent))]
     [KnownType(typeof(AddSprintEvent))]

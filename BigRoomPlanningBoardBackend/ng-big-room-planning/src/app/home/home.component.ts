@@ -80,6 +80,8 @@ export class HomeComponent implements OnInit {
       select(getCurrentSession)
     );
 
+    this.store$.subscribe(console.log)
+
     this.periods$ = this.store$.pipe(
       select(getPlannedPeriods),
       map(periods => {
