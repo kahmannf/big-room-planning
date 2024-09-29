@@ -123,6 +123,9 @@ export class EditSquadComponent extends EditEntityComponent implements OnInit, O
             history.back();
           } else {
             this.editId = target.squadId;
+
+            this.title = $localize`Edit Squad ${target.name}`;
+
             this.formGroup.setValue({
               name: target.name ?? null
             });
