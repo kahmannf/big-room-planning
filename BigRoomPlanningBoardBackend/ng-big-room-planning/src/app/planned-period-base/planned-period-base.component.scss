@@ -6,7 +6,7 @@
     $navbar-height: 96px;
     
     .navbar {
-        height: $navbar-height;
+        height: calc($navbar-height - 1px);
         width: 100%;
         display: flex;
         flex-direction: row;
@@ -54,7 +54,6 @@
     }
 
     .main-content {
-        padding-top: 2rem;
         height: calc(100% - #{$navbar-height});
         width: 100%;
         overflow: auto;

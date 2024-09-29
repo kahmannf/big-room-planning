@@ -6,6 +6,7 @@ namespace BigRoomPlanningBoardBackend
     public class Ticket
     {
         public int TicketId { get; set; }
+
         public int SquadId { get; set; }
 
         /// <summary>
@@ -18,5 +19,7 @@ namespace BigRoomPlanningBoardBackend
         /// If this is null, the Ticket is in the Backlog for the PlannedPeriod
         /// </summary>
         public int? SprintId { get; set; }
+
+        public string Title { get; set; }
     }
 }

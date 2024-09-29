@@ -1,1 +1,8 @@
-<p>squad-board works!</p>
+<div class="squad-board">
+    <div class="inner-squad-board">
+        <div class="sprints">
+
+        </div>
+        <app-backlog-column [plannedPeriodId]="plannedPeriodId$ | async" [squadId]="squadId$ | async"></app-backlog-column>
+    </div>
+</div>

@@ -9,6 +9,7 @@ import {
   Session,
   Sprint,
   Squad,
+  Ticket,
 } from '../client';
 
 export const applyFullData = createAction('applyFullData', props<{ fullData: BRPFullData }>())
@@ -23,11 +24,15 @@ export const eventAddSprint = createAction('eventAddSprint', props<{ sprint: Spr
 
 export const eventAddSquad = createAction('eventAddSquad', props<{ squad: Squad, eventId: number }>());
 
+export const eventAddTicket = createAction('eventAddTicket', props<{ ticket: Ticket, eventId: number }>());
+
 export const eventEditPlannedPeriod = createAction('eventEditPlannedPeriod', props<{ plannedPeriod: PlannedPeriod, eventId: number }>());
 
 export const eventEditSprint = createAction('eventEditSprint', props<{ sprint: Sprint, eventId: number }>());
 
 export const eventEditSquad = createAction('eventEditSquad', props<{ squad: Squad, eventId: number }>());
+
+export const eventEditTicket = createAction('eventEditTicket', props<{ ticket: Ticket, eventId: number }>());
 
 export const initializCurrentSeesion = createAction('initializCurrentSeesion', props<{ session: Session }>());
 

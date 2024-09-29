@@ -10,6 +10,11 @@ namespace BigRoomPlanningBoardBackend.Events.Types
 
         public override bool Process(BigRoomPlanningContext bigRoomPlanningContext)
         {
+            if(string.IsNullOrWhiteSpace(Name))
+            {
+                return false;
+            }
+
             var item = bigRoomPlanningContext.Squads.Find(SquadId);
 
             if (item == null)

@@ -98,5 +98,10 @@ namespace BigRoomPlanningBoardBackend.Hubs
         {
             return bigRoomPlanningContext.Sprints.Find(id);
         }
+
+        public Ticket GetTicket(int id)
+        {
+            return bigRoomPlanningContext.Tickets.Find(id);
+        }
     }
 }

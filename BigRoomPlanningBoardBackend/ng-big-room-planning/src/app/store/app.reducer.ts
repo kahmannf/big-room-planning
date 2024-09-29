@@ -20,9 +20,11 @@ import {
   eventAddSession,
   eventAddSprint,
   eventAddSquad,
+  eventAddTicket,
   eventEditPlannedPeriod,
   eventEditSprint,
   eventEditSquad,
+  eventEditTicket,
   initializCurrentSeesion as initializCurrentSession,
   setCreateSessionFailed,
   setLastEventId,
@@ -107,6 +109,14 @@ export const appReducer = createReducer(
             action.squad
         ]
     })),
+    on(eventAddTicket, (state, action) => ({
+        ...state,
+        lastEventId: action.eventId,
+        tickets: [
+            ...state.tickets,
+            action.ticket
+        ]
+    })),
     on(eventEditPlannedPeriod, (state, action) => ({
         ...state,
         lastEventId: action.eventId,
@@ -134,6 +144,16 @@ export const appReducer = createReducer(
             .map(x => 
                 x.squadId === action.squad.squadId
                     ? action.squad
+                    : x
+            )
+    })),
+    on(eventEditTicket, (state, action) => ({
+        ...state,
+        lastEventId: action.eventId,
+        tickets: state.tickets
+            .map(x => 
+                x.ticketId === action.ticket.ticketId
+                    ? action.ticket
                     : x
             )
     })),

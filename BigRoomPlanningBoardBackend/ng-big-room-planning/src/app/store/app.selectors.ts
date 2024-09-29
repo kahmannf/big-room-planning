@@ -24,3 +24,5 @@ export const getCreateSessionFailed = createSelector(appStateSelector, state => 
 export const getPlannedPeriods = createSelector(appStateSelector, state => state.plannedPeriods);
 
 export const getSprints = createSelector(appStateSelector, state => state.sprints);
+
+export const getTickets = createSelector(appStateSelector, state => state.tickets);

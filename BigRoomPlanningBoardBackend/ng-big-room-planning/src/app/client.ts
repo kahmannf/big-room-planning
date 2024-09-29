@@ -210,6 +210,11 @@ export abstract class Event implements IEvent {
             result.init(data);
             return result;
         }
+        if (data["discriminator"] === "AddTicketEvent") {
+            let result = new AddTicketEvent();
+            result.init(data);
+            return result;
+        }
         if (data["discriminator"] === "EditPlannedPeriodEvent") {
             let result = new EditPlannedPeriodEvent();
             result.init(data);
@@ -222,6 +227,11 @@ export abstract class Event implements IEvent {
         }
         if (data["discriminator"] === "EditSquadEvent") {
             let result = new EditSquadEvent();
+            result.init(data);
+            return result;
+        }
+        if (data["discriminator"] === "EditTicketEvent") {
+            let result = new EditTicketEvent();
             result.init(data);
             return result;
         }
@@ -420,6 +430,56 @@ export interface IAddSquadEvent extends IEvent {
     squadId?: number | undefined;
 }
 
+export class AddTicketEvent extends Event implements IAddTicketEvent {
+    ticketId?: number | undefined;
+    squadId?: number;
+    plannedPeriodId?: number;
+    sprintId?: number | undefined;
+    title?: string | undefined;
+
+    constructor(data?: IAddTicketEvent) {
+        super(data);
+        this._discriminator = "AddTicketEvent";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.ticketId = _data["ticketId"];
+            this.squadId = _data["squadId"];
+            this.plannedPeriodId = _data["plannedPeriodId"];
+            this.sprintId = _data["sprintId"];
+            this.title = _data["title"];
+        }
+    }
+
+    static override fromJS(data: any): AddTicketEvent {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddTicketEvent();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["ticketId"] = this.ticketId;
+        data["squadId"] = this.squadId;
+        data["plannedPeriodId"] = this.plannedPeriodId;
+        data["sprintId"] = this.sprintId;
+        data["title"] = this.title;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IAddTicketEvent extends IEvent {
+    ticketId?: number | undefined;
+    squadId?: number;
+    plannedPeriodId?: number;
+    sprintId?: number | undefined;
+    title?: string | undefined;
+}
+
 export class EditPlannedPeriodEvent extends Event implements IEditPlannedPeriodEvent {
     plannedPeriodId?: number;
     name?: string | undefined;
@@ -552,6 +612,56 @@ export class EditSquadEvent extends Event implements IEditSquadEvent {
 export interface IEditSquadEvent extends IEvent {
     name?: string | undefined;
     squadId?: number;
+}
+
+export class EditTicketEvent extends Event implements IEditTicketEvent {
+    ticketId?: number;
+    squadId?: number;
+    plannedPeriodId?: number;
+    sprintId?: number | undefined;
+    title?: string | undefined;
+
+    constructor(data?: IEditTicketEvent) {
+        super(data);
+        this._discriminator = "EditTicketEvent";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.ticketId = _data["ticketId"];
+            this.squadId = _data["squadId"];
+            this.plannedPeriodId = _data["plannedPeriodId"];
+            this.sprintId = _data["sprintId"];
+            this.title = _data["title"];
+        }
+    }
+
+    static override fromJS(data: any): EditTicketEvent {
+        data = typeof data === 'object' ? data : {};
+        let result = new EditTicketEvent();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["ticketId"] = this.ticketId;
+        data["squadId"] = this.squadId;
+        data["plannedPeriodId"] = this.plannedPeriodId;
+        data["sprintId"] = this.sprintId;
+        data["title"] = this.title;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IEditTicketEvent extends IEvent {
+    ticketId?: number;
+    squadId?: number;
+    plannedPeriodId?: number;
+    sprintId?: number | undefined;
+    title?: string | undefined;
 }
 
 export class BRPFullData implements IBRPFullData {
@@ -763,6 +873,7 @@ export class Ticket implements ITicket {
     squadId?: number;
     plannedPeriodId!: number;
     sprintId?: number | undefined;
+    title?: string | undefined;
 
     constructor(data?: ITicket) {
         if (data) {
@@ -779,6 +890,7 @@ export class Ticket implements ITicket {
             this.squadId = _data["squadId"];
             this.plannedPeriodId = _data["plannedPeriodId"];
             this.sprintId = _data["sprintId"];
+            this.title = _data["title"];
         }
     }
 
@@ -795,6 +907,7 @@ export class Ticket implements ITicket {
         data["squadId"] = this.squadId;
         data["plannedPeriodId"] = this.plannedPeriodId;
         data["sprintId"] = this.sprintId;
+        data["title"] = this.title;
         return data;
     }
 }
@@ -804,6 +917,7 @@ export interface ITicket {
     squadId?: number;
     plannedPeriodId: number;
     sprintId?: number | undefined;
+    title?: string | undefined;
 }
 
 export class PlannedPeriod implements IPlannedPeriod {

@@ -1,0 +1,7 @@
+<div class="backlog-column ticket-column">
+    <button mat-flat-button class="new-button" (click)="addNewTicket()">
+        <span i18n>Add Ticket</span>
+        <mat-icon>plus</mat-icon>
+    </button>
+    <app-ticket-card [ticket]="ticket" *ngFor="let ticket of tickets$ | async"></app-ticket-card>
+</div>

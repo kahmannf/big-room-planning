@@ -14,19 +14,23 @@ import {
   AddSessionEvent,
   AddSprintEvent,
   AddSquadEvent,
+  AddTicketEvent,
   EditPlannedPeriodEvent,
   EditSprintEvent,
   EditSquadEvent,
+  EditTicketEvent,
   Event,
   IEvent,
   IPlannedPeriod,
   ISession,
   ISprint,
   ISquad,
+  ITicket,
   PlannedPeriod,
   Session,
   Sprint,
   Squad,
+  Ticket,
 } from './client';
 import { HandleErrorService } from './handle-error.service';
 import {
@@ -34,9 +38,11 @@ import {
   eventAddSession,
   eventAddSprint,
   eventAddSquad,
+  eventAddTicket,
   eventEditPlannedPeriod,
   eventEditSprint,
   eventEditSquad,
+  eventEditTicket,
   initializCurrentSeesion,
   setCreateSessionFailed,
   setLastEventId,
@@ -135,6 +141,14 @@ export class ProcessEventService {
       return;
     }
 
+    if (instance instanceof AddTicketEvent) {
+      const iticket: ITicket = await connection.invoke('GetTicket', instance.ticketId);
+      const ticket = new Ticket();
+      ticket.init(iticket);
+      this.store$.dispatch(eventAddTicket({ ticket, eventId: event.eventId }))
+      return;
+    }
+
     if (instance instanceof EditPlannedPeriodEvent) {
       const iplannedPeriod: IPlannedPeriod = await connection.invoke('GetPlannedPeriod', instance.plannedPeriodId);
       const plannedPeriod = new PlannedPeriod();
@@ -183,6 +197,14 @@ export class ProcessEventService {
         const returnUrl = this.getReturnUrl();
         this.router.navigate(JSON.parse(returnUrl));
       }
+      return;
+    }
+
+    if(instance instanceof EditTicketEvent) {
+      const iticket: ITicket = await connection.invoke('GetTicket', instance.ticketId);
+      const ticket = new Ticket();
+      ticket.init(iticket);
+      this.store$.dispatch(eventEditTicket({ ticket, eventId: event.eventId }));
       return;
     }
 

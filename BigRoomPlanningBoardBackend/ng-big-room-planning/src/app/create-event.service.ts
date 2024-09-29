@@ -5,14 +5,17 @@ import {
   AddSessionEvent,
   AddSprintEvent,
   AddSquadEvent,
+  AddTicketEvent,
   EditPlannedPeriodEvent,
   EditSprintEvent,
   EditSquadEvent,
+  EditTicketEvent,
   Event,
   IEvent,
   IPlannedPeriod,
   ISprint,
   ISquad,
+  ITicket,
 } from './client';
 import { DataService } from './data.service';
 
@@ -90,6 +93,28 @@ export class CreatEventService {
     const event = this.getBaseEvent(EditSquadEvent)
     event.squadId = squad.squadId;
     event.name = squad.name;
+
+    this.dataService.sendEvent(event);
+  }
+
+  addTicket (ticket: ITicket) {
+    const event = this.getBaseEvent(AddTicketEvent)
+    event.squadId = ticket.squadId;
+    event.plannedPeriodId = ticket.plannedPeriodId;
+    event.sprintId = ticket.sprintId;
+    event.title = ticket.title;
+
+    this.dataService.sendEvent(event);
+  }
+
+  editTicket(ticket: ITicket) {
+    
+    const event = this.getBaseEvent(EditTicketEvent)
+    event.ticketId = ticket.ticketId;
+    event.squadId = ticket.squadId;
+    event.plannedPeriodId = ticket.plannedPeriodId;
+    event.sprintId = ticket.sprintId;
+    event.title = ticket.title;
 
     this.dataService.sendEvent(event);
   }

@@ -1,0 +1,11 @@
+.backlog-column {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    position: relative;
+
+
+    .new-button {
+        position: sticky;
+    }
+}

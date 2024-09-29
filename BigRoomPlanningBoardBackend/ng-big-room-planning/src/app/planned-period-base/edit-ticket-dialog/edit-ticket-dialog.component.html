@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+<mat-dialog-content>
+    <form class="form-column" [formGroup]="formGroup" (ngSubmit)="saveClick()">
+        <mat-form-field class="w-100">
+            <mat-label i18n>Title</mat-label>
+            <input type="text" matInput [formControlName]="'title'">
+            @if (formGroup.hasError('required', 'title')) {
+                <mat-error i18n>Required</mat-error>
+            }
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button (click)="cancelClick()" i18n>Cancel</button>
+    <button mat-flat-button (click)="saveClick()">{{ closeAction }}</button>
+</mat-dialog-actions>

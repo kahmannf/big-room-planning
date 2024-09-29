@@ -185,6 +185,9 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     b.Property<int>("SquadId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Title")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("TicketId");
 
                     b.ToTable("Tickets");
@@ -264,6 +267,40 @@ namespace BigRoomPlanningBoardBackend.Migrations
                         });
 
                     b.HasDiscriminator().HasValue("AddSquadEvent");
+                });
+
+            modelBuilder.Entity("BigRoomPlanningBoardBackend.Events.Types.AddTicketEvent", b =>
+                {
+                    b.HasBaseType("BigRoomPlanningBoardBackend.Events.Event");
+
+                    b.Property<int>("PlannedPeriodId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("SprintId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SquadId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("TicketId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("TEXT");
+
+                    b.ToTable("Events", t =>
+                        {
+                            t.Property("PlannedPeriodId")
+                                .HasColumnName("AddTicketEvent_PlannedPeriodId");
+
+                            t.Property("SprintId")
+                                .HasColumnName("AddTicketEvent_SprintId");
+
+                            t.Property("SquadId")
+                                .HasColumnName("AddTicketEvent_SquadId");
+                        });
+
+                    b.HasDiscriminator().HasValue("AddTicketEvent");
                 });
 
             modelBuilder.Entity("BigRoomPlanningBoardBackend.Events.Types.EditPlannedPeriodEvent", b =>
@@ -360,6 +397,46 @@ namespace BigRoomPlanningBoardBackend.Migrations
                         });
 
                     b.HasDiscriminator().HasValue("EditSquadEvent");
+                });
+
+            modelBuilder.Entity("BigRoomPlanningBoardBackend.Events.Types.EditTicketEvent", b =>
+                {
+                    b.HasBaseType("BigRoomPlanningBoardBackend.Events.Event");
+
+                    b.Property<int>("PlannedPeriodId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("SprintId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SquadId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TicketId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("TEXT");
+
+                    b.ToTable("Events", t =>
+                        {
+                            t.Property("PlannedPeriodId")
+                                .HasColumnName("EditTicketEvent_PlannedPeriodId");
+
+                            t.Property("SprintId")
+                                .HasColumnName("EditTicketEvent_SprintId");
+
+                            t.Property("SquadId")
+                                .HasColumnName("EditTicketEvent_SquadId");
+
+                            t.Property("TicketId")
+                                .HasColumnName("EditTicketEvent_TicketId");
+
+                            t.Property("Title")
+                                .HasColumnName("EditTicketEvent_Title");
+                        });
+
+                    b.HasDiscriminator().HasValue("EditTicketEvent");
                 });
 #pragma warning restore 612, 618
         }
