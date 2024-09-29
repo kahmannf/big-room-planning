@@ -9,7 +9,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -51,8 +50,7 @@ import { getPlannedPeriods } from '../store/app.selectors';
     {
       provide: EditEntityComponent,
       useExisting: EditPlannedPeriodComponent
-    },
-    provideNativeDateAdapter()
+    }
   ],
   templateUrl: './edit-planned-period.component.html',
   styleUrl: './edit-planned-period.component.scss'

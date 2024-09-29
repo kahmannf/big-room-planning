@@ -17,6 +17,7 @@ import {
 import {
   SquadBoardComponent,
 } from './planned-period-base/squad-board/squad-board.component';
+import { SprintsComponent } from './sprints/sprints.component';
 
 export const routes: Routes = [
     { path: 'create-planned-period', component: EditPlannedPeriodComponent },
@@ -24,6 +25,7 @@ export const routes: Routes = [
     { path: 'edit-planned-period/:id', component: EditPlannedPeriodComponent },
     { path: 'edit-squad/:id', component: EditSquadComponent },
     { path: 'home', component: HomeComponent },
+    { path: 'sprints', component: SprintsComponent },
     { 
         path: 'planned-period/:plannedPeriodId',
         component: PlannedPeriodBaseComponent,

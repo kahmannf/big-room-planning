@@ -10,8 +10,10 @@ namespace BigRoomPlanningBoardBackend.Events
     [JsonConverter(typeof(JsonInheritanceConverter), "discriminator")]
     [KnownType(typeof(AddPlannedPeriodEvent))]
     [KnownType(typeof(AddSessionEvent))]
+    [KnownType(typeof(AddSprintEvent))]
     [KnownType(typeof(AddSquadEvent))]
     [KnownType(typeof(EditPlannedPeriodEvent))]
+    [KnownType(typeof(EditSprintEvent))]
     [KnownType(typeof(EditSquadEvent))]
     public abstract class Event
     {

@@ -10,7 +10,7 @@
             </div>
         } @else {
             <div i18n>
-                Select a Planned Period to view or <a [routerLink]="[ '/create-planned-period' ]">add a new Planned Period</a>.
+                Select a Planned Period to view, <a [routerLink]="[ '/create-planned-period' ]">add a new Planned Period</a> or <a [routerLink]="[ '/sprints' ]">manage interations</a>.
             </div>
             <mat-card class="period-card" *ngFor="let period of periods$ | async" appearance="outlined">
                 <mat-card-header class="card-header">{{ period | periodName }}</mat-card-header>

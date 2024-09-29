@@ -1,11 +1,26 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  provideZoneChangeDetection,
+} from '@angular/core';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import {
+  provideAnimationsAsync,
+} from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
 
-import { routes } from './app.routes';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { Action, ActionReducer, MetaReducer, provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
-import { appReducer, AppState } from './store/app.reducer';
+import {
+  Action,
+  ActionReducer,
+  MetaReducer,
+  provideStore,
+} from '@ngrx/store';
+
+import { routes } from './app.routes';
+import {
+  appReducer,
+  AppState,
+} from './store/app.reducer';
 
 interface State {
   app: AppState;
@@ -36,6 +51,7 @@ export const getAppConfig: () => ApplicationConfig = () => {
       provideZoneChangeDetection({ eventCoalescing: true }),
       provideRouter(routes),
       provideAnimationsAsync(),
+      provideNativeDateAdapter(),
       provideStore<State>({
         app: appReducer
       }, {

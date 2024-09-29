@@ -1,0 +1,65 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+<mat-dialog-content>
+    <form class="form-column" [formGroup]="formGroup">
+        <mat-form-field class="w-100">
+            <mat-label i18n>Name</mat-label>
+            <input type="text" matInput [formControlName]="'name'">
+            @if (formGroup.hasError('required', 'name')) {
+                <mat-error i18n>Required</mat-error>
+            }
+        </mat-form-field>
+        <mat-form-field class="w-100">
+            <mat-label i18n>
+                Start Date
+            </mat-label>
+            <input matInput type="text" [formControlName]="'startsAt'" [matDatepicker]="pickerStart">
+            <mat-datepicker-toggle matIconSuffix [for]="pickerStart"></mat-datepicker-toggle>
+            <mat-datepicker #pickerStart></mat-datepicker>
+            @if (formGroup.hasError('required', 'startsAt')) {
+                <mat-error i18n>Required</mat-error>
+            }
+        </mat-form-field>
+        <mat-form-field class="w-100">
+            <mat-label i18n>
+                End Date
+            </mat-label>
+            <input matInput type="text" [formControlName]="'endsAt'" [matDatepicker]="pickerEnd">
+            <mat-datepicker-toggle matIconSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+            <mat-datepicker #pickerEnd></mat-datepicker>
+            @if (formGroup.hasError('required', 'endsAt')) {
+                <mat-error i18n>Required</mat-error>
+            }
+        </mat-form-field>
+
+        @if(!isTimeRangeValid) {
+            <mat-error>
+                The current range intersect eith another existing iteration.
+            </mat-error>
+        }
+        
+        @if (formGroup.controls.startsAt.value && formGroup.controls.endsAt.value && formGroup.controls.startsAt.value?.getTime() === formGroup.controls.endsAt.value?.getTime()) {
+            <mat-error i18n>
+                Start and end day cannot be on the same date.
+            </mat-error>
+        }
+        @if (formGroup.controls.startsAt.value && formGroup.controls.endsAt.value && formGroup.controls.startsAt.value?.getTime() > formGroup.controls.endsAt.value?.getTime()) {
+            <mat-error i18n>
+                Start day cannot be after end day.
+            </mat-error>
+        }
+
+        @if (plannedPeriod) {
+            <div i18n>
+                This iteration will belong to Planned Period <i>{{ plannedPeriod | periodName }}</i>. This is based on the selected end date {{ formGroup.controls.endsAt.value | date:'mediumDate' }}
+            </div>
+        } @else {
+            <div i18n>
+                This iteration will not belong to any existing Planned Period.
+            </div>
+        }
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button (click)="cancelClick()" i18n>Cancel</button>
+    <button mat-flat-button (click)="saveClick()">{{ closeAction }}</button>
+</mat-dialog-actions>

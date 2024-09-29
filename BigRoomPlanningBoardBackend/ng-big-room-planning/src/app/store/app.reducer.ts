@@ -8,6 +8,7 @@ import {
   DependencyBoard,
   PlannedPeriod,
   Session,
+  Sprint,
   Squad,
   SquadBoard,
   Ticket,
@@ -17,11 +18,14 @@ import {
   connectionStateChange,
   eventAddPlannedPeriod,
   eventAddSession,
+  eventAddSprint,
   eventAddSquad,
   eventEditPlannedPeriod,
+  eventEditSprint,
   eventEditSquad,
   initializCurrentSeesion as initializCurrentSession,
   setCreateSessionFailed,
+  setLastEventId,
 } from './app.actions';
 
 export interface AppState {
@@ -31,6 +35,7 @@ export interface AppState {
     plannedPeriods: PlannedPeriod[];
     dependencies: Dependency[];
     dependencyBoards: DependencyBoard[];
+    sprints: Sprint[];
     lastEventId: number;
     currentSession?: Session;
     knownSessions: { [sessionId: string]: Session };
@@ -47,6 +52,7 @@ export const initialAppState: AppState = {
     plannedPeriods: [],
     sqaudBoards: [],
     tickets: [],
+    sprints: [],
     knownSessions: {},
     isConnected: false,
     createSessionFailed: false
@@ -61,7 +67,8 @@ export const appReducer = createReducer(
         quarterYears: action.fullData.plannedPeriods ?? [],
         sqaudBoards: action.fullData.squadBoards ?? [],
         squads: action.fullData.squads ?? [],
-        tickets: action.fullData.tickets ?? []
+        tickets: action.fullData.tickets ?? [],
+        sprints: action.fullData.sprints ?? []
     })),
     on(connectionStateChange, (state, action) => ({
         ...state,
@@ -84,6 +91,14 @@ export const appReducer = createReducer(
             [action.session.sessionId]: action.session
         },
     })),
+    on(eventAddSprint, (state, action) => ({
+        ...state,
+        lastEventId: action.eventId,
+        sprints: [
+            ...state.sprints,
+            action.sprint
+        ]
+    })),
     on(eventAddSquad, (state, action) => ({
         ...state,
         lastEventId: action.eventId,
@@ -99,6 +114,16 @@ export const appReducer = createReducer(
             .map(x =>
                 x.plannedPeriodId === action.plannedPeriod.plannedPeriodId
                     ? action.plannedPeriod
+                    : x
+            )
+    })),
+    on(eventEditSprint, (state, action) => ({
+        ...state,
+        lastEventId: action.eventId,
+        sprints: state.sprints
+            .map(x => 
+                x.sprintId === action.sprint.sprintId
+                    ? action.sprint
                     : x
             )
     })),
@@ -120,5 +145,9 @@ export const appReducer = createReducer(
     on(setCreateSessionFailed, (state, action) => ({
         ...state,
         createSessionFailed: action.failed
+    })),
+    on(setLastEventId, (state, action) => ({
+        ...state,
+        lastEventId: action.lastEventId
     }))
 )

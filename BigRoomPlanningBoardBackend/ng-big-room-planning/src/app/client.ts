@@ -119,6 +119,40 @@ export class DummyClient {
         }
         return Promise.resolve<Session>(null as any);
     }
+
+    dummySprint(): Promise<Sprint> {
+        let url_ = this.baseUrl + "/api/Dummy/DummySprint";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: RequestInit = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDummySprint(_response);
+        });
+    }
+
+    protected processDummySprint(response: Response): Promise<Sprint> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Sprint.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Sprint>(null as any);
+    }
 }
 
 export abstract class Event implements IEvent {
@@ -166,6 +200,11 @@ export abstract class Event implements IEvent {
             result.init(data);
             return result;
         }
+        if (data["discriminator"] === "AddSprintEvent") {
+            let result = new AddSprintEvent();
+            result.init(data);
+            return result;
+        }
         if (data["discriminator"] === "AddSquadEvent") {
             let result = new AddSquadEvent();
             result.init(data);
@@ -173,6 +212,11 @@ export abstract class Event implements IEvent {
         }
         if (data["discriminator"] === "EditPlannedPeriodEvent") {
             let result = new EditPlannedPeriodEvent();
+            result.init(data);
+            return result;
+        }
+        if (data["discriminator"] === "EditSprintEvent") {
+            let result = new EditSprintEvent();
             result.init(data);
             return result;
         }
@@ -292,6 +336,52 @@ export interface IAddSessionEvent extends IEvent {
     sessionName?: string | undefined;
 }
 
+export class AddSprintEvent extends Event implements IAddSprintEvent {
+    sprintId?: number | undefined;
+    name?: string | undefined;
+    startsAt?: Date;
+    endsAt?: Date;
+
+    constructor(data?: IAddSprintEvent) {
+        super(data);
+        this._discriminator = "AddSprintEvent";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.sprintId = _data["sprintId"];
+            this.name = _data["name"];
+            this.startsAt = _data["startsAt"] ? new Date(_data["startsAt"].toString()) : <any>undefined;
+            this.endsAt = _data["endsAt"] ? new Date(_data["endsAt"].toString()) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): AddSprintEvent {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddSprintEvent();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sprintId"] = this.sprintId;
+        data["name"] = this.name;
+        data["startsAt"] = this.startsAt ? this.startsAt.toISOString() : <any>undefined;
+        data["endsAt"] = this.endsAt ? this.endsAt.toISOString() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IAddSprintEvent extends IEvent {
+    sprintId?: number | undefined;
+    name?: string | undefined;
+    startsAt?: Date;
+    endsAt?: Date;
+}
+
 export class AddSquadEvent extends Event implements IAddSquadEvent {
     name?: string | undefined;
     squadId?: number | undefined;
@@ -380,6 +470,52 @@ export interface IEditPlannedPeriodEvent extends IEvent {
     bigRoomPlanningAt?: Date | undefined;
 }
 
+export class EditSprintEvent extends Event implements IEditSprintEvent {
+    sprintId?: number;
+    name?: string | undefined;
+    startsAt?: Date;
+    endsAt?: Date;
+
+    constructor(data?: IEditSprintEvent) {
+        super(data);
+        this._discriminator = "EditSprintEvent";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.sprintId = _data["sprintId"];
+            this.name = _data["name"];
+            this.startsAt = _data["startsAt"] ? new Date(_data["startsAt"].toString()) : <any>undefined;
+            this.endsAt = _data["endsAt"] ? new Date(_data["endsAt"].toString()) : <any>undefined;
+        }
+    }
+
+    static override fromJS(data: any): EditSprintEvent {
+        data = typeof data === 'object' ? data : {};
+        let result = new EditSprintEvent();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sprintId"] = this.sprintId;
+        data["name"] = this.name;
+        data["startsAt"] = this.startsAt ? this.startsAt.toISOString() : <any>undefined;
+        data["endsAt"] = this.endsAt ? this.endsAt.toISOString() : <any>undefined;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IEditSprintEvent extends IEvent {
+    sprintId?: number;
+    name?: string | undefined;
+    startsAt?: Date;
+    endsAt?: Date;
+}
+
 export class EditSquadEvent extends Event implements IEditSquadEvent {
     name?: string | undefined;
     squadId?: number;
@@ -425,6 +561,7 @@ export class BRPFullData implements IBRPFullData {
     plannedPeriods?: PlannedPeriod[] | undefined;
     dependencies?: Dependency[] | undefined;
     dependencyBoards?: DependencyBoard[] | undefined;
+    sprints?: Sprint[] | undefined;
     lastEventId?: number;
 
     constructor(data?: IBRPFullData) {
@@ -467,6 +604,11 @@ export class BRPFullData implements IBRPFullData {
                 this.dependencyBoards = [] as any;
                 for (let item of _data["dependencyBoards"])
                     this.dependencyBoards!.push(DependencyBoard.fromJS(item));
+            }
+            if (Array.isArray(_data["sprints"])) {
+                this.sprints = [] as any;
+                for (let item of _data["sprints"])
+                    this.sprints!.push(Sprint.fromJS(item));
             }
             this.lastEventId = _data["lastEventId"];
         }
@@ -511,6 +653,11 @@ export class BRPFullData implements IBRPFullData {
             for (let item of this.dependencyBoards)
                 data["dependencyBoards"].push(item.toJSON());
         }
+        if (Array.isArray(this.sprints)) {
+            data["sprints"] = [];
+            for (let item of this.sprints)
+                data["sprints"].push(item.toJSON());
+        }
         data["lastEventId"] = this.lastEventId;
         return data;
     }
@@ -523,6 +670,7 @@ export interface IBRPFullData {
     plannedPeriods?: PlannedPeriod[] | undefined;
     dependencies?: Dependency[] | undefined;
     dependencyBoards?: DependencyBoard[] | undefined;
+    sprints?: Sprint[] | undefined;
     lastEventId?: number;
 }
 
@@ -784,6 +932,54 @@ export class DependencyBoard implements IDependencyBoard {
 export interface IDependencyBoard {
     dependencyBoardId?: number;
     plannedPeriodId?: number;
+}
+
+export class Sprint implements ISprint {
+    sprintId?: number;
+    name?: string | undefined;
+    startsAt?: Date;
+    endsAt?: Date;
+
+    constructor(data?: ISprint) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.sprintId = _data["sprintId"];
+            this.name = _data["name"];
+            this.startsAt = _data["startsAt"] ? new Date(_data["startsAt"].toString()) : <any>undefined;
+            this.endsAt = _data["endsAt"] ? new Date(_data["endsAt"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): Sprint {
+        data = typeof data === 'object' ? data : {};
+        let result = new Sprint();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sprintId"] = this.sprintId;
+        data["name"] = this.name;
+        data["startsAt"] = this.startsAt ? this.startsAt.toISOString() : <any>undefined;
+        data["endsAt"] = this.endsAt ? this.endsAt.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface ISprint {
+    sprintId?: number;
+    name?: string | undefined;
+    startsAt?: Date;
+    endsAt?: Date;
 }
 
 export class Session implements ISession {

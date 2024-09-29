@@ -3,12 +3,15 @@ import { Injectable } from '@angular/core';
 import {
   AddPlannedPeriodEvent,
   AddSessionEvent,
+  AddSprintEvent,
   AddSquadEvent,
   EditPlannedPeriodEvent,
+  EditSprintEvent,
   EditSquadEvent,
   Event,
   IEvent,
   IPlannedPeriod,
+  ISprint,
   ISquad,
 } from './client';
 import { DataService } from './data.service';
@@ -51,6 +54,26 @@ export class CreatEventService {
     event.startDay = plannedPeriod.startDay;
     event.endDay = plannedPeriod.endDay;
     event.bigRoomPlanningAt = plannedPeriod.bigRoomPlanningAt;
+
+    this.dataService.sendEvent(event);
+  }
+
+  addSprint (sprint: ISprint) {
+    const event = this.getBaseEvent(AddSprintEvent)
+    event.name = sprint.name;
+    event.startsAt = sprint.startsAt;
+    event.endsAt = sprint.endsAt;
+
+    this.dataService.sendEvent(event);
+  }
+
+  editSprint(sprint: ISprint) {
+    
+    const event = this.getBaseEvent(EditSprintEvent)
+    event.sprintId = sprint.sprintId;
+    event.name = sprint.name;
+    event.startsAt = sprint.startsAt;
+    event.endsAt = sprint.endsAt;
 
     this.dataService.sendEvent(event);
   }

@@ -7,6 +7,7 @@ import {
   BRPFullData,
   PlannedPeriod,
   Session,
+  Sprint,
   Squad,
 } from '../client';
 
@@ -18,12 +19,18 @@ export const eventAddPlannedPeriod = createAction('eventAddPlannedPeriod', props
 
 export const eventAddSession = createAction('eventAddSession', props<{ session: Session, eventId: number }>());
 
+export const eventAddSprint = createAction('eventAddSprint', props<{ sprint: Sprint, eventId: number }>());
+
 export const eventAddSquad = createAction('eventAddSquad', props<{ squad: Squad, eventId: number }>());
 
 export const eventEditPlannedPeriod = createAction('eventEditPlannedPeriod', props<{ plannedPeriod: PlannedPeriod, eventId: number }>());
+
+export const eventEditSprint = createAction('eventEditSprint', props<{ sprint: Sprint, eventId: number }>());
 
 export const eventEditSquad = createAction('eventEditSquad', props<{ squad: Squad, eventId: number }>());
 
 export const initializCurrentSeesion = createAction('initializCurrentSeesion', props<{ session: Session }>());
 
 export const setCreateSessionFailed = createAction('createSessionFailed', props<{failed: boolean}>());
+
+export const setLastEventId = createAction('setLastEventId', props<{ lastEventId: number }>());

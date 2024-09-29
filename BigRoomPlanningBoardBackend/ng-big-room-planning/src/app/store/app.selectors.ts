@@ -1,5 +1,9 @@
-import { createFeatureSelector, createSelector } from "@ngrx/store"
-import { AppState } from "./app.reducer"
+import {
+  createFeatureSelector,
+  createSelector,
+} from '@ngrx/store';
+
+import { AppState } from './app.reducer';
 
 export const appStateSelector = createFeatureSelector<AppState>("app");
 
@@ -18,3 +22,5 @@ export const getLastEventId = createSelector(appStateSelector, state => state.la
 export const getCreateSessionFailed = createSelector(appStateSelector, state => state.createSessionFailed);
 
 export const getPlannedPeriods = createSelector(appStateSelector, state => state.plannedPeriods);
+
+export const getSprints = createSelector(appStateSelector, state => state.sprints);

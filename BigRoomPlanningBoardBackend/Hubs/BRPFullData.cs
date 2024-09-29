@@ -20,6 +20,8 @@ namespace BigRoomPlanningBoardBackend.Hubs
         public List<Dependency> Dependencies { get; set; }
         public List<DependencyBoard> DependencyBoards { get; set; }
 
+        public List<Sprint> Sprints { get; set; }
+
         public int LastEventId { get; set; }
 
         public static BRPFullData FromContext(BigRoomPlanningContext bigRoomPlanningContext) => new()
@@ -30,7 +32,8 @@ namespace BigRoomPlanningBoardBackend.Hubs
             Tickets = [.. bigRoomPlanningContext.Tickets],
             PlannedPeriods = [.. bigRoomPlanningContext.PlannedPeriods],
             Dependencies = [.. bigRoomPlanningContext.Dependencies],
-            DependencyBoards = [.. bigRoomPlanningContext.DependencyBoards]
+            DependencyBoards = [.. bigRoomPlanningContext.DependencyBoards],
+            Sprints = [.. bigRoomPlanningContext.Sprints]
         };
     }
 }

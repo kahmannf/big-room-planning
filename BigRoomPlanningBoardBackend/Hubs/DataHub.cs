@@ -93,5 +93,10 @@ namespace BigRoomPlanningBoardBackend.Hubs
         {
             return bigRoomPlanningContext.PlannedPeriods.Find(id);
         }
+
+        public Sprint GetSprint(int id)
+        {
+            return bigRoomPlanningContext.Sprints.Find(id);
+        }
     }
 }

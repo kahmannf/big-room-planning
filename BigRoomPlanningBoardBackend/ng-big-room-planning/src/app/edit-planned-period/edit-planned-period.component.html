@@ -16,7 +16,7 @@
                 <mat-label i18n>
                     Starting at
                 </mat-label>
-                <input matInput [formControlName]="'startDay'" [matDatepicker]="pickerStart">
+                <input matInput type="text" [formControlName]="'startDay'" [matDatepicker]="pickerStart">
                 <mat-datepicker-toggle matIconSuffix [for]="pickerStart"></mat-datepicker-toggle>
                 <mat-datepicker #pickerStart></mat-datepicker>
                 @if (formGroup.hasError('required', 'startDay')) {
@@ -27,7 +27,7 @@
                 <mat-label i18n>
                     Ending at
                 </mat-label>
-                <input matInput [formControlName]="'endDay'" [matDatepicker]="pickerEnd">
+                <input matInput type="text" [formControlName]="'endDay'" [matDatepicker]="pickerEnd">
                 <mat-datepicker-toggle matIconSuffix [for]="pickerEnd"></mat-datepicker-toggle>
                 <mat-datepicker #pickerEnd></mat-datepicker>
                 @if (formGroup.hasError('required', 'endDay')) {
@@ -38,7 +38,7 @@
                 <mat-label i18n>
                     Big Room Planning at
                 </mat-label>
-                <input matInput [formControlName]="'bigRoomPlanningAt'" [matDatepicker]="pickerBRP">
+                <input matInput type="text" [formControlName]="'bigRoomPlanningAt'" [matDatepicker]="pickerBRP">
                 <mat-datepicker-toggle matIconSuffix [for]="pickerBRP"></mat-datepicker-toggle>
                 <mat-datepicker #pickerBRP></mat-datepicker>
                 @if (formGroup.hasError('required', 'bigRoomPlanningAt')) {

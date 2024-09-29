@@ -29,5 +29,11 @@ namespace BigRoomPlanningBoardBackend.Controller
         {
             throw new NotSupportedException();
         }
+
+        [HttpGet]
+        public Sprint DummySprint()
+        {
+            throw new NotSupportedException();
+        }
     }
 }

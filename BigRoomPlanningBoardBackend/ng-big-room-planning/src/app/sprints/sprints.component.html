@@ -1,0 +1,43 @@
+<div class="sprints-container">
+    <div class="sprints-content">
+        <mat-toolbar>
+            <button mat-button [routerLink]="[ '/home' ]">
+                <span i18n>Return</span>
+                <mat-icon>home</mat-icon>
+            </button>
+            <button mat-button (click)="editSprint()">
+                <span i18n>Add Sprint</span>
+                <mat-icon>add</mat-icon>
+            </button>
+        </mat-toolbar>
+        <table mat-table [dataSource]="displaySprints$ | async">
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef i18n>Name</th>
+                <td mat-cell *matCellDef="let element"> {{ element.sprint.name }} </td>
+            </ng-container>
+            <ng-container matColumnDef="startsAt">
+                <th mat-header-cell *matHeaderCellDef i18n>Start Date</th>
+                <td mat-cell *matCellDef="let element"> {{ element.sprint.startsAt | date:'mediumDate' }} </td>
+            </ng-container>
+            <ng-container matColumnDef="endsAt">
+                <th mat-header-cell *matHeaderCellDef i18n>End Date</th>
+                <td mat-cell *matCellDef="let element"> {{ element.sprint.endsAt | date:'mediumDate' }} </td>
+            </ng-container>
+            <ng-container matColumnDef="plannedPeriod">
+                <th mat-header-cell *matHeaderCellDef i18n>Planned Period</th>
+                <td mat-cell *matCellDef="let element"> {{ element.plannedPeriod | periodName }} </td>
+            </ng-container>
+            <ng-container matColumnDef="contextMenu">
+                <th mat-header-cell *matHeaderCellDef i18n></th>
+                <td mat-cell *matCellDef="let element">
+                    <button mat-icon-button (click)="editSprint(element)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+            
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </div>
+</div>

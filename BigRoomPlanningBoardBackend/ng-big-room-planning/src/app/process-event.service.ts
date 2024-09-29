@@ -12,26 +12,34 @@ import {
 import {
   AddPlannedPeriodEvent,
   AddSessionEvent,
+  AddSprintEvent,
   AddSquadEvent,
   EditPlannedPeriodEvent,
+  EditSprintEvent,
   EditSquadEvent,
   Event,
   IEvent,
   IPlannedPeriod,
   ISession,
+  ISprint,
   ISquad,
   PlannedPeriod,
   Session,
+  Sprint,
   Squad,
 } from './client';
+import { HandleErrorService } from './handle-error.service';
 import {
   eventAddPlannedPeriod,
   eventAddSession,
+  eventAddSprint,
   eventAddSquad,
   eventEditPlannedPeriod,
+  eventEditSprint,
   eventEditSquad,
   initializCurrentSeesion,
   setCreateSessionFailed,
+  setLastEventId,
 } from './store/app.actions';
 import { getLastEventId } from './store/app.selectors';
 
@@ -42,7 +50,8 @@ export class ProcessEventService {
 
   constructor(
     private store$: Store<any>,
-    private router: Router
+    private router: Router,
+    private handleErrorService: HandleErrorService
   ) { }
 
   async processEvent(event: IEvent, currentSessionId: string, connection: HubConnection) {
@@ -80,6 +89,11 @@ export class ProcessEventService {
     }
 
     if (!instance.isSuccessful) {
+      if (instance.sessionId === currentSessionId) {
+        this.handleErrorService.handleFailedEvent(instance);
+      }
+
+      this.store$.dispatch(setLastEventId({ lastEventId: event.eventId }));
       return;
     }
 
@@ -99,11 +113,19 @@ export class ProcessEventService {
       return;
     }
 
+    if (instance instanceof AddSprintEvent) {
+      const isprint: ISprint = await connection.invoke('GetSprint', instance.sprintId);
+      const sprint = new Sprint();
+      sprint.init(isprint);
+      this.store$.dispatch(eventAddSprint({ sprint, eventId: event.eventId }))
+      return;
+    }
+
     if (instance instanceof AddSquadEvent) {
       const isquad: ISquad = await connection.invoke('GetSquad', instance.squadId);
       const squad = new Squad();
       squad.init(isquad);
-      this.store$.dispatch(eventAddSquad({ squad: new Squad(squad), eventId: event.eventId }))
+      this.store$.dispatch(eventAddSquad({ squad, eventId: event.eventId }))
 
       if (event.sessionId === currentSessionId) {
         const returnUrl = this.getReturnUrl();
@@ -140,6 +162,14 @@ export class ProcessEventService {
           plannedPeriod.plannedPeriodId
         ]);
       }
+      return;
+    }
+
+    if(instance instanceof EditSprintEvent) {
+      const isprint: ISprint = await connection.invoke('GetSprint', instance.sprintId);
+      const sprint = new Sprint();
+      sprint.init(isprint);
+      this.store$.dispatch(eventEditSprint({ sprint, eventId: event.eventId }));
       return;
     }
 
@@ -153,6 +183,7 @@ export class ProcessEventService {
         const returnUrl = this.getReturnUrl();
         this.router.navigate(JSON.parse(returnUrl));
       }
+      return;
     }
 
   }

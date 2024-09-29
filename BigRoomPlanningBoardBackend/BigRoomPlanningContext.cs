@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver.Core.Configuration;
 using MongoDB.Driver;
 using System;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BigRoomPlanningBoardBackend
 {
@@ -28,8 +29,10 @@ namespace BigRoomPlanningBoardBackend
 
         public DbSet<AddPlannedPeriodEvent> AddPlannedPeriodEvents { get; set; }
         public DbSet<AddSessionEvent> AddSessionEvents { get; set; }
+        public DbSet<AddSprintEvent> AddSprintEvents { get; set; }
         public DbSet<AddSquadEvent> AddSquadEvents { get; set; }
         public DbSet<EditPlannedPeriodEvent> EditPlannedPeriodEvents { get; set; }
+        public DbSet<EditSprintEvent> EditSprintEvents { get; set; }
         public DbSet<EditSquadEvent> EditSquadEvents { get; set; }
 
 
@@ -40,6 +43,8 @@ namespace BigRoomPlanningBoardBackend
         public BigRoomPlanningContext(IOptions<ApiSettings> apiSettingsOptions)
         {
             this.apiSettingsOptions = apiSettingsOptions;
+
+            
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
@@ -67,6 +72,43 @@ namespace BigRoomPlanningBoardBackend
                     break;
                 default:
                     throw new Exception("Unknown DataBaseProvider: " +  apiSettingsOptions.Value.DbPath);
+            }
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Make sure DAtes are deserialized with te correct time
+            // https://stackoverflow.com/a/61243301
+            var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
+                v => v.ToUniversalTime(),
+                v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+            );
+
+            var nullableDateTimeConverter = new ValueConverter<DateTime?, DateTime?>(
+                v => v.HasValue ? v.Value.ToUniversalTime() : v,
+                v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v
+             );
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                if (entityType.IsKeyless)
+                {
+                    continue;
+                }
+
+                foreach (var property in entityType.GetProperties())
+                {
+                    if (property.ClrType == typeof(DateTime))
+                    {
+                        property.SetValueConverter(dateTimeConverter);
+                    }
+                    else if (property.ClrType == typeof(DateTime?))
+                    {
+                        property.SetValueConverter(nullableDateTimeConverter);
+                    }
+                }
             }
         }
     }
