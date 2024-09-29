@@ -41,6 +41,16 @@ namespace BigRoomPlanningBoardBackend
 
             var app = builder.Build();
 
+            if (builder.Configuration.GetSection("ApiSettings").GetValue<bool>("CreateDebugData"))
+            {
+                var scope = app.Services.CreateScope();
+                var context = scope.ServiceProvider.GetRequiredService<BigRoomPlanningContext>();
+
+                DebugData.Create(context);
+
+                scope.Dispose();
+            }
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {

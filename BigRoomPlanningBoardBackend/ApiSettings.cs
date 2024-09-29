@@ -24,5 +24,10 @@ namespace BigRoomPlanningBoardBackend
         /// Connection string for the configured DataBaseProvider
         /// </summary>
         public string ConnectionString { get; set; }
+
+        /// <summary>
+        /// If true, a set of default Data will be created
+        /// </summary>
+        public bool CreateDebugData { get; set; }
     }
 }

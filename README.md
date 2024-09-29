@@ -7,7 +7,7 @@ While draw.io is a versatile tool for other use cases, its really not build for 
 There are multiple paid tools that can do this a lot better, but no one is willing to spend that money if draw.io "gets the job done" (sort of at least).
 
 
-## Goal of this Software
+## Purpose of this Software
 
 Provide a free, self-hostable web-application that can be used to conduct a Big Room Planning. This should not replace a good paid tool, but provide three basic features. 
 
