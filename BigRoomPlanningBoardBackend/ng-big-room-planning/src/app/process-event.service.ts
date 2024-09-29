@@ -87,10 +87,12 @@ export class ProcessEventService {
       plannedPeriod.init(iplannedPeriod);
       this.store$.dispatch(eventAddPlannedPeriod({ plannedPeriod, eventId: event.eventId }));
 
-      this.router.navigate([
-        '/planned-period',
-        plannedPeriod.plannedPeriodId
-      ]);
+      if (event.sessionId === currentSessionId) {
+        this.router.navigate([
+          '/planned-period',
+          plannedPeriod.plannedPeriodId
+        ]);
+      }
 
       return;
     }
@@ -109,10 +111,12 @@ export class ProcessEventService {
       plannedPeriod.init(iplannedPeriod);
       this.store$.dispatch(eventEditPlannedPeriod({ plannedPeriod, eventId: event.eventId }));
       
-      this.router.navigate([
-        '/planned-period',
-        plannedPeriod.plannedPeriodId
-      ]);
+      if (event.sessionId === currentSessionId) {
+        this.router.navigate([
+          '/planned-period',
+          plannedPeriod.plannedPeriodId
+        ]);
+      }
       return;
     }
 

@@ -1,1 +1,26 @@
-<p>planned-period-base works!</p>
+<div class="main-container">
+    <nav class="navbar">
+        <button class="home-button" mat-icon-button (click)="homeClick()">
+            <mat-icon>home</mat-icon>
+        </button>
+
+        <div class="name">
+            {{ plannedPeriod$ | async | periodName }}
+        </div>
+
+        <div class="nav-item" [routerLinkActive]="'active'" [routerLink]="[ '/planned-period', (plannedPeriod$ | async).plannedPeriodId, 'overview' ]">
+            <span class="nav-item-text" i18n>Overview</span>
+        </div>
+        <div class="nav-item" [routerLinkActive]="'active'" [routerLink]="[ '/planned-period', (plannedPeriod$ | async).plannedPeriodId, 'dependencies' ]">
+            <span class="nav-item-text" i18n>Dependencies</span>
+        </div>
+        <div *ngFor="let squad of squads$ | async" class="nav-item" [routerLinkActive]="'active'" [routerLink]="[ '/planned-period', (plannedPeriod$ | async).plannedPeriodId, 'squad', squad.squadId]">
+            <span class="nav-item-text" i18n>
+                {{squad.name}}
+            </span>
+        </div>
+    </nav>
+    <div class="main-content">
+        <router-outlet></router-outlet>
+    </div>
+</div>
