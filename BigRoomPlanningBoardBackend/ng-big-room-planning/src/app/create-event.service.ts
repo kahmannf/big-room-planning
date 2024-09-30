@@ -148,6 +148,7 @@ export class CreatEventService {
     event.plannedPeriodId = ticket.plannedPeriodId;
     event.sprintId = ticket.sprintId;
     event.title = ticket.title;
+    event.columnOrder = ticket.columnOrder;
 
     this.dataService.sendEvent(event);
   }
@@ -167,6 +168,7 @@ export class CreatEventService {
     event.plannedPeriodId = ticket.plannedPeriodId;
     event.sprintId = ticket.sprintId;
     event.title = ticket.title;
+    event.columnOrder = ticket.columnOrder;
 
     this.dataService.sendEvent(event);
   }

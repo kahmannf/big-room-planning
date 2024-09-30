@@ -16,8 +16,8 @@
         <button mat-button (click)="openRiskDialog()" i18n>Add Risk</button>
         }
     </div>
-    <div class="tickets">
-
+    <div class="tickets" cdkDropList [id]="dropListId" [cdkDropListConnectedTo]="connectedDropLists$ | async" (cdkDropListDropped)="onTicketDrop($event)">
+        <app-ticket-card cdkDrag [cdkDragData]="ticket" [ticket]="ticket" *ngFor="let ticket of tickets$ | async"></app-ticket-card>
     </div>
     <div class="stats">
         <div class="stat">

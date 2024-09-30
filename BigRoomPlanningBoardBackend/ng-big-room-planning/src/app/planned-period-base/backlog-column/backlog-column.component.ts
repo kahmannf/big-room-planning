@@ -1,4 +1,8 @@
 import {
+  CdkDragDrop,
+  DragDropModule,
+} from '@angular/cdk/drag-drop';
+import {
   AsyncPipe,
   NgFor,
 } from '@angular/common';
@@ -6,6 +10,7 @@ import {
   Component,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   SimpleChanges,
 } from '@angular/core';
@@ -16,8 +21,10 @@ import { MatIcon } from '@angular/material/icon';
 import {
   map,
   Observable,
+  Subscription,
 } from 'rxjs';
 
+import create from '@kahmannf/iterable-transforms';
 import {
   select,
   Store,
@@ -27,6 +34,8 @@ import {
   ITicket,
   Ticket,
 } from '../../client';
+import { CreatEventService } from '../../create-event.service';
+import { DragDropService } from '../../drag-drop.service';
 import { getTickets } from '../../store/app.selectors';
 import {
   EditTicketDialogComponent,
@@ -41,12 +50,13 @@ import { TicketCardComponent } from '../ticket-card/ticket-card.component';
     MatIcon,
     TicketCardComponent,
     NgFor,
-    AsyncPipe
+    AsyncPipe,
+    DragDropModule
   ],
   templateUrl: './backlog-column.component.html',
   styleUrl: './backlog-column.component.scss'
 })
-export class BacklogColumnComponent implements OnInit, OnChanges {
+export class BacklogColumnComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input()
   squadId: number;
@@ -56,24 +66,44 @@ export class BacklogColumnComponent implements OnInit, OnChanges {
 
   tickets$: Observable<Ticket[]>;
 
+  dropListId: string;
+
+  connectedDropLists$: Observable<string[]>;
+
+  private subscription: Subscription;
 
   constructor(
     private store$: Store<any>,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private dragDropService: DragDropService,
+    private createEventService: CreatEventService
   ) {
 
   }
 
   ngOnInit(): void {
+    this.subscription = new Subscription();
+
+    this.dropListId = crypto.randomUUID()
+    this.subscription.add(this.dragDropService.registerTicketDropList(this.dropListId));
+    this.connectedDropLists$ = this.dragDropService.availableTicketDropLists$;
   }
 
   ngOnChanges(simpleChanges: SimpleChanges) {
     if (simpleChanges['squadId'] || simpleChanges['plannedPeriodId']) {
       this.tickets$ = this.store$.pipe(
         select(getTickets),
-        map(tickets => tickets.filter(x => !x.sprintId && x.squadId === this.squadId && x.plannedPeriodId === this.plannedPeriodId))
+        map(tickets => create(tickets)
+          .filter(x => !x.sprintId && x.squadId === this.squadId && x.plannedPeriodId === this.plannedPeriodId)
+          .sort(x => x.columnOrder)
+          .toArray()
+        )
       )
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
   }
 
   addNewTicket(): void {
@@ -87,5 +117,13 @@ export class BacklogColumnComponent implements OnInit, OnChanges {
       data,
       disableClose: true
     })
+  }
+
+  onTicketDrop(event: CdkDragDrop<void, void, Ticket>) {
+    this.createEventService.editTicket({
+      ...event.item.data,
+      columnOrder: event.currentIndex,
+      sprintId: undefined
+    });
   }
 }

@@ -1,4 +1,4 @@
-<div class="backlog-column ticket-column">
+<div class="backlog-column ticket-column" cdkDropList [id]="dropListId" [cdkDropListConnectedTo]="connectedDropLists$ | async" (cdkDropListDropped)="onTicketDrop($event)">
     <div class="header">
         <div class="title" i18n>
             Backlog
@@ -8,5 +8,5 @@
             <mat-icon>add</mat-icon>
         </button>
     </div>
-    <app-ticket-card [ticket]="ticket" *ngFor="let ticket of tickets$ | async"></app-ticket-card>
+    <app-ticket-card cdkDrag [cdkDragData]="ticket" [ticket]="ticket" *ngFor="let ticket of tickets$ | async"></app-ticket-card>
 </div>

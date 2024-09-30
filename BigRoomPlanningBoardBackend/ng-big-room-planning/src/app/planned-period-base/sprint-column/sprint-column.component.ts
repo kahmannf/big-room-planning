@@ -1,4 +1,8 @@
 import {
+  CdkDragDrop,
+  DragDropModule,
+} from '@angular/cdk/drag-drop';
+import {
   AsyncPipe,
   NgClass,
   NgFor,
@@ -7,6 +11,7 @@ import {
   Component,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   SimpleChanges,
 } from '@angular/core';
@@ -18,6 +23,7 @@ import {
   first,
   map,
   Observable,
+  Subscription,
 } from 'rxjs';
 
 import create from '@kahmannf/iterable-transforms';
@@ -30,12 +36,17 @@ import {
   ISquadSprintStats,
   Risk,
   Sprint,
+  Ticket,
 } from '../../client';
+import { CreatEventService } from '../../create-event.service';
+import { DragDropService } from '../../drag-drop.service';
 import {
   getRisks,
   getSprints,
   getSquadSprintStats,
+  getTickets,
 } from '../../store/app.selectors';
+import { TicketCardComponent } from '../ticket-card/ticket-card.component';
 import {
   EditRisksDialogComponent,
   EditRisksDialogData,
@@ -51,12 +62,14 @@ import {
     AsyncPipe,
     MatButton,
     NgFor,
-    NgClass
+    NgClass,
+    DragDropModule,
+    TicketCardComponent
   ],
   templateUrl: './sprint-column.component.html',
   styleUrl: './sprint-column.component.scss'
 })
-export class SprintColumnComponent implements OnInit, OnChanges {
+export class SprintColumnComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input()
   sprintId: number;
@@ -73,15 +86,37 @@ export class SprintColumnComponent implements OnInit, OnChanges {
 
   riskStatus$: Observable<'none' | 'open' | 'closed'>;
 
+  tickets$: Observable<Ticket[]>;
+
+  dropListId: string;
+
+  connectedDropLists$: Observable<string[]>;
+
+  private subscription: Subscription;
+
   constructor(
     private store$: Store<any>,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private dragDropService: DragDropService,
+    private createEventService: CreatEventService
   ) {
 
   }
 
   ngOnInit(): void {
+    this.subscription = new Subscription();
+
+    this.dropListId = crypto.randomUUID()
+    this.subscription.add(this.dragDropService.registerTicketDropList(this.dropListId));
+    this.connectedDropLists$ = this.dragDropService.availableTicketDropLists$;
   }
+
+  
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+  }
+
 
 
   ngOnChanges(simpleChange: SimpleChanges): void {
@@ -123,6 +158,15 @@ export class SprintColumnComponent implements OnInit, OnChanges {
             : 'open'
         )
       )
+
+      this.tickets$ = this.store$.pipe(
+        select(getTickets),
+        map(tickets => create(tickets)
+          .filter(x => x.sprintId === this.sprintId && x.squadId === this.squadId)
+          .sort(x => x.columnOrder)
+          .toArray()
+        )
+      )
     }
   }
 
@@ -159,5 +203,14 @@ export class SprintColumnComponent implements OnInit, OnChanges {
       disableClose: true,
       width: '800px'
     })
+  }
+
+  
+  onTicketDrop(event: CdkDragDrop<void, void, Ticket>) {
+    this.createEventService.editTicket({
+      ...event.item.data,
+      columnOrder: event.currentIndex,
+      sprintId: this.sprintId
+    });
   }
 }

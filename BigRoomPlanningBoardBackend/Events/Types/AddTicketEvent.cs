@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace BigRoomPlanningBoardBackend.Events.Types
 {
@@ -16,6 +17,8 @@ namespace BigRoomPlanningBoardBackend.Events.Types
         public int? SprintId { get; set; }
 
         public string Title { get; set; }
+
+        public int ColumnOrder { get; set;  }
 
         public override bool Process(BigRoomPlanningContext bigRoomPlanningContext)
         {
@@ -37,10 +40,24 @@ namespace BigRoomPlanningBoardBackend.Events.Types
                 PlannedPeriodId = PlannedPeriodId,
                 SprintId = SprintId,
                 SquadId = SquadId,
-                Title = Title
+                Title = Title,
+                ColumnOrder = ColumnOrder
             };
 
             bigRoomPlanningContext.Add(ticket);
+
+            // we just assume that tickets will always be added in the backlog
+            var relevantTickets = bigRoomPlanningContext.Tickets
+                .Where(x => x.SprintId == null && x.PlannedPeriodId == ticket.PlannedPeriodId && x.SquadId == ticket.SquadId)
+                .OrderBy(x => x.ColumnOrder)
+                .ToList();
+
+            for (int i = 0; i < relevantTickets.Count; i++)
+            {
+                relevantTickets[i].ColumnOrder = relevantTickets[i].ColumnOrder + 1;
+            }
+
+
             bigRoomPlanningContext.SaveChanges();
             TicketId = ticket.TicketId;
 

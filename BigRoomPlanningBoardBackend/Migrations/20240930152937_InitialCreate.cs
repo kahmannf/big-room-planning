@@ -78,6 +78,7 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     AddTicketEvent_PlannedPeriodId = table.Column<int>(type: "INTEGER", nullable: true),
                     AddTicketEvent_SprintId = table.Column<int>(type: "INTEGER", nullable: true),
                     Title = table.Column<string>(type: "TEXT", nullable: true),
+                    ColumnOrder = table.Column<int>(type: "INTEGER", nullable: true),
                     DeleteRiskEvent_RiskId = table.Column<int>(type: "INTEGER", nullable: true),
                     DeleteTicketEvent_TicketId = table.Column<int>(type: "INTEGER", nullable: true),
                     EditPlannedPeriodEvent_PlannedPeriodId = table.Column<int>(type: "INTEGER", nullable: true),
@@ -101,7 +102,8 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     EditTicketEvent_SquadId = table.Column<int>(type: "INTEGER", nullable: true),
                     EditTicketEvent_PlannedPeriodId = table.Column<int>(type: "INTEGER", nullable: true),
                     EditTicketEvent_SprintId = table.Column<int>(type: "INTEGER", nullable: true),
-                    EditTicketEvent_Title = table.Column<string>(type: "TEXT", nullable: true)
+                    EditTicketEvent_Title = table.Column<string>(type: "TEXT", nullable: true),
+                    EditTicketEvent_ColumnOrder = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -204,6 +206,7 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     SquadId = table.Column<int>(type: "INTEGER", nullable: false),
                     PlannedPeriodId = table.Column<int>(type: "INTEGER", nullable: false),
                     SprintId = table.Column<int>(type: "INTEGER", nullable: true),
+                    ColumnOrder = table.Column<int>(type: "INTEGER", nullable: false),
                     Title = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>

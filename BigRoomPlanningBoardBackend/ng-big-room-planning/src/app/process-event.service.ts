@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { firstValueFrom } from 'rxjs';
+import {
+  firstValueFrom,
+  map,
+} from 'rxjs';
 
 import { HubConnection } from '@microsoft/signalr';
 import {
@@ -25,7 +28,6 @@ import {
   EditSquadEvent,
   EditTicketEvent,
   Event,
-  IEvent,
   IPlannedPeriod,
   IRisk,
   ISession,
@@ -60,12 +62,17 @@ import {
   setCreateSessionFailed,
   setLastEventId,
 } from './store/app.actions';
-import { getLastEventId } from './store/app.selectors';
+import {
+  getLastEventId,
+  getTickets,
+} from './store/app.selectors';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProcessEventService {
+
+  waitingForEventsCount = 0;
 
   constructor(
     private store$: Store<any>,
@@ -73,9 +80,7 @@ export class ProcessEventService {
     private handleErrorService: HandleErrorService
   ) { }
 
-  async processEvent(event: IEvent, currentSessionId: string, connection: HubConnection) {
-
-    const instance = Event.fromJS(event)
+  async processEvent(event: Event, currentSessionId: string, connection: HubConnection) {
 
     const lastEventId = await firstValueFrom(this.store$.pipe(select(getLastEventId)));
 
@@ -84,21 +89,49 @@ export class ProcessEventService {
       return;
     }
 
+    if (event.isProcessed) {
+      this.store$.dispatch(setLastEventId({ lastEventId: event.eventId }));
+    }
+    
+    if (this.isServerRequiredEvent(event)) {
+      if(!event.isProcessed) {
+        
+        if (this.waitingForEventsCount === 0) {
+          this.showLoadingSpinner();
+        } 
+        this.waitingForEventsCount++;
+        return;
+
+      } else {
+        this.waitingForEventsCount--;
+        
+        if (this.waitingForEventsCount === 0) {
+          this.hideLoadingSpinner();
+        }
+      }
+
+    } else {
+      // skip own events that have been processed
+      if(event.isProcessed && event.sessionId === currentSessionId) {
+        return;
+      }
+    }
+
     // this one is first, because of the special !isSuccessful event branch. Every other event is sorted alphabetically below
     // the general !isSuccessful check
-    if (instance instanceof AddSessionEvent) {
+    if (event instanceof AddSessionEvent) {
 
-      if (!instance.isSuccessful) {
-        if(instance.sessionId === currentSessionId) {
+      if (!event.isSuccessful) {
+        if(event.sessionId === currentSessionId) {
           this.store$.dispatch(setCreateSessionFailed({ failed: true }));
         }
         return;
       }
 
-      const isession: ISession = await connection.invoke('GetSession', instance.sessionId);
+      const isession: ISession = await connection.invoke('GetSession', event.sessionId);
       const session = new Session();
       session.init(isession);
-      this.store$.dispatch(eventAddSession({ session, eventId: event.eventId }))
+      this.store$.dispatch(eventAddSession({ session }))
 
       if (session.sessionId === currentSessionId) {
         this.store$.dispatch(initializCurrentSeesion({ session }))
@@ -107,31 +140,31 @@ export class ProcessEventService {
       return;
     }
 
-    if (!instance.isSuccessful) {
-      if (instance.sessionId === currentSessionId) {
-        this.handleErrorService.handleFailedEvent(instance);
+    if (event.isProcessed && !event.isSuccessful) {
+      if (event.sessionId === currentSessionId) {
+        this.handleErrorService.handleFailedEvent(event);
       }
 
-      this.store$.dispatch(setLastEventId({ lastEventId: event.eventId }));
       return;
     }
 
-    if (instance instanceof AddOrUpdateSquadSprintStatsEvent) {
+
+    if (event instanceof AddOrUpdateSquadSprintStatsEvent) {
       const squadSprintStats = new SquadSprintStats();
-      squadSprintStats.squadId = instance.squadId;
-      squadSprintStats.sprintId = instance.sprintId;
-      squadSprintStats.capacity = instance.capacity;
-      squadSprintStats.backgroundNoise = instance.backgroundNoise;
+      squadSprintStats.squadId = event.squadId;
+      squadSprintStats.sprintId = event.sprintId;
+      squadSprintStats.capacity = event.capacity;
+      squadSprintStats.backgroundNoise = event.backgroundNoise;
 
-      this.store$.dispatch(eventAddOrUpdateSquadSprintStats({ squadSprintStats, eventId: event.eventId }));
+      this.store$.dispatch(eventAddOrUpdateSquadSprintStats({ squadSprintStats }));
       return;
     }
 
-    if (instance instanceof AddPlannedPeriodEvent) {
-      const iplannedPeriod: IPlannedPeriod = await connection.invoke('GetPlannedPeriod', instance.plannedPeriodId);
+    if (event instanceof AddPlannedPeriodEvent) {
+      const iplannedPeriod: IPlannedPeriod = await connection.invoke('GetPlannedPeriod', event.plannedPeriodId);
       const plannedPeriod = new PlannedPeriod();
       plannedPeriod.init(iplannedPeriod);
-      this.store$.dispatch(eventAddPlannedPeriod({ plannedPeriod, eventId: event.eventId }));
+      this.store$.dispatch(eventAddPlannedPeriod({ plannedPeriod }));
 
       if (event.sessionId === currentSessionId) {
         this.router.navigate([
@@ -143,27 +176,27 @@ export class ProcessEventService {
       return;
     }
 
-    if (instance instanceof AddRiskEvent) {
-      const irisk: IRisk = await connection.invoke('GetRisk', instance.riskId);
+    if (event instanceof AddRiskEvent) {
+      const irisk: IRisk = await connection.invoke('GetRisk', event.riskId);
       const risk = new Risk();
       risk.init(irisk);
-      this.store$.dispatch(eventAddRisk({ risk, eventId: event.eventId }))
+      this.store$.dispatch(eventAddRisk({ risk }))
       return;
     }
 
-    if (instance instanceof AddSprintEvent) {
-      const isprint: ISprint = await connection.invoke('GetSprint', instance.sprintId);
+    if (event instanceof AddSprintEvent) {
+      const isprint: ISprint = await connection.invoke('GetSprint', event.sprintId);
       const sprint = new Sprint();
       sprint.init(isprint);
-      this.store$.dispatch(eventAddSprint({ sprint, eventId: event.eventId }))
+      this.store$.dispatch(eventAddSprint({ sprint }))
       return;
     }
 
-    if (instance instanceof AddSquadEvent) {
-      const isquad: ISquad = await connection.invoke('GetSquad', instance.squadId);
+    if (event instanceof AddSquadEvent) {
+      const isquad: ISquad = await connection.invoke('GetSquad', event.squadId);
       const squad = new Squad();
       squad.init(isquad);
-      this.store$.dispatch(eventAddSquad({ squad, eventId: event.eventId }))
+      this.store$.dispatch(eventAddSquad({ squad }))
 
       if (event.sessionId === currentSessionId) {
         const returnUrl = this.getReturnUrl();
@@ -173,29 +206,29 @@ export class ProcessEventService {
       return;
     }
 
-    if (instance instanceof AddTicketEvent) {
-      const iticket: ITicket = await connection.invoke('GetTicket', instance.ticketId);
+    if (event instanceof AddTicketEvent) {
+      const iticket: ITicket = await connection.invoke('GetTicket', event.ticketId);
       const ticket = new Ticket();
       ticket.init(iticket);
-      this.store$.dispatch(eventAddTicket({ ticket, eventId: event.eventId }))
+      this.store$.dispatch(eventAddTicket({ ticket }))
       return;
     }
 
-    if (instance instanceof DeleteRiskEvent) {
-      this.store$.dispatch(eventDeleteRisk({ riskId: instance.riskId, eventId: event.eventId }))
+    if (event instanceof DeleteRiskEvent) {
+      this.store$.dispatch(eventDeleteRisk({ riskId: event.riskId }))
       return;
     }
 
-    if (instance instanceof DeleteTicketEvent) {
-      this.store$.dispatch(eventDeleteTicket({ ticketId: instance.ticketId, eventId: event.eventId }))
+    if (event instanceof DeleteTicketEvent) {
+      this.store$.dispatch(eventDeleteTicket({ ticketId: event.ticketId }))
       return;
     }
 
-    if (instance instanceof EditPlannedPeriodEvent) {
-      const iplannedPeriod: IPlannedPeriod = await connection.invoke('GetPlannedPeriod', instance.plannedPeriodId);
+    if (event instanceof EditPlannedPeriodEvent) {
+      const iplannedPeriod: IPlannedPeriod = await connection.invoke('GetPlannedPeriod', event.plannedPeriodId);
       const plannedPeriod = new PlannedPeriod();
       plannedPeriod.init(iplannedPeriod);
-      this.store$.dispatch(eventEditPlannedPeriod({ plannedPeriod, eventId: event.eventId }));
+      this.store$.dispatch(eventEditPlannedPeriod({ plannedPeriod }));
       
       if (event.sessionId === currentSessionId) {
         this.router.navigate([
@@ -206,11 +239,11 @@ export class ProcessEventService {
       return;
     }
 
-    if (instance instanceof EditPlannedPeriodEvent) {
-      const iplannedPeriod: IPlannedPeriod = await connection.invoke('GetPlannedPeriod', instance.plannedPeriodId);
+    if (event instanceof EditPlannedPeriodEvent) {
+      const iplannedPeriod: IPlannedPeriod = await connection.invoke('GetPlannedPeriod', event.plannedPeriodId);
       const plannedPeriod = new PlannedPeriod();
       plannedPeriod.init(iplannedPeriod);
-      this.store$.dispatch(eventEditPlannedPeriod({ plannedPeriod, eventId: event.eventId }));
+      this.store$.dispatch(eventEditPlannedPeriod({ plannedPeriod }));
       
       if (event.sessionId === currentSessionId) {
         this.router.navigate([
@@ -221,27 +254,27 @@ export class ProcessEventService {
       return;
     }
 
-    if (instance instanceof EditRiskEvent) {
-      const irisk: IRisk = await connection.invoke('GetRisk', instance.riskId);
+    if (event instanceof EditRiskEvent) {
+      const irisk: IRisk = await connection.invoke('GetRisk', event.riskId);
       const risk = new Risk();
       risk.init(irisk);
-      this.store$.dispatch(eventEditRisk({ risk, eventId: event.eventId }))
+      this.store$.dispatch(eventEditRisk({ risk }))
       return;
     }
 
-    if(instance instanceof EditSprintEvent) {
-      const isprint: ISprint = await connection.invoke('GetSprint', instance.sprintId);
+    if(event instanceof EditSprintEvent) {
+      const isprint: ISprint = await connection.invoke('GetSprint', event.sprintId);
       const sprint = new Sprint();
       sprint.init(isprint);
-      this.store$.dispatch(eventEditSprint({ sprint, eventId: event.eventId }));
+      this.store$.dispatch(eventEditSprint({ sprint }));
       return;
     }
 
-    if(instance instanceof EditSquadEvent) {
-      const isquad: ISquad = await connection.invoke('GetSquad', instance.squadId);
+    if(event instanceof EditSquadEvent) {
+      const isquad: ISquad = await connection.invoke('GetSquad', event.squadId);
       const squad = new Squad();
       squad.init(isquad);
-      this.store$.dispatch(eventEditSquad({ squad, eventId: event.eventId }));
+      this.store$.dispatch(eventEditSquad({ squad }));
 
       if (event.sessionId === currentSessionId) {
         const returnUrl = this.getReturnUrl();
@@ -250,11 +283,13 @@ export class ProcessEventService {
       return;
     }
 
-    if(instance instanceof EditTicketEvent) {
-      const iticket: ITicket = await connection.invoke('GetTicket', instance.ticketId);
-      const ticket = new Ticket();
-      ticket.init(iticket);
-      this.store$.dispatch(eventEditTicket({ ticket, eventId: event.eventId }));
+    if(event instanceof EditTicketEvent) {
+      const oldTicket = await firstValueFrom(this.store$.pipe(select(getTickets), map(tickets =>  tickets.find(t => t.ticketId === event.ticketId))));
+      const ticket = new Ticket({
+        ...oldTicket,
+        ...event
+      });
+      this.store$.dispatch(eventEditTicket({ ticket }));
       return;
     }
 
@@ -265,5 +300,24 @@ export class ProcessEventService {
     return decodeURI(query.get('returnUrl'));
   }
 
+  /**
+   * Determines whether we can process this event locally or show a loading spinner until we get the answer from the server
+   */
+  private isServerRequiredEvent(event: Event): boolean {
+    return event instanceof AddOrUpdateSquadSprintStatsEvent
+      || event instanceof AddPlannedPeriodEvent
+      || event instanceof AddRiskEvent
+      || event instanceof AddSessionEvent
+      || event instanceof AddSprintEvent
+      || event instanceof AddSquadEvent
+      || event instanceof AddTicketEvent
+  }
 
+  private showLoadingSpinner() {
+
+  }
+
+  private hideLoadingSpinner() {
+
+  }
 }

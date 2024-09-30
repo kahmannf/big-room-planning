@@ -207,6 +207,9 @@ namespace BigRoomPlanningBoardBackend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("ColumnOrder")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("PlannedPeriodId")
                         .HasColumnType("INTEGER");
 
@@ -362,6 +365,9 @@ namespace BigRoomPlanningBoardBackend.Migrations
             modelBuilder.Entity("BigRoomPlanningBoardBackend.Events.Types.AddTicketEvent", b =>
                 {
                     b.HasBaseType("BigRoomPlanningBoardBackend.Events.Event");
+
+                    b.Property<int>("ColumnOrder")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PlannedPeriodId")
                         .HasColumnType("INTEGER");
@@ -571,6 +577,9 @@ namespace BigRoomPlanningBoardBackend.Migrations
                 {
                     b.HasBaseType("BigRoomPlanningBoardBackend.Events.Event");
 
+                    b.Property<int>("ColumnOrder")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("PlannedPeriodId")
                         .HasColumnType("INTEGER");
 
@@ -588,6 +597,9 @@ namespace BigRoomPlanningBoardBackend.Migrations
 
                     b.ToTable("Events", t =>
                         {
+                            t.Property("ColumnOrder")
+                                .HasColumnName("EditTicketEvent_ColumnOrder");
+
                             t.Property("PlannedPeriodId")
                                 .HasColumnName("EditTicketEvent_PlannedPeriodId");
 

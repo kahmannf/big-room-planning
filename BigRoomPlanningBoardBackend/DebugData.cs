@@ -140,7 +140,7 @@ namespace BigRoomPlanningBoardBackend
                 "Papercut",
                 "One Step Closer",
                 "With You",
-                "Points aof Authority",
+                "Points of Authority",
                 "Crawling",
                 "Runaway",
                 "By Mywself",

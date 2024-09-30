@@ -32,7 +32,7 @@ import {
 } from './store/app.actions';
 import { getLastEventId } from './store/app.selectors';
 
-const pingInterval = 500;
+const pingInterval = 1000;
 
 const enableLogging = true;
 
@@ -131,6 +131,8 @@ export class DataService {
       this._sessionId = event.sessionId;
       this.startPingTimer();
     }
+
+    this.processEventService.processEvent(event, this._sessionId, this.connection);
   }
 
   private recieveEvents(events: IEvent[]) {
@@ -170,7 +172,8 @@ export class DataService {
         const item = this.queue.get();
         lastQueueItem = item;
         this.log('[Queue] processing item', item)
-        await this.processEventService.processEvent(item, this._sessionId, this.connection);
+        const instance = Event.fromJS(item);
+        await this.processEventService.processEvent(instance, this._sessionId, this.connection);
       }
     } catch (err) {
       console.error('Failed to process events. Dropping queue and requesting full data. Last event bevor error occurred: ', lastQueueItem);

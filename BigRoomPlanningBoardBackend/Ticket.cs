@@ -20,6 +20,11 @@ namespace BigRoomPlanningBoardBackend
         /// </summary>
         public int? SprintId { get; set; }
 
+        /// <summary>
+        /// Position in the column its currently in
+        /// </summary>
+        public int ColumnOrder { get; set; }
+
         public string Title { get; set; }
     }
 }

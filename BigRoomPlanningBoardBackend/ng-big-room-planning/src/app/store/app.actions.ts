@@ -18,33 +18,33 @@ export const applyFullData = createAction('applyFullData', props<{ fullData: BRP
 
 export const connectionStateChange = createAction('connectionStateChange', props<{ isConnected: boolean, error?: string }>());
 
-export const eventAddOrUpdateSquadSprintStats = createAction('eventAddOrUpdateSquadSprintStats', props<{ squadSprintStats: SquadSprintStats, eventId: number }>());
+export const eventAddOrUpdateSquadSprintStats = createAction('eventAddOrUpdateSquadSprintStats', props<{ squadSprintStats: SquadSprintStats }>());
 
-export const eventAddPlannedPeriod = createAction('eventAddPlannedPeriod', props<{ plannedPeriod: PlannedPeriod, eventId: number }>());
+export const eventAddPlannedPeriod = createAction('eventAddPlannedPeriod', props<{ plannedPeriod: PlannedPeriod }>());
 
-export const eventAddRisk = createAction('eventAddRisk', props<{ risk: Risk, eventId: number }>());
+export const eventAddRisk = createAction('eventAddRisk', props<{ risk: Risk }>());
 
-export const eventAddSession = createAction('eventAddSession', props<{ session: Session, eventId: number }>());
+export const eventAddSession = createAction('eventAddSession', props<{ session: Session }>());
 
-export const eventAddSprint = createAction('eventAddSprint', props<{ sprint: Sprint, eventId: number }>());
+export const eventAddSprint = createAction('eventAddSprint', props<{ sprint: Sprint }>());
 
-export const eventAddSquad = createAction('eventAddSquad', props<{ squad: Squad, eventId: number }>());
+export const eventAddSquad = createAction('eventAddSquad', props<{ squad: Squad }>());
 
-export const eventAddTicket = createAction('eventAddTicket', props<{ ticket: Ticket, eventId: number }>());
+export const eventAddTicket = createAction('eventAddTicket', props<{ ticket: Ticket }>());
 
-export const eventDeleteRisk = createAction('eventDeleteRisk', props<{ riskId: number, eventId: number }>());
+export const eventDeleteRisk = createAction('eventDeleteRisk', props<{ riskId: number }>());
 
-export const eventDeleteTicket = createAction('eventDeleteTicket', props<{ ticketId: number, eventId: number }>());
+export const eventDeleteTicket = createAction('eventDeleteTicket', props<{ ticketId: number }>());
 
-export const eventEditPlannedPeriod = createAction('eventEditPlannedPeriod', props<{ plannedPeriod: PlannedPeriod, eventId: number }>());
+export const eventEditPlannedPeriod = createAction('eventEditPlannedPeriod', props<{ plannedPeriod: PlannedPeriod }>());
 
-export const eventEditRisk = createAction('eventEditRisk', props<{ risk: Risk, eventId: number }>());
+export const eventEditRisk = createAction('eventEditRisk', props<{ risk: Risk }>());
 
-export const eventEditSprint = createAction('eventEditSprint', props<{ sprint: Sprint, eventId: number }>());
+export const eventEditSprint = createAction('eventEditSprint', props<{ sprint: Sprint }>());
 
-export const eventEditSquad = createAction('eventEditSquad', props<{ squad: Squad, eventId: number }>());
+export const eventEditSquad = createAction('eventEditSquad', props<{ squad: Squad }>());
 
-export const eventEditTicket = createAction('eventEditTicket', props<{ ticket: Ticket, eventId: number }>());
+export const eventEditTicket = createAction('eventEditTicket', props<{ ticket: Ticket }>());
 
 export const initializCurrentSeesion = createAction('initializCurrentSeesion', props<{ session: Session }>());
 

@@ -527,6 +527,7 @@ export class AddTicketEvent extends Event implements IAddTicketEvent {
     plannedPeriodId?: number;
     sprintId?: number | undefined;
     title?: string | undefined;
+    columnOrder?: number;
 
     constructor(data?: IAddTicketEvent) {
         super(data);
@@ -541,6 +542,7 @@ export class AddTicketEvent extends Event implements IAddTicketEvent {
             this.plannedPeriodId = _data["plannedPeriodId"];
             this.sprintId = _data["sprintId"];
             this.title = _data["title"];
+            this.columnOrder = _data["columnOrder"];
         }
     }
 
@@ -558,6 +560,7 @@ export class AddTicketEvent extends Event implements IAddTicketEvent {
         data["plannedPeriodId"] = this.plannedPeriodId;
         data["sprintId"] = this.sprintId;
         data["title"] = this.title;
+        data["columnOrder"] = this.columnOrder;
         super.toJSON(data);
         return data;
     }
@@ -569,6 +572,7 @@ export interface IAddTicketEvent extends IEvent {
     plannedPeriodId?: number;
     sprintId?: number | undefined;
     title?: string | undefined;
+    columnOrder?: number;
 }
 
 export class DeleteRiskEvent extends Event implements IDeleteRiskEvent {
@@ -833,6 +837,7 @@ export class EditTicketEvent extends Event implements IEditTicketEvent {
     plannedPeriodId?: number;
     sprintId?: number | undefined;
     title?: string | undefined;
+    columnOrder?: number;
 
     constructor(data?: IEditTicketEvent) {
         super(data);
@@ -847,6 +852,7 @@ export class EditTicketEvent extends Event implements IEditTicketEvent {
             this.plannedPeriodId = _data["plannedPeriodId"];
             this.sprintId = _data["sprintId"];
             this.title = _data["title"];
+            this.columnOrder = _data["columnOrder"];
         }
     }
 
@@ -864,6 +870,7 @@ export class EditTicketEvent extends Event implements IEditTicketEvent {
         data["plannedPeriodId"] = this.plannedPeriodId;
         data["sprintId"] = this.sprintId;
         data["title"] = this.title;
+        data["columnOrder"] = this.columnOrder;
         super.toJSON(data);
         return data;
     }
@@ -875,6 +882,7 @@ export interface IEditTicketEvent extends IEvent {
     plannedPeriodId?: number;
     sprintId?: number | undefined;
     title?: string | undefined;
+    columnOrder?: number;
 }
 
 export class BRPFullData implements IBRPFullData {
@@ -1058,6 +1066,7 @@ export class Ticket implements ITicket {
     squadId?: number;
     plannedPeriodId!: number;
     sprintId?: number | undefined;
+    columnOrder?: number;
     title?: string | undefined;
 
     constructor(data?: ITicket) {
@@ -1075,6 +1084,7 @@ export class Ticket implements ITicket {
             this.squadId = _data["squadId"];
             this.plannedPeriodId = _data["plannedPeriodId"];
             this.sprintId = _data["sprintId"];
+            this.columnOrder = _data["columnOrder"];
             this.title = _data["title"];
         }
     }
@@ -1092,6 +1102,7 @@ export class Ticket implements ITicket {
         data["squadId"] = this.squadId;
         data["plannedPeriodId"] = this.plannedPeriodId;
         data["sprintId"] = this.sprintId;
+        data["columnOrder"] = this.columnOrder;
         data["title"] = this.title;
         return data;
     }
@@ -1102,6 +1113,7 @@ export interface ITicket {
     squadId?: number;
     plannedPeriodId: number;
     sprintId?: number | undefined;
+    columnOrder?: number;
     title?: string | undefined;
 }
 
