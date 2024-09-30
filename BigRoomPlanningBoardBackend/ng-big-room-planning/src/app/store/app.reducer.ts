@@ -7,6 +7,7 @@ import {
   Dependency,
   DependencyBoard,
   PlannedPeriod,
+  Risk,
   Session,
   Sprint,
   Squad,
@@ -18,12 +19,15 @@ import {
   connectionStateChange,
   eventAddOrUpdateSquadSprintStats,
   eventAddPlannedPeriod,
+  eventAddRisk,
   eventAddSession,
   eventAddSprint,
   eventAddSquad,
   eventAddTicket,
+  eventDeleteRisk,
   eventDeleteTicket,
   eventEditPlannedPeriod,
+  eventEditRisk,
   eventEditSprint,
   eventEditSquad,
   eventEditTicket,
@@ -40,6 +44,7 @@ export interface AppState {
     dependencyBoards: DependencyBoard[];
     sprints: Sprint[];
     squadSprintStats: SquadSprintStats[];
+    risks: Risk[];
     lastEventId: number;
     currentSession?: Session;
     knownSessions: { [sessionId: string]: Session };
@@ -57,6 +62,7 @@ export const initialAppState: AppState = {
     tickets: [],
     sprints: [],
     squadSprintStats: [],
+    risks: [],
     knownSessions: {},
     isConnected: false,
     createSessionFailed: false
@@ -74,6 +80,7 @@ export const appReducer = createReducer(
         sprints: action.fullData.sprints ?? [],
         plannedPeriods: action.fullData.plannedPeriods ?? [],
         squadSprintStats: action.fullData.squadSprintStats ?? [],
+        risks: action.fullData.risks ?? [],
         currentSession: state.currentSession ?? action.fullData.ownSession,
         lastEventId: action.fullData.lastEventId
     })),
@@ -96,6 +103,14 @@ export const appReducer = createReducer(
         plannedPeriods: [
             ...state.plannedPeriods,
             action.plannedPeriod
+        ]
+    })),
+    on(eventAddRisk, (state, action) => ({
+        ...state,
+        lastEventId: action.eventId,
+        risks: [
+            ...state.risks,
+            action.risk
         ]
     })),
     on(eventAddSession, (state, action) => ({
@@ -130,6 +145,11 @@ export const appReducer = createReducer(
             action.ticket
         ]
     })),
+    on(eventDeleteRisk, (state, action) => ({
+        ...state,
+        lastEventId: action.eventId,
+        risks: state.risks.filter(x => x.riskId !== action.riskId)
+    })),
     on(eventDeleteTicket, (state, action) => ({
         ...state,
         lastEventId: action.eventId,
@@ -142,6 +162,16 @@ export const appReducer = createReducer(
             .map(x =>
                 x.plannedPeriodId === action.plannedPeriod.plannedPeriodId
                     ? action.plannedPeriod
+                    : x
+            )
+    })),
+    on(eventEditRisk, (state, action) => ({
+        ...state,
+        lastEventId: action.eventId,
+        risks: state.risks
+            .map(x => 
+                x.riskId === action.risk.riskId
+                    ? action.risk
                     : x
             )
     })),

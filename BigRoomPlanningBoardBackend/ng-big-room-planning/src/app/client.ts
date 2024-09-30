@@ -166,6 +166,11 @@ export abstract class Event implements IEvent {
             result.init(data);
             return result;
         }
+        if (data["discriminator"] === "AddRiskEvent") {
+            let result = new AddRiskEvent();
+            result.init(data);
+            return result;
+        }
         if (data["discriminator"] === "AddSessionEvent") {
             let result = new AddSessionEvent();
             result.init(data);
@@ -186,6 +191,11 @@ export abstract class Event implements IEvent {
             result.init(data);
             return result;
         }
+        if (data["discriminator"] === "DeleteRiskEvent") {
+            let result = new DeleteRiskEvent();
+            result.init(data);
+            return result;
+        }
         if (data["discriminator"] === "DeleteTicketEvent") {
             let result = new DeleteTicketEvent();
             result.init(data);
@@ -193,6 +203,11 @@ export abstract class Event implements IEvent {
         }
         if (data["discriminator"] === "EditPlannedPeriodEvent") {
             let result = new EditPlannedPeriodEvent();
+            result.init(data);
+            return result;
+        }
+        if (data["discriminator"] === "EditRiskEvent") {
+            let result = new EditRiskEvent();
             result.init(data);
             return result;
         }
@@ -332,6 +347,60 @@ export interface IAddPlannedPeriodEvent extends IEvent {
     startDay?: Date;
     endDay?: Date;
     bigRoomPlanningAt?: Date | undefined;
+}
+
+export class AddRiskEvent extends Event implements IAddRiskEvent {
+    riskId?: number | undefined;
+    squadId?: number;
+    sprintId?: number;
+    text?: string | undefined;
+    mitigations?: string | undefined;
+    accepted?: boolean;
+
+    constructor(data?: IAddRiskEvent) {
+        super(data);
+        this._discriminator = "AddRiskEvent";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.riskId = _data["riskId"];
+            this.squadId = _data["squadId"];
+            this.sprintId = _data["sprintId"];
+            this.text = _data["text"];
+            this.mitigations = _data["mitigations"];
+            this.accepted = _data["accepted"];
+        }
+    }
+
+    static override fromJS(data: any): AddRiskEvent {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddRiskEvent();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["riskId"] = this.riskId;
+        data["squadId"] = this.squadId;
+        data["sprintId"] = this.sprintId;
+        data["text"] = this.text;
+        data["mitigations"] = this.mitigations;
+        data["accepted"] = this.accepted;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IAddRiskEvent extends IEvent {
+    riskId?: number | undefined;
+    squadId?: number;
+    sprintId?: number;
+    text?: string | undefined;
+    mitigations?: string | undefined;
+    accepted?: boolean;
 }
 
 export class AddSessionEvent extends Event implements IAddSessionEvent {
@@ -502,6 +571,40 @@ export interface IAddTicketEvent extends IEvent {
     title?: string | undefined;
 }
 
+export class DeleteRiskEvent extends Event implements IDeleteRiskEvent {
+    riskId?: number;
+
+    constructor(data?: IDeleteRiskEvent) {
+        super(data);
+        this._discriminator = "DeleteRiskEvent";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.riskId = _data["riskId"];
+        }
+    }
+
+    static override fromJS(data: any): DeleteRiskEvent {
+        data = typeof data === 'object' ? data : {};
+        let result = new DeleteRiskEvent();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["riskId"] = this.riskId;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IDeleteRiskEvent extends IEvent {
+    riskId?: number;
+}
+
 export class DeleteTicketEvent extends Event implements IDeleteTicketEvent {
     ticketId?: number;
 
@@ -584,6 +687,60 @@ export interface IEditPlannedPeriodEvent extends IEvent {
     startDay?: Date;
     endDay?: Date;
     bigRoomPlanningAt?: Date | undefined;
+}
+
+export class EditRiskEvent extends Event implements IEditRiskEvent {
+    riskId?: number;
+    squadId?: number;
+    sprintId?: number;
+    text?: string | undefined;
+    mitigations?: string | undefined;
+    accepted?: boolean;
+
+    constructor(data?: IEditRiskEvent) {
+        super(data);
+        this._discriminator = "EditRiskEvent";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.riskId = _data["riskId"];
+            this.squadId = _data["squadId"];
+            this.sprintId = _data["sprintId"];
+            this.text = _data["text"];
+            this.mitigations = _data["mitigations"];
+            this.accepted = _data["accepted"];
+        }
+    }
+
+    static override fromJS(data: any): EditRiskEvent {
+        data = typeof data === 'object' ? data : {};
+        let result = new EditRiskEvent();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["riskId"] = this.riskId;
+        data["squadId"] = this.squadId;
+        data["sprintId"] = this.sprintId;
+        data["text"] = this.text;
+        data["mitigations"] = this.mitigations;
+        data["accepted"] = this.accepted;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IEditRiskEvent extends IEvent {
+    riskId?: number;
+    squadId?: number;
+    sprintId?: number;
+    text?: string | undefined;
+    mitigations?: string | undefined;
+    accepted?: boolean;
 }
 
 export class EditSprintEvent extends Event implements IEditSprintEvent {
@@ -728,6 +885,7 @@ export class BRPFullData implements IBRPFullData {
     dependencyBoards?: DependencyBoard[] | undefined;
     sprints?: Sprint[] | undefined;
     squadSprintStats?: SquadSprintStats[] | undefined;
+    risks?: Risk[] | undefined;
     ownSession?: Session | undefined;
     lastEventId?: number;
 
@@ -776,6 +934,11 @@ export class BRPFullData implements IBRPFullData {
                 this.squadSprintStats = [] as any;
                 for (let item of _data["squadSprintStats"])
                     this.squadSprintStats!.push(SquadSprintStats.fromJS(item));
+            }
+            if (Array.isArray(_data["risks"])) {
+                this.risks = [] as any;
+                for (let item of _data["risks"])
+                    this.risks!.push(Risk.fromJS(item));
             }
             this.ownSession = _data["ownSession"] ? Session.fromJS(_data["ownSession"]) : <any>undefined;
             this.lastEventId = _data["lastEventId"];
@@ -826,6 +989,11 @@ export class BRPFullData implements IBRPFullData {
             for (let item of this.squadSprintStats)
                 data["squadSprintStats"].push(item.toJSON());
         }
+        if (Array.isArray(this.risks)) {
+            data["risks"] = [];
+            for (let item of this.risks)
+                data["risks"].push(item.toJSON());
+        }
         data["ownSession"] = this.ownSession ? this.ownSession.toJSON() : <any>undefined;
         data["lastEventId"] = this.lastEventId;
         return data;
@@ -840,6 +1008,7 @@ export interface IBRPFullData {
     dependencyBoards?: DependencyBoard[] | undefined;
     sprints?: Sprint[] | undefined;
     squadSprintStats?: SquadSprintStats[] | undefined;
+    risks?: Risk[] | undefined;
     ownSession?: Session | undefined;
     lastEventId?: number;
 }
@@ -1166,6 +1335,58 @@ export interface ISquadSprintStats {
     sprintId?: number;
     capacity?: number;
     backgroundNoise?: number;
+}
+
+export class Risk implements IRisk {
+    riskId?: number;
+    squadId?: number;
+    sprintId?: number;
+    text?: string | undefined;
+    accepted?: boolean;
+
+    constructor(data?: IRisk) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.riskId = _data["riskId"];
+            this.squadId = _data["squadId"];
+            this.sprintId = _data["sprintId"];
+            this.text = _data["text"];
+            this.accepted = _data["accepted"];
+        }
+    }
+
+    static fromJS(data: any): Risk {
+        data = typeof data === 'object' ? data : {};
+        let result = new Risk();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["riskId"] = this.riskId;
+        data["squadId"] = this.squadId;
+        data["sprintId"] = this.sprintId;
+        data["text"] = this.text;
+        data["accepted"] = this.accepted;
+        return data;
+    }
+}
+
+export interface IRisk {
+    riskId?: number;
+    squadId?: number;
+    sprintId?: number;
+    text?: string | undefined;
+    accepted?: boolean;
 }
 
 export class Session implements ISession {

@@ -21,6 +21,7 @@ namespace BigRoomPlanningBoardBackend
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Sprint> Sprints { get; set; }
         public DbSet<SquadSprintStats> SquadSprintStats { get; set; }
+        public DbSet<Risk> Risks { get; set; }
 
 
         public DbSet<Event> Events { get; set; }
@@ -29,12 +30,15 @@ namespace BigRoomPlanningBoardBackend
 
         public DbSet<AddOrUpdateSquadSprintStatsEvent> AddOrUpdateSquadSprintStatsEvents { get; set; }
         public DbSet<AddPlannedPeriodEvent> AddPlannedPeriodEvents { get; set; }
+        public DbSet<AddRiskEvent> AddRiskEvents { get; set; }
         public DbSet<AddSessionEvent> AddSessionEvents { get; set; }
         public DbSet<AddSprintEvent> AddSprintEvents { get; set; }
         public DbSet<AddSquadEvent> AddSquadEvents { get; set; }
         public DbSet<AddTicketEvent> AddTicketEvents { get; set; }
+        public DbSet<DeleteRiskEvent> DeleteRiskEvents { get; set; }
         public DbSet<DeleteTicketEvent> DeleteTicketEvents { get; set; }
         public DbSet<EditPlannedPeriodEvent> EditPlannedPeriodEvents { get; set; }
+        public DbSet<EditRiskEvent> EditRiskEvents { get; set; }
         public DbSet<EditSprintEvent> EditSprintEvents { get; set; }
         public DbSet<EditSquadEvent> EditSquadEvents { get; set; }
         public DbSet<EditTicketEvent> EditTicketEvents { get; set; }

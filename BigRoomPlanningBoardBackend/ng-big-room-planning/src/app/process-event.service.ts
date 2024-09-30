@@ -12,23 +12,28 @@ import {
 import {
   AddOrUpdateSquadSprintStatsEvent,
   AddPlannedPeriodEvent,
+  AddRiskEvent,
   AddSessionEvent,
   AddSprintEvent,
   AddSquadEvent,
   AddTicketEvent,
+  DeleteRiskEvent,
   DeleteTicketEvent,
   EditPlannedPeriodEvent,
+  EditRiskEvent,
   EditSprintEvent,
   EditSquadEvent,
   EditTicketEvent,
   Event,
   IEvent,
   IPlannedPeriod,
+  IRisk,
   ISession,
   ISprint,
   ISquad,
   ITicket,
   PlannedPeriod,
+  Risk,
   Session,
   Sprint,
   Squad,
@@ -39,12 +44,15 @@ import { HandleErrorService } from './handle-error.service';
 import {
   eventAddOrUpdateSquadSprintStats,
   eventAddPlannedPeriod,
+  eventAddRisk,
   eventAddSession,
   eventAddSprint,
   eventAddSquad,
   eventAddTicket,
+  eventDeleteRisk,
   eventDeleteTicket,
   eventEditPlannedPeriod,
+  eventEditRisk,
   eventEditSprint,
   eventEditSquad,
   eventEditTicket,
@@ -135,6 +143,14 @@ export class ProcessEventService {
       return;
     }
 
+    if (instance instanceof AddRiskEvent) {
+      const irisk: IRisk = await connection.invoke('GetRisk', instance.riskId);
+      const risk = new Risk();
+      risk.init(irisk);
+      this.store$.dispatch(eventAddRisk({ risk, eventId: event.eventId }))
+      return;
+    }
+
     if (instance instanceof AddSprintEvent) {
       const isprint: ISprint = await connection.invoke('GetSprint', instance.sprintId);
       const sprint = new Sprint();
@@ -162,6 +178,11 @@ export class ProcessEventService {
       const ticket = new Ticket();
       ticket.init(iticket);
       this.store$.dispatch(eventAddTicket({ ticket, eventId: event.eventId }))
+      return;
+    }
+
+    if (instance instanceof DeleteRiskEvent) {
+      this.store$.dispatch(eventDeleteRisk({ riskId: instance.riskId, eventId: event.eventId }))
       return;
     }
 
@@ -197,6 +218,14 @@ export class ProcessEventService {
           plannedPeriod.plannedPeriodId
         ]);
       }
+      return;
+    }
+
+    if (instance instanceof EditRiskEvent) {
+      const irisk: IRisk = await connection.invoke('GetRisk', instance.riskId);
+      const risk = new Risk();
+      risk.init(irisk);
+      this.store$.dispatch(eventEditRisk({ risk, eventId: event.eventId }))
       return;
     }
 

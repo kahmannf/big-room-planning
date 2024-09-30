@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BigRoomPlanningBoardBackend.Migrations
 {
     [DbContext(typeof(BigRoomPlanningContext))]
-    [Migration("20240929133950_InitialCreate")]
+    [Migration("20240930135804_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -110,6 +110,29 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     b.HasKey("PlannedPeriodId");
 
                     b.ToTable("PlannedPeriods");
+                });
+
+            modelBuilder.Entity("BigRoomPlanningBoardBackend.Risk", b =>
+                {
+                    b.Property<int>("RiskId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Accepted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SprintId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SquadId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("RiskId");
+
+                    b.ToTable("Risks");
                 });
 
             modelBuilder.Entity("BigRoomPlanningBoardBackend.Session", b =>
@@ -245,6 +268,40 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     b.HasDiscriminator().HasValue("AddPlannedPeriodEvent");
                 });
 
+            modelBuilder.Entity("BigRoomPlanningBoardBackend.Events.Types.AddRiskEvent", b =>
+                {
+                    b.HasBaseType("BigRoomPlanningBoardBackend.Events.Event");
+
+                    b.Property<bool>("Accepted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Mitigations")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("RiskId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SprintId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SquadId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("TEXT");
+
+                    b.ToTable("Events", t =>
+                        {
+                            t.Property("SprintId")
+                                .HasColumnName("AddRiskEvent_SprintId");
+
+                            t.Property("SquadId")
+                                .HasColumnName("AddRiskEvent_SquadId");
+                        });
+
+                    b.HasDiscriminator().HasValue("AddRiskEvent");
+                });
+
             modelBuilder.Entity("BigRoomPlanningBoardBackend.Events.Types.AddSessionEvent", b =>
                 {
                     b.HasBaseType("BigRoomPlanningBoardBackend.Events.Event");
@@ -339,6 +396,22 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     b.HasDiscriminator().HasValue("AddTicketEvent");
                 });
 
+            modelBuilder.Entity("BigRoomPlanningBoardBackend.Events.Types.DeleteRiskEvent", b =>
+                {
+                    b.HasBaseType("BigRoomPlanningBoardBackend.Events.Event");
+
+                    b.Property<int>("RiskId")
+                        .HasColumnType("INTEGER");
+
+                    b.ToTable("Events", t =>
+                        {
+                            t.Property("RiskId")
+                                .HasColumnName("DeleteRiskEvent_RiskId");
+                        });
+
+                    b.HasDiscriminator().HasValue("DeleteRiskEvent");
+                });
+
             modelBuilder.Entity("BigRoomPlanningBoardBackend.Events.Types.DeleteTicketEvent", b =>
                 {
                     b.HasBaseType("BigRoomPlanningBoardBackend.Events.Event");
@@ -393,6 +466,52 @@ namespace BigRoomPlanningBoardBackend.Migrations
                         });
 
                     b.HasDiscriminator().HasValue("EditPlannedPeriodEvent");
+                });
+
+            modelBuilder.Entity("BigRoomPlanningBoardBackend.Events.Types.EditRiskEvent", b =>
+                {
+                    b.HasBaseType("BigRoomPlanningBoardBackend.Events.Event");
+
+                    b.Property<bool>("Accepted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Mitigations")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RiskId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SprintId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SquadId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("TEXT");
+
+                    b.ToTable("Events", t =>
+                        {
+                            t.Property("Accepted")
+                                .HasColumnName("EditRiskEvent_Accepted");
+
+                            t.Property("Mitigations")
+                                .HasColumnName("EditRiskEvent_Mitigations");
+
+                            t.Property("RiskId")
+                                .HasColumnName("EditRiskEvent_RiskId");
+
+                            t.Property("SprintId")
+                                .HasColumnName("EditRiskEvent_SprintId");
+
+                            t.Property("SquadId")
+                                .HasColumnName("EditRiskEvent_SquadId");
+
+                            t.Property("Text")
+                                .HasColumnName("EditRiskEvent_Text");
+                        });
+
+                    b.HasDiscriminator().HasValue("EditRiskEvent");
                 });
 
             modelBuilder.Entity("BigRoomPlanningBoardBackend.Events.Types.EditSprintEvent", b =>

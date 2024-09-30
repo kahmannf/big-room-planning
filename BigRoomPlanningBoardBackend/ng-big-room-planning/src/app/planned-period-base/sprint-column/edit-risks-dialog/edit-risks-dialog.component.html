@@ -1,0 +1,62 @@
+<h2 mat-dialog-title i18n>Risks for {{ (sprint$ | async).name }}</h2>
+<mat-dialog-content>
+    <div class="risks-main">
+        <ng-template #editRiskTemplate>
+            <form [formGroup]="formGroup" (ngSubmit)="save()">
+                <mat-form-field>
+                    <mat-label i18n>Risk</mat-label>
+                    <input matInput [formControlName]="'text'">
+                    @if(formGroup.hasError('required', 'text')) {
+                        <mat-error i18n>Required</mat-error>
+                    }
+                </mat-form-field>
+                <button type="button" style="margin-left: 1rem;" mat-button (click)="cancelEdit()" i18n>Cancel</button>
+                <button type="submit" mat-flat-button i18n>Save</button>
+            </form>
+        </ng-template>
+        <div *ngFor="let risk of risks$ | async" class="risk">
+            @if (editRisk?.riskId === risk.riskId) {
+                <ng-container *ngTemplateOutlet="editRiskTemplate"></ng-container>
+            } @else {
+                <div class="risk-text">
+                    {{risk.text}}
+                </div>
+                @if (!risk.accepted) {
+                    <button mat-flat-button (click)="setAccepted(risk, true)">
+                        Accept
+                    </button>
+                } @else {
+                    <button mat-stroked-button (click)="setAccepted(risk, false)">
+                        <div class="normal">
+                            <mat-icon>check</mat-icon>
+                            <ng-container i18n>Accepted</ng-container>
+                        </div>
+                        <div class="hover">
+                            <mat-icon>close</mat-icon>
+                            <ng-container i18n>Reopend</ng-container>
+                        </div>
+                    </button>
+                }
+                <button mat-button (click)="editText(risk)" i18n>Edit</button>
+                <button mat-button (click)="delete(risk)" i18n>Remove</button>
+            }
+        </div>
+        @if(isAdding) {
+            <ng-container *ngTemplateOutlet="editRiskTemplate"></ng-container>
+        } @else if((risks$ | async).length) {
+            <button mat-button (click)="addNew()" i18n>
+                Add new Risk
+            </button>
+        } @else {
+            <button mat-flat-button (click)="addNew()" i18n>
+                Add new Risk
+            </button>
+        }
+    </div>
+
+
+
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-flat-button (click)="closeClick()" i18n>Close</button>
+</mat-dialog-actions>

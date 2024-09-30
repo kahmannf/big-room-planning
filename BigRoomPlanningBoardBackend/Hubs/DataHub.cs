@@ -104,5 +104,10 @@ namespace BigRoomPlanningBoardBackend.Hubs
         {
             return bigRoomPlanningContext.Tickets.Find(id);
         }
+
+        public Risk GetRisk(int id)
+        {
+            return bigRoomPlanningContext.Risks.Find(id);
+        }
     }
 }

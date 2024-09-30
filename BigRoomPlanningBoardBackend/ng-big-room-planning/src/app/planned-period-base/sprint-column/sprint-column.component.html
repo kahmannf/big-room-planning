@@ -1,6 +1,20 @@
 <div class="ticket-column">
+    <div class="sprint-header">
+        {{ (sprint$ | async).name }}
+    </div>
     <div class="risks">
-
+        <div class="risk-heading" [ngClass]="riskStatus$ | async" i18n>
+            Risks: {{ (risks$ | async).length }}
+        </div>
+        <div class="risk-body">
+            <div *ngFor="let risk of risks$ | async" [class.accepted]="risk.accepted" class="risk-text">{{risk.text}}
+            </div>
+        </div>
+        @if ((risks$ | async).length) {
+        <button mat-button (click)="openRiskDialog()" i18n>Details/Add Risk</button>
+        } @else {
+        <button mat-button (click)="openRiskDialog()" i18n>Add Risk</button>
+        }
     </div>
     <div class="tickets">
 

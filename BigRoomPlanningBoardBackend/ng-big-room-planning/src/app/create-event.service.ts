@@ -3,18 +3,22 @@ import { Injectable } from '@angular/core';
 import {
   AddOrUpdateSquadSprintStatsEvent,
   AddPlannedPeriodEvent,
+  AddRiskEvent,
   AddSessionEvent,
   AddSprintEvent,
   AddSquadEvent,
   AddTicketEvent,
+  DeleteRiskEvent,
   DeleteTicketEvent,
   EditPlannedPeriodEvent,
+  EditRiskEvent,
   EditSprintEvent,
   EditSquadEvent,
   EditTicketEvent,
   Event,
   IEvent,
   IPlannedPeriod,
+  IRisk,
   ISprint,
   ISquad,
   ISquadSprintStats,
@@ -70,6 +74,34 @@ export class CreatEventService {
     event.startDay = plannedPeriod.startDay;
     event.endDay = plannedPeriod.endDay;
     event.bigRoomPlanningAt = plannedPeriod.bigRoomPlanningAt;
+
+    this.dataService.sendEvent(event);
+  }
+
+  addRisk (risk: IRisk) {
+    const event = this.getBaseEvent(AddRiskEvent)
+    event.squadId = risk.squadId;
+    event.sprintId = risk.sprintId;
+    event.text = risk.text;
+    event.accepted = risk.accepted;
+
+    this.dataService.sendEvent(event);
+  }
+
+  deleteRisk (risk: IRisk) {
+    const event = this.getBaseEvent(DeleteRiskEvent);
+    event.riskId = risk.riskId;
+
+    this.dataService.sendEvent(event);
+  }
+
+  editRisk (risk: IRisk) {
+    const event = this.getBaseEvent(EditRiskEvent)
+    event.riskId = risk.riskId;
+    event.squadId = risk.squadId;
+    event.sprintId = risk.sprintId;
+    event.text = risk.text;
+    event.accepted = risk.accepted;
 
     this.dataService.sendEvent(event);
   }

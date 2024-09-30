@@ -1,0 +1,41 @@
+.risks-main {
+    display: flex;
+    flex-direction: column;
+
+    mat-form-field {
+        width: 300px;
+    }
+
+    .risk {
+        display: flex;
+        flex-direction: row;
+
+        align-items: center;
+
+        margin-bottom: 2rem;
+
+        button {
+            
+            margin-left: auto;
+            
+            & + button {
+                margin-left: .5rem;
+            }
+
+            .hover {
+                display: none;
+                color: rgb(255, 180, 171);
+            }
+
+            &:hover {
+                .normal {
+                    display: none;
+                }
+                
+                .hover {
+                    display: block;
+                }
+            }
+        }
+    }
+}

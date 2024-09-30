@@ -21,6 +21,8 @@ namespace BigRoomPlanningBoardBackend.Hubs
         public List<Sprint> Sprints { get; set; }
         public List<SquadSprintStats> SquadSprintStats { get; set; }
 
+        public List<Risk> Risks { get; set; }
+
         /// <summary>
         /// This will always be filled to avoid a deadlock if the first response from the server is a full data response (SessionCreated gets voided by that)
         /// </summary>
@@ -38,6 +40,7 @@ namespace BigRoomPlanningBoardBackend.Hubs
             DependencyBoards = [.. bigRoomPlanningContext.DependencyBoards],
             Sprints = [.. bigRoomPlanningContext.Sprints],
             SquadSprintStats = [..bigRoomPlanningContext.SquadSprintStats],
+            Risks = [.. bigRoomPlanningContext.Risks],
             OwnSession = bigRoomPlanningContext.Sessions.Find(sessionId)
         };
     }

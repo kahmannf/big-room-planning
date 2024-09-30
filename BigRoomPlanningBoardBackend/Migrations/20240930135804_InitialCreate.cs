@@ -60,6 +60,12 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     StartDay = table.Column<DateTime>(type: "TEXT", nullable: true),
                     EndDay = table.Column<DateTime>(type: "TEXT", nullable: true),
                     BigRoomPlanningAt = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    RiskId = table.Column<int>(type: "INTEGER", nullable: true),
+                    AddRiskEvent_SquadId = table.Column<int>(type: "INTEGER", nullable: true),
+                    AddRiskEvent_SprintId = table.Column<int>(type: "INTEGER", nullable: true),
+                    Text = table.Column<string>(type: "TEXT", nullable: true),
+                    Mitigations = table.Column<string>(type: "TEXT", nullable: true),
+                    Accepted = table.Column<bool>(type: "INTEGER", nullable: true),
                     SessionName = table.Column<string>(type: "TEXT", nullable: true),
                     AddSprintEvent_SprintId = table.Column<int>(type: "INTEGER", nullable: true),
                     AddSprintEvent_Name = table.Column<string>(type: "TEXT", nullable: true),
@@ -72,12 +78,19 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     AddTicketEvent_PlannedPeriodId = table.Column<int>(type: "INTEGER", nullable: true),
                     AddTicketEvent_SprintId = table.Column<int>(type: "INTEGER", nullable: true),
                     Title = table.Column<string>(type: "TEXT", nullable: true),
+                    DeleteRiskEvent_RiskId = table.Column<int>(type: "INTEGER", nullable: true),
                     DeleteTicketEvent_TicketId = table.Column<int>(type: "INTEGER", nullable: true),
                     EditPlannedPeriodEvent_PlannedPeriodId = table.Column<int>(type: "INTEGER", nullable: true),
                     EditPlannedPeriodEvent_Name = table.Column<string>(type: "TEXT", nullable: true),
                     EditPlannedPeriodEvent_StartDay = table.Column<DateTime>(type: "TEXT", nullable: true),
                     EditPlannedPeriodEvent_EndDay = table.Column<DateTime>(type: "TEXT", nullable: true),
                     EditPlannedPeriodEvent_BigRoomPlanningAt = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    EditRiskEvent_RiskId = table.Column<int>(type: "INTEGER", nullable: true),
+                    EditRiskEvent_SquadId = table.Column<int>(type: "INTEGER", nullable: true),
+                    EditRiskEvent_SprintId = table.Column<int>(type: "INTEGER", nullable: true),
+                    EditRiskEvent_Text = table.Column<string>(type: "TEXT", nullable: true),
+                    EditRiskEvent_Mitigations = table.Column<string>(type: "TEXT", nullable: true),
+                    EditRiskEvent_Accepted = table.Column<bool>(type: "INTEGER", nullable: true),
                     EditSprintEvent_SprintId = table.Column<int>(type: "INTEGER", nullable: true),
                     EditSprintEvent_Name = table.Column<string>(type: "TEXT", nullable: true),
                     EditSprintEvent_StartsAt = table.Column<DateTime>(type: "TEXT", nullable: true),
@@ -109,6 +122,22 @@ namespace BigRoomPlanningBoardBackend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PlannedPeriods", x => x.PlannedPeriodId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Risks",
+                columns: table => new
+                {
+                    RiskId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    SquadId = table.Column<int>(type: "INTEGER", nullable: false),
+                    SprintId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Text = table.Column<string>(type: "TEXT", nullable: true),
+                    Accepted = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Risks", x => x.RiskId);
                 });
 
             migrationBuilder.CreateTable(
@@ -197,6 +226,9 @@ namespace BigRoomPlanningBoardBackend.Migrations
 
             migrationBuilder.DropTable(
                 name: "PlannedPeriods");
+
+            migrationBuilder.DropTable(
+                name: "Risks");
 
             migrationBuilder.DropTable(
                 name: "Sessions");

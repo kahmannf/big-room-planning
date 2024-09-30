@@ -1,4 +1,8 @@
-import { AsyncPipe } from '@angular/common';
+import {
+  AsyncPipe,
+  NgClass,
+  NgFor,
+} from '@angular/common';
 import {
   Component,
   Input,
@@ -16,13 +20,26 @@ import {
   Observable,
 } from 'rxjs';
 
+import create from '@kahmannf/iterable-transforms';
 import {
   select,
   Store,
 } from '@ngrx/store';
 
-import { ISquadSprintStats } from '../../client';
-import { getSquadSprintStats } from '../../store/app.selectors';
+import {
+  ISquadSprintStats,
+  Risk,
+  Sprint,
+} from '../../client';
+import {
+  getRisks,
+  getSprints,
+  getSquadSprintStats,
+} from '../../store/app.selectors';
+import {
+  EditRisksDialogComponent,
+  EditRisksDialogData,
+} from './edit-risks-dialog/edit-risks-dialog.component';
 import {
   EditSquadSprintStatsDialogComponent,
 } from './edit-squad-sprint-stats-dialog/edit-squad-sprint-stats-dialog.component';
@@ -32,7 +49,9 @@ import {
   standalone: true,
   imports: [
     AsyncPipe,
-    MatButton
+    MatButton,
+    NgFor,
+    NgClass
   ],
   templateUrl: './sprint-column.component.html',
   styleUrl: './sprint-column.component.scss'
@@ -48,6 +67,11 @@ export class SprintColumnComponent implements OnInit, OnChanges {
   capacity$: Observable<number>
   backgroundNoise$: Observable<number>
 
+  sprint$: Observable<Sprint>;
+
+  risks$: Observable<Risk[]>;
+
+  riskStatus$: Observable<'none' | 'open' | 'closed'>;
 
   constructor(
     private store$: Store<any>,
@@ -61,6 +85,14 @@ export class SprintColumnComponent implements OnInit, OnChanges {
 
 
   ngOnChanges(simpleChange: SimpleChanges): void {
+    
+    if(simpleChange['sprintId']) {
+      this.sprint$ = this.store$.pipe(
+        select(getSprints),
+        map(sprints => sprints.find(x => x.sprintId === this.sprintId))
+      )
+    }
+    
     if(simpleChange['sprintId'] || simpleChange['squadId']) {
       const squadSprintStats$ = this.store$.pipe(
         select(getSquadSprintStats),
@@ -75,6 +107,22 @@ export class SprintColumnComponent implements OnInit, OnChanges {
       this.backgroundNoise$ = squadSprintStats$.pipe(
         map(stats => stats.backgroundNoise)
       );
+
+      this.risks$ = this.store$.pipe(
+        select(getRisks),
+        map(risks => risks.filter(x => x.sprintId === this.sprintId && x.squadId === this.squadId)),
+        map(risks => create(risks).sort(x => x.accepted ? 10 : 0).toArray())
+      );
+
+      this.riskStatus$ = this.risks$.pipe(
+        map(risks => risks.length === 0
+          ? 'none'
+          // risks are sorted by accepted, we can check the first to know whether all are closed
+          : risks[0].accepted
+            ? 'closed'
+            : 'open'
+        )
+      )
     }
   }
 
@@ -100,5 +148,16 @@ export class SprintColumnComponent implements OnInit, OnChanges {
     });
   }
 
-  // TODO: Risks
+  openRiskDialog() {
+    const data: EditRisksDialogData = {
+      sprintId: this.sprintId,
+      squadId: this.squadId
+    }
+    
+    this.matDialog.open(EditRisksDialogComponent, {
+      data,
+      disableClose: true,
+      width: '800px'
+    })
+  }
 }
