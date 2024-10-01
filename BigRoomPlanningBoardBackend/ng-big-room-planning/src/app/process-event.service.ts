@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import {
-  firstValueFrom,
-  map,
-} from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 import { HubConnection } from '@microsoft/signalr';
 import {
@@ -28,12 +25,7 @@ import {
   EditSquadEvent,
   EditTicketEvent,
   Event,
-  IPlannedPeriod,
-  IRisk,
   ISession,
-  ISprint,
-  ISquad,
-  ITicket,
   PlannedPeriod,
   Risk,
   Session,
@@ -62,10 +54,7 @@ import {
   setCreateSessionFailed,
   setLastEventId,
 } from './store/app.actions';
-import {
-  getLastEventId,
-  getTickets,
-} from './store/app.selectors';
+import { getLastEventId } from './store/app.selectors';
 
 @Injectable({
   providedIn: 'root'
@@ -150,20 +139,16 @@ export class ProcessEventService {
 
 
     if (event instanceof AddOrUpdateSquadSprintStatsEvent) {
-      const squadSprintStats = new SquadSprintStats();
-      squadSprintStats.squadId = event.squadId;
-      squadSprintStats.sprintId = event.sprintId;
-      squadSprintStats.capacity = event.capacity;
-      squadSprintStats.backgroundNoise = event.backgroundNoise;
+      const squadSprintStats = SquadSprintStats.fromJS(event)
 
       this.store$.dispatch(eventAddOrUpdateSquadSprintStats({ squadSprintStats }));
       return;
     }
 
     if (event instanceof AddPlannedPeriodEvent) {
-      const iplannedPeriod: IPlannedPeriod = await connection.invoke('GetPlannedPeriod', event.plannedPeriodId);
-      const plannedPeriod = new PlannedPeriod();
-      plannedPeriod.init(iplannedPeriod);
+      const plannedPeriod = new PlannedPeriod({
+        ...event
+      });
       this.store$.dispatch(eventAddPlannedPeriod({ plannedPeriod }));
 
       if (event.sessionId === currentSessionId) {
@@ -177,25 +162,19 @@ export class ProcessEventService {
     }
 
     if (event instanceof AddRiskEvent) {
-      const irisk: IRisk = await connection.invoke('GetRisk', event.riskId);
-      const risk = new Risk();
-      risk.init(irisk);
+      const risk = Risk.fromJS(event);
       this.store$.dispatch(eventAddRisk({ risk }))
       return;
     }
 
     if (event instanceof AddSprintEvent) {
-      const isprint: ISprint = await connection.invoke('GetSprint', event.sprintId);
-      const sprint = new Sprint();
-      sprint.init(isprint);
+      const sprint = Sprint.fromJS(event);
       this.store$.dispatch(eventAddSprint({ sprint }))
       return;
     }
 
     if (event instanceof AddSquadEvent) {
-      const isquad: ISquad = await connection.invoke('GetSquad', event.squadId);
-      const squad = new Squad();
-      squad.init(isquad);
+      const squad = Squad.fromJS(event);
       this.store$.dispatch(eventAddSquad({ squad }))
 
       if (event.sessionId === currentSessionId) {
@@ -207,9 +186,7 @@ export class ProcessEventService {
     }
 
     if (event instanceof AddTicketEvent) {
-      const iticket: ITicket = await connection.invoke('GetTicket', event.ticketId);
-      const ticket = new Ticket();
-      ticket.init(iticket);
+      const ticket = Ticket.fromJS(event);
       this.store$.dispatch(eventAddTicket({ ticket }))
       return;
     }
@@ -225,24 +202,7 @@ export class ProcessEventService {
     }
 
     if (event instanceof EditPlannedPeriodEvent) {
-      const iplannedPeriod: IPlannedPeriod = await connection.invoke('GetPlannedPeriod', event.plannedPeriodId);
-      const plannedPeriod = new PlannedPeriod();
-      plannedPeriod.init(iplannedPeriod);
-      this.store$.dispatch(eventEditPlannedPeriod({ plannedPeriod }));
-      
-      if (event.sessionId === currentSessionId) {
-        this.router.navigate([
-          '/planned-period',
-          plannedPeriod.plannedPeriodId
-        ]);
-      }
-      return;
-    }
-
-    if (event instanceof EditPlannedPeriodEvent) {
-      const iplannedPeriod: IPlannedPeriod = await connection.invoke('GetPlannedPeriod', event.plannedPeriodId);
-      const plannedPeriod = new PlannedPeriod();
-      plannedPeriod.init(iplannedPeriod);
+      const plannedPeriod = PlannedPeriod.fromJS(event);
       this.store$.dispatch(eventEditPlannedPeriod({ plannedPeriod }));
       
       if (event.sessionId === currentSessionId) {
@@ -255,25 +215,19 @@ export class ProcessEventService {
     }
 
     if (event instanceof EditRiskEvent) {
-      const irisk: IRisk = await connection.invoke('GetRisk', event.riskId);
-      const risk = new Risk();
-      risk.init(irisk);
+      const risk = Risk.fromJS(event);
       this.store$.dispatch(eventEditRisk({ risk }))
       return;
     }
 
     if(event instanceof EditSprintEvent) {
-      const isprint: ISprint = await connection.invoke('GetSprint', event.sprintId);
-      const sprint = new Sprint();
-      sprint.init(isprint);
+      const sprint = Sprint.fromJS(event);
       this.store$.dispatch(eventEditSprint({ sprint }));
       return;
     }
 
     if(event instanceof EditSquadEvent) {
-      const isquad: ISquad = await connection.invoke('GetSquad', event.squadId);
-      const squad = new Squad();
-      squad.init(isquad);
+      const squad = Squad.fromJS(event);
       this.store$.dispatch(eventEditSquad({ squad }));
 
       if (event.sessionId === currentSessionId) {
@@ -284,11 +238,7 @@ export class ProcessEventService {
     }
 
     if(event instanceof EditTicketEvent) {
-      const oldTicket = await firstValueFrom(this.store$.pipe(select(getTickets), map(tickets =>  tickets.find(t => t.ticketId === event.ticketId))));
-      const ticket = new Ticket({
-        ...oldTicket,
-        ...event
-      });
+      const ticket = Ticket.fromJS(event);
       this.store$.dispatch(eventEditTicket({ ticket }));
       return;
     }
