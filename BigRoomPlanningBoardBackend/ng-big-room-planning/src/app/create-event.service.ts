@@ -149,6 +149,7 @@ export class CreatEventService {
     event.sprintId = ticket.sprintId;
     event.title = ticket.title;
     event.columnOrder = ticket.columnOrder;
+    event.predecessorId = ticket.predecessorId;
 
     this.dataService.sendEvent(event);
   }
@@ -169,6 +170,7 @@ export class CreatEventService {
     event.sprintId = ticket.sprintId;
     event.title = ticket.title;
     event.columnOrder = ticket.columnOrder;
+    event.predecessorId = ticket.predecessorId;
 
     this.dataService.sendEvent(event);
   }

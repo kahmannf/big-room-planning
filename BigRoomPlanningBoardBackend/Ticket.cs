@@ -12,7 +12,6 @@ namespace BigRoomPlanningBoardBackend
         /// <summary>
         /// This must be set!
         /// </summary>
-        [Required]
         public int PlannedPeriodId { get; set; }
 
         /// <summary>
@@ -26,5 +25,7 @@ namespace BigRoomPlanningBoardBackend
         public int ColumnOrder { get; set; }
 
         public string Title { get; set; }
+
+        public int? PredecessorId { get; set; }
     }
 }

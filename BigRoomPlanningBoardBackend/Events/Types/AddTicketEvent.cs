@@ -18,7 +18,9 @@ namespace BigRoomPlanningBoardBackend.Events.Types
 
         public string Title { get; set; }
 
-        public int ColumnOrder { get; set;  }
+        public int ColumnOrder { get; set; }
+
+        public int? PredecessorId { get; set; }
 
         public override bool Process(BigRoomPlanningContext bigRoomPlanningContext)
         {

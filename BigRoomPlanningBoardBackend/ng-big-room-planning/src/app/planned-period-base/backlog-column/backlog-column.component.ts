@@ -123,7 +123,8 @@ export class BacklogColumnComponent implements OnInit, OnChanges, OnDestroy {
     this.createEventService.editTicket({
       ...event.item.data,
       columnOrder: event.currentIndex,
-      sprintId: undefined
+      sprintId: undefined,
+      predecessorId: undefined
     });
   }
 }

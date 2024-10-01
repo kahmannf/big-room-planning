@@ -210,7 +210,8 @@ export class SprintColumnComponent implements OnInit, OnChanges, OnDestroy {
     this.createEventService.editTicket({
       ...event.item.data,
       columnOrder: event.currentIndex,
-      sprintId: this.sprintId
+      sprintId: this.sprintId,
+      predecessorId: undefined
     });
   }
 }

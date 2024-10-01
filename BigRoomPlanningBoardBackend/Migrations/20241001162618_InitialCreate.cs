@@ -79,6 +79,7 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     AddTicketEvent_SprintId = table.Column<int>(type: "INTEGER", nullable: true),
                     Title = table.Column<string>(type: "TEXT", nullable: true),
                     ColumnOrder = table.Column<int>(type: "INTEGER", nullable: true),
+                    PredecessorId = table.Column<int>(type: "INTEGER", nullable: true),
                     DeleteRiskEvent_RiskId = table.Column<int>(type: "INTEGER", nullable: true),
                     DeleteTicketEvent_TicketId = table.Column<int>(type: "INTEGER", nullable: true),
                     EditPlannedPeriodEvent_PlannedPeriodId = table.Column<int>(type: "INTEGER", nullable: true),
@@ -103,7 +104,8 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     EditTicketEvent_PlannedPeriodId = table.Column<int>(type: "INTEGER", nullable: true),
                     EditTicketEvent_SprintId = table.Column<int>(type: "INTEGER", nullable: true),
                     EditTicketEvent_Title = table.Column<string>(type: "TEXT", nullable: true),
-                    EditTicketEvent_ColumnOrder = table.Column<int>(type: "INTEGER", nullable: true)
+                    EditTicketEvent_ColumnOrder = table.Column<int>(type: "INTEGER", nullable: true),
+                    EditTicketEvent_PredecessorId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -207,7 +209,8 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     PlannedPeriodId = table.Column<int>(type: "INTEGER", nullable: false),
                     SprintId = table.Column<int>(type: "INTEGER", nullable: true),
                     ColumnOrder = table.Column<int>(type: "INTEGER", nullable: false),
-                    Title = table.Column<string>(type: "TEXT", nullable: true)
+                    Title = table.Column<string>(type: "TEXT", nullable: true),
+                    PredecessorId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {

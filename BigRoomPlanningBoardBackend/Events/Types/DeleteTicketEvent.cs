@@ -24,6 +24,15 @@ namespace BigRoomPlanningBoardBackend.Events.Types
             // Delete Dependencies, if this ticket was a Dependedant
             var removableDependecies = bigRoomPlanningContext.Dependencies.Where(d => d.DependantTicketId == TicketId).ToArray();
             bigRoomPlanningContext.Dependencies.RemoveRange(removableDependecies);
+
+            // set predecessorids to null
+            var successorTickets = bigRoomPlanningContext.Tickets.Where(t => t.PredecessorId == TicketId).ToArray();
+            
+            foreach(var successor in successorTickets)
+            {
+                successor.PredecessorId = null;
+            }
+
             bigRoomPlanningContext.Tickets.Remove(item);
 
             return true;

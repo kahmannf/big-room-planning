@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BigRoomPlanningBoardBackend.Migrations
 {
     [DbContext(typeof(BigRoomPlanningContext))]
-    [Migration("20240930152937_InitialCreate")]
+    [Migration("20241001162618_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -216,6 +216,9 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     b.Property<int>("PlannedPeriodId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("PredecessorId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("SprintId")
                         .HasColumnType("INTEGER");
 
@@ -373,6 +376,9 @@ namespace BigRoomPlanningBoardBackend.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("PlannedPeriodId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("PredecessorId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("SprintId")
@@ -586,6 +592,9 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     b.Property<int>("PlannedPeriodId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("PredecessorId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("SprintId")
                         .HasColumnType("INTEGER");
 
@@ -605,6 +614,9 @@ namespace BigRoomPlanningBoardBackend.Migrations
 
                             t.Property("PlannedPeriodId")
                                 .HasColumnName("EditTicketEvent_PlannedPeriodId");
+
+                            t.Property("PredecessorId")
+                                .HasColumnName("EditTicketEvent_PredecessorId");
 
                             t.Property("SprintId")
                                 .HasColumnName("EditTicketEvent_SprintId");

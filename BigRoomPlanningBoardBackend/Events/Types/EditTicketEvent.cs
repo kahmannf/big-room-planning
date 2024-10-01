@@ -17,6 +17,8 @@ namespace BigRoomPlanningBoardBackend.Events.Types
 
         public int ColumnOrder { get; set; }
 
+        public int? PredecessorId { get; set; }
+
         public override bool Process(BigRoomPlanningContext bigRoomPlanningContext)
         {
             if (string.IsNullOrWhiteSpace(Title))
@@ -26,10 +28,26 @@ namespace BigRoomPlanningBoardBackend.Events.Types
 
             var squad = bigRoomPlanningContext.Squads.Find(SquadId);
             var plannedPeriod = bigRoomPlanningContext.PlannedPeriods.Find(PlannedPeriodId);
+            var sprint = bigRoomPlanningContext.Sprints.Find(SprintId);
 
-            if (squad == null || plannedPeriod == null)
+            if (squad == null || plannedPeriod == null || sprint == null)
             {
                 return false;
+            }
+
+            if (PredecessorId.HasValue)
+            {
+                var predecessor = bigRoomPlanningContext.Tickets.FirstOrDefault(t => 
+                    t.TicketId == PredecessorId.Value
+                    && t.SquadId == SquadId
+                    && t.SprintId == SprintId
+                    && t.PlannedPeriodId == PlannedPeriodId
+                );
+
+                if (predecessor == null)
+                {
+                    return false;
+                }
             }
 
             var item = bigRoomPlanningContext.Tickets.Find(TicketId);
@@ -59,6 +77,11 @@ namespace BigRoomPlanningBoardBackend.Events.Types
                 for (int i = 0; i < oldColumnTickets.Length; i++)
                 {
                     oldColumnTickets[i].ColumnOrder = i;
+
+                    if (oldColumnTickets[i].PredecessorId == TicketId)
+                    {
+                        oldColumnTickets[i].PredecessorId = null;
+                    }
                 }
             }
 
@@ -92,13 +115,14 @@ namespace BigRoomPlanningBoardBackend.Events.Types
                 }
             }
 
+
+
             item.SquadId = SquadId;
             item.PlannedPeriodId = PlannedPeriodId;
             item.SprintId = SprintId;
             item.Title = Title;
             item.ColumnOrder = ColumnOrder;
-
-
+            item.PredecessorId = PredecessorId;
 
             return true;
         }
