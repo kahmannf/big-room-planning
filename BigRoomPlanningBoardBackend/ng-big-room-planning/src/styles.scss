@@ -46,6 +46,10 @@ $displays: "flex", "none";
 
 .ticket-column {
     width: calc(400px - 2rem);
-    height: calc(100% - 2rem);
     padding: 1rem;
+    height: 100%;
+
+    &.scroll {
+        height: calc(100% - 2rem);
+    }
 }

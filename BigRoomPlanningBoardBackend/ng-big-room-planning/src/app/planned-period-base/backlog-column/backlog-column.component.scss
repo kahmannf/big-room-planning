@@ -1,9 +1,12 @@
 .backlog-column {
     display: flex;
     flex-direction: column;
-    overflow: auto;
     position: relative;
+    
+    &.scroll {
+        overflow: auto;
 
+    }
 
     .header {
         // sticky is not working...

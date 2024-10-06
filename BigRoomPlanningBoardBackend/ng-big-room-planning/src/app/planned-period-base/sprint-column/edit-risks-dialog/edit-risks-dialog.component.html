@@ -43,11 +43,11 @@
         </div>
         @if(isAdding) {
             <ng-container *ngTemplateOutlet="editRiskTemplate"></ng-container>
-        } @else if((risks$ | async).length) {
+        } @else if(data.mode !== 'dependency' && (risks$ | async).length) {
             <button mat-button (click)="addNew()" i18n>
                 Add new Risk
             </button>
-        } @else {
+        } @else if(data.mode !== 'dependency') {
             <button mat-flat-button (click)="addNew()" i18n>
                 Add new Risk
             </button>

@@ -25,6 +25,7 @@ import {
   map,
   Observable,
   Subscription,
+  switchMap,
 } from 'rxjs';
 
 import create from '@kahmannf/iterable-transforms';
@@ -42,6 +43,7 @@ import {
 import { CreatEventService } from '../../create-event.service';
 import { DragDropService } from '../../drag-drop.service';
 import {
+  getDependencies,
   getRisks,
   getSprints,
   getSquadSprintStats,
@@ -71,6 +73,9 @@ import {
   styleUrl: './sprint-column.component.scss'
 })
 export class SprintColumnComponent implements OnInit, OnChanges, OnDestroy {
+
+  @Input()
+  mode: 'squad' | 'dependency' = 'squad'
 
   @Input()
   sprintId: number;
@@ -130,24 +135,27 @@ export class SprintColumnComponent implements OnInit, OnChanges, OnDestroy {
       )
     }
     
-    if(simpleChange['sprintId'] || simpleChange['squadId']) {
-      const squadSprintStats$ = this.store$.pipe(
-        select(getSquadSprintStats),
-        map(stats => stats.find(x => x.sprintId === this.sprintId && x.squadId === this.squadId)),
-        map(stats => !stats ? ({ capacity: 0, backgroundNoise: 0 }) : stats)
-      )
+    if(simpleChange['sprintId'] || simpleChange['squadId'] || simpleChange['mode']) {
 
-      this.capacity$ = squadSprintStats$.pipe(
-        map(stats => stats.capacity)
-      );
-      
-      this.backgroundNoise$ = squadSprintStats$.pipe(
-        map(stats => stats.backgroundNoise)
-      );
+      if (this.mode === 'squad') {
+        const squadSprintStats$ = this.store$.pipe(
+          select(getSquadSprintStats),
+          map(stats => stats.find(x => x.sprintId === this.sprintId && x.squadId === this.squadId)),
+          map(stats => !stats ? ({ capacity: 0, backgroundNoise: 0 }) : stats)
+        )
+  
+        this.capacity$ = squadSprintStats$.pipe(
+          map(stats => stats.capacity)
+        );
+        
+        this.backgroundNoise$ = squadSprintStats$.pipe(
+          map(stats => stats.backgroundNoise)
+        );
+      }
 
       this.risks$ = this.store$.pipe(
         select(getRisks),
-        map(risks => risks.filter(x => x.sprintId === this.sprintId && x.squadId === this.squadId)),
+        map(risks => risks.filter(x => x.sprintId === this.sprintId && (this.mode === 'dependency' || x.squadId === this.squadId))),
         map(risks => create(risks).sort(x => x.accepted ? 10 : 0).toArray())
       );
 
@@ -161,14 +169,30 @@ export class SprintColumnComponent implements OnInit, OnChanges, OnDestroy {
         )
       )
 
-      this.tickets$ = this.store$.pipe(
-        select(getTickets),
-        map(tickets => create(tickets)
-          .filter(x => x.sprintId === this.sprintId && x.squadId === this.squadId)
-          .sort(x => x.columnOrder)
-          .toArray()
+      if (this.mode === 'squad') {
+        this.tickets$ = this.store$.pipe(
+          select(getTickets),
+          map(tickets => create(tickets)
+            .filter(x => x.sprintId === this.sprintId && x.squadId === this.squadId)
+            .sort(x => x.columnOrder)
+            .toArray()
+          )
         )
-      )
+      } else {
+        this.tickets$ = this.store$.pipe(
+          select(getTickets),
+          switchMap(tickets => this.store$.pipe(
+            select(getDependencies),
+            map(dependencies => ({ tickets, dependencies }))
+          )),
+          map(({ tickets, dependencies }) => create(tickets)
+            .filter(x => x.sprintId === this.sprintId && dependencies.some(d => d.dependencyTicketId === x.ticketId || d.dependantTicketId === x.ticketId))
+            .sort(x => x.squadId)
+            .thenSort(x => x.columnOrder)
+            .toArray()
+          )
+        )
+      }
     }
   }
 
@@ -196,6 +220,7 @@ export class SprintColumnComponent implements OnInit, OnChanges, OnDestroy {
 
   openRiskDialog() {
     const data: EditRisksDialogData = {
+      mode: this.mode,
       sprintId: this.sprintId,
       squadId: this.squadId
     }

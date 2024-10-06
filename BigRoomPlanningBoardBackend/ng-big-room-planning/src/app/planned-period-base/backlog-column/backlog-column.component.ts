@@ -23,6 +23,7 @@ import {
   map,
   Observable,
   Subscription,
+  switchMap,
 } from 'rxjs';
 
 import create from '@kahmannf/iterable-transforms';
@@ -37,7 +38,10 @@ import {
 } from '../../client';
 import { CreatEventService } from '../../create-event.service';
 import { DragDropService } from '../../drag-drop.service';
-import { getTickets } from '../../store/app.selectors';
+import {
+  getDependencies,
+  getTickets,
+} from '../../store/app.selectors';
 import {
   EditTicketDialogComponent,
 } from '../edit-ticket-dialog/edit-ticket-dialog.component';
@@ -58,6 +62,9 @@ import { TicketCardComponent } from '../ticket-card/ticket-card.component';
   styleUrl: './backlog-column.component.scss'
 })
 export class BacklogColumnComponent implements OnInit, OnChanges, OnDestroy {
+
+  @Input()
+  mode: 'squad' | 'dependency' = 'squad'
 
   @Input()
   squadId: number;
@@ -92,15 +99,34 @@ export class BacklogColumnComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(simpleChanges: SimpleChanges) {
-    if (simpleChanges['squadId'] || simpleChanges['plannedPeriodId']) {
-      this.tickets$ = this.store$.pipe(
-        select(getTickets),
-        map(tickets => create(tickets)
-          .filter(x => !x.sprintId && x.squadId === this.squadId && x.plannedPeriodId === this.plannedPeriodId)
-          .sort(x => x.columnOrder)
-          .toArray()
+    if (simpleChanges['squadId'] || simpleChanges['plannedPeriodId'] || simpleChanges['mode']) {
+
+      if(this.mode === 'squad') {
+
+        this.tickets$ = this.store$.pipe(
+          select(getTickets),
+          map(tickets => create(tickets)
+            .filter(x => !x.sprintId && x.plannedPeriodId === this.plannedPeriodId && x.squadId === this.squadId)
+            .sort(x => x.columnOrder)
+            .toArray()
+          )
         )
-      )
+      } else {
+        
+        this.tickets$ = this.store$.pipe(
+          select(getTickets),
+          switchMap(tickets => this.store$.pipe(
+            select(getDependencies),
+            map(dependencies => ({ tickets, dependencies }))
+          )),
+          map(({ tickets, dependencies }) => create(tickets)
+            .filter(x => !x.sprintId && x.plannedPeriodId === this.plannedPeriodId && dependencies.some(d => d.dependencyTicketId === x.ticketId || d.dependantTicketId === x.ticketId))
+            .sort(x => x.squadId)
+            .thenSort(x => x.columnOrder)
+            .toArray()
+          )
+        );
+      }
     }
   }
 

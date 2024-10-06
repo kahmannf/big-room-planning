@@ -1,12 +1,14 @@
-<div class="backlog-column ticket-column" cdkDropList [id]="dropListId" [cdkDropListConnectedTo]="connectedDropLists$ | async" (cdkDropListDropped)="onTicketDrop($event)">
+<div class="backlog-column ticket-column" [class.scroll]="mode === 'squad'" cdkDropList [id]="dropListId" [cdkDropListConnectedTo]="connectedDropLists$ | async" (cdkDropListDropped)="onTicketDrop($event)">
     <div class="header">
         <div class="title" i18n>
             Backlog
         </div>
-        <button mat-flat-button class="new-button" (click)="addNewTicket()">
-            <ng-container i18n>Add Ticket</ng-container>
-            <mat-icon>add</mat-icon>
-        </button>
+        @if (mode === 'squad') {
+            <button mat-flat-button class="new-button" (click)="addNewTicket()">
+                <ng-container i18n>Add Ticket</ng-container>
+                <mat-icon>add</mat-icon>
+            </button>
+        }
     </div>
     <app-ticket-card cdkDrag [cdkDragData]="ticket" [ticket]="ticket" *ngFor="let ticket of tickets$ | async"></app-ticket-card>
 </div>

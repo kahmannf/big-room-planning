@@ -1,1 +1,10 @@
-<p>dependency-board works!</p>
+<div class="dependency-board">
+    <div class="inner-dependency-board">
+        <div class="sprints">
+            <div class="sprint" *ngFor="let sprint of sprints$ | async">
+                <app-sprint-column [mode]="'dependency'" [sprintId]="sprint.sprintId"></app-sprint-column>
+            </div>
+        </div>
+        <app-backlog-column [plannedPeriodId]="plannedPeriodId$ | async" [mode]="'dependency'"></app-backlog-column>
+    </div>
+</div>

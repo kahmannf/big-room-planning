@@ -55,13 +55,17 @@ $acceptedColor:  rgb(174, 241, 97);
 
 .tickets {
 
-    // 2rem margin from .ticket-column
-    // 3 rem from this file (1rem each .sprint-header, .risks, .stats)
-    // total 5rem
+    height: 100%;
 
-    // 130px + 200px + 30px = 360px
-    height: calc(100% - calc(360px + 5rem));
-    overflow: auto;
+    &.scroll {
+        // 2rem margin from .ticket-column
+        // 3 rem from this file (1rem each .sprint-header, .risks, .stats)
+        // total 5rem
+
+        // 130px + 200px + 30px = 360px
+        height: calc(100% - calc(360px + 5rem));
+        overflow: auto;
+    }
 
     
 

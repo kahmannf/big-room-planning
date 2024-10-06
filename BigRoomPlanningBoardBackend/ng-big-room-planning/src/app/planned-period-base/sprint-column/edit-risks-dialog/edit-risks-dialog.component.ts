@@ -52,8 +52,9 @@ import {
 } from '../../../store/app.selectors';
 
 export interface EditRisksDialogData {
-  squadId: number;
+  mode: 'dependency' | 'squad';
   sprintId: number;
+  squadId?: number;
 } 
 
 @Component({
@@ -90,7 +91,7 @@ export class EditRisksDialogComponent implements OnInit {
   })
 
   constructor (
-    @Inject(MAT_DIALOG_DATA) private data: EditRisksDialogData,
+    @Inject(MAT_DIALOG_DATA) public data: EditRisksDialogData,
     private store$: Store<any>,
     private matDialogRef: MatDialogRef<EditRisksDialogComponent>,
     private createEventService: CreatEventService
@@ -107,7 +108,7 @@ export class EditRisksDialogComponent implements OnInit {
     
     this.risks$ = this.store$.pipe(
       select(getRisks),
-      map(risks => risks.filter(risk => risk.sprintId == this.data.sprintId && risk.squadId == this.data.squadId)),
+      map(risks => risks.filter(risk => risk.sprintId == this.data.sprintId && (this.data.mode === 'dependency' || risk.squadId == this.data.squadId))),
       map(risks => create(risks).sort(x => x.accepted ? 10 : 0).toArray()),
       distinctUntilChanged((a, b) => this.hasChanged(a, b))
     )
