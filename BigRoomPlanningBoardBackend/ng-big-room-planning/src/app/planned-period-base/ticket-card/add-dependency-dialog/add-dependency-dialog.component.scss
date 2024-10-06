@@ -30,6 +30,7 @@
             white-space: nowrap;
             text-overflow: ellipsis;
             margin-right: .25rem;
+            overflow: hidden;
         }
 
         .iteration {
@@ -37,6 +38,7 @@
             white-space: nowrap;
             text-overflow: ellipsis;
             margin-right: auto;
+            overflow: hidden;
         }
 
         .active {

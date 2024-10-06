@@ -21,8 +21,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 
 import {
+  combineLatest,
   map,
   Observable,
+  of,
   switchMap,
 } from 'rxjs';
 
@@ -36,6 +38,10 @@ import {
   Ticket,
 } from '../../client';
 import { CreatEventService } from '../../create-event.service';
+import {
+  HighlightDependenciesService,
+} from '../../highlight-dependencies.service';
+import { SquadNamePipe } from '../../squad-name.pipe';
 import {
   getDependencies,
   getSprints,
@@ -65,7 +71,8 @@ interface DependencyWithInfo extends IDependency {
     CdkMenu,
     CdkMenuItem,
     CdkContextMenuTrigger,
-    MatIcon
+    MatIcon,
+    SquadNamePipe
   ],
   templateUrl: './ticket-card.component.html',
   styleUrl: './ticket-card.component.scss'
@@ -74,6 +81,9 @@ export class TicketCardComponent implements OnChanges {
 
   @Input()
   ticket: Ticket;
+
+  @Input()
+  mode: 'squad' | 'dependency';
 
   dependants$: Observable<DependencyWithInfo[]>;
   dependencies$: Observable<DependencyWithInfo[]>;
@@ -84,13 +94,20 @@ export class TicketCardComponent implements OnChanges {
   dependenciesCount$: Observable<number>;
   dependenciesFullfilled$: Observable<boolean>;
 
+  isHighlightUnfullfilledDependency$: Observable<boolean> = of(false);
+  isHighlightFullfilledDependency$: Observable<boolean> = of(false);
+
+  isHighlightTarget$: Observable<boolean> = of(false);
+
   constructor(
     private matDialog: MatDialog,
     private createEventServie: CreatEventService,
-    private store$: Store<any>
+    private store$: Store<any>,
+    private highlightDependenciesService: HighlightDependenciesService
   ) {
 
   }
+
 
   ngOnChanges(simpleChanges: SimpleChanges) {
 
@@ -177,6 +194,52 @@ export class TicketCardComponent implements OnChanges {
       this.dependenciesCount$ = this.dependencies$.pipe(map(x => x.length));
       this.dependenciesFullfilled$ = this.dependencies$.pipe(map(x => x.length === 0 ? true : x.every(y => y.fullfilled)));
     }
+
+    if(simpleChanges['mode'] || simpleChanges['ticket']) {
+      if (this.mode === 'squad') {
+        this.isHighlightFullfilledDependency$ = of(false);
+        this.isHighlightUnfullfilledDependency$ = of(false);
+        this.isHighlightTarget$ = of(false);
+      } else {
+
+        const allDeps$: Observable<DependencyWithInfo[]> = combineLatest([
+          this.dependants$,
+          this.dependencies$,
+        ]).pipe(
+          map(([a, b]) => ([...a, ...b]))
+        );
+
+        this.isHighlightUnfullfilledDependency$ = combineLatest([
+          allDeps$,
+          this.highlightDependenciesService.highlightedDependencyIds$
+        ]).pipe(
+          map(([deps, highlightIds]) =>
+            !highlightIds?.length
+              ? false
+              : deps.some(x => !x.fullfilled && highlightIds.includes(x.dependencyId))
+          )
+        );
+
+        this.isHighlightFullfilledDependency$ = combineLatest([
+          allDeps$,
+          this.highlightDependenciesService.highlightedDependencyIds$
+        ]).pipe(
+          map(([deps, highlightIds]) => ({
+            deps: !highlightIds?.length? [] : deps.filter(x => highlightIds.includes(x.dependencyId)),
+            highlightIds
+          })),
+          map(({ deps, highlightIds }) =>
+            !highlightIds?.length
+              ? false
+              : (
+                deps.length > 0
+                && deps.every(x => x.fullfilled)
+              ) 
+          )
+        );
+      }
+
+    }
   }
 
   edit() {
@@ -195,5 +258,17 @@ export class TicketCardComponent implements OnChanges {
 
   delete() {
     this.createEventServie.deleteTicket(this.ticket.ticketId);
+  }
+
+  mouseEnter() {
+    if(this.mode === 'dependency') {
+      this.highlightDependenciesService.mouseEnter(this.ticket);
+    }
+  }
+
+  mouseLeave() {
+    if(this.mode === 'dependency') {
+      this.highlightDependenciesService.mouseLeave();
+    }
   }
 }

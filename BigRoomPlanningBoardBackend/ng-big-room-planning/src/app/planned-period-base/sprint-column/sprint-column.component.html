@@ -17,7 +17,7 @@
         }
     </div>
     <div class="tickets" [class.scroll]="mode === 'squad'" cdkDropList [id]="dropListId" [cdkDropListConnectedTo]="connectedDropLists$ | async" (cdkDropListDropped)="onTicketDrop($event)">
-        <app-ticket-card cdkDrag [cdkDragData]="ticket" [ticket]="ticket" *ngFor="let ticket of tickets$ | async"></app-ticket-card>
+        <app-ticket-card cdkDrag [cdkDragData]="ticket" [ticket]="ticket" [mode]="mode" *ngFor="let ticket of tickets$ | async"></app-ticket-card>
     </div>
     @if (mode === 'squad') {
         <div class="stats">

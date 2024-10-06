@@ -2,6 +2,19 @@ mat-card-header {
   font-size: 1.1rem;
 }
 
+.squad-name {
+  margin-left: auto;
+  font-size: .8rem;
+}
+
+.highlight-fullfilled:not(.highlight-unfullfilled) {
+  border-color: rgb(174, 241, 97);
+}
+
+.highlight-unfullfilled {
+  border-color: rgb(255, 180, 171);
+}
+
 .dependency-container {
   display: flex;
   flex-direction: row;

@@ -1,5 +1,10 @@
-<mat-card appearance="outlined" [cdkContextMenuTriggerFor]="contextMenu">
-    <mat-card-header>{{ ticket?.title }}</mat-card-header>
+<mat-card appearance="outlined" [class.highlight-unfullfilled]="isHighlightUnfullfilledDependency$ | async" [class.highlight-fullfilled]="isHighlightFullfilledDependency$ | async" [cdkContextMenuTriggerFor]="contextMenu" (mouseenter)="mouseEnter()" (mouseleave)="mouseLeave()">
+    <mat-card-header>
+        <span>{{ ticket?.title }}</span>
+        @if(mode === 'dependency') {
+            <span class="squad-name">{{ ticket?.squadId | squadName | async }}</span>
+        }
+    </mat-card-header>
     <mat-card-content>
         <div class="dependency-container">
             <div class="item-container">

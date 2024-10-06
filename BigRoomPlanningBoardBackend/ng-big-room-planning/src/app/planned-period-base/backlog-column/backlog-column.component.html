@@ -10,5 +10,5 @@
             </button>
         }
     </div>
-    <app-ticket-card cdkDrag [cdkDragData]="ticket" [ticket]="ticket" *ngFor="let ticket of tickets$ | async"></app-ticket-card>
+    <app-ticket-card cdkDrag [cdkDragData]="ticket" [ticket]="ticket" [mode]="mode" *ngFor="let ticket of tickets$ | async"></app-ticket-card>
 </div>
