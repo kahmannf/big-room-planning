@@ -18,6 +18,7 @@ import {
 import {
   applyFullData,
   connectionStateChange,
+  eventAddDependency,
   eventAddOrUpdateSquadSprintStats,
   eventAddPlannedPeriod,
   eventAddRisk,
@@ -25,6 +26,7 @@ import {
   eventAddSprint,
   eventAddSquad,
   eventAddTicket,
+  eventDeleteDependency,
   eventDeleteRisk,
   eventDeleteTicket,
   eventEditPlannedPeriod,
@@ -90,6 +92,13 @@ export const appReducer = createReducer(
         connectionError: action.error,
         isConnected: action.isConnected
     })),
+    on(eventAddDependency, (state, action) => ({
+        ...state,
+        dependencies: [
+            ...state.dependencies,
+            action.dependency
+        ]
+    })),
     on(eventAddOrUpdateSquadSprintStats, (state, action) => ({
         ...state,
         squadSprintStats: [
@@ -146,6 +155,10 @@ export const appReducer = createReducer(
             }),
             action.ticket
         ]
+    })),
+    on(eventDeleteDependency, (state, action) => ({
+        ...state,
+        dependencies: state.dependencies.filter(x => x.dependencyId !== action.dependencyId)
     })),
     on(eventDeleteRisk, (state, action) => ({
         ...state,

@@ -30,3 +30,5 @@ export const getTickets = createSelector(appStateSelector, state => state.ticket
 export const getSquadSprintStats = createSelector(appStateSelector, state => state.squadSprintStats);
 
 export const getRisks = createSelector(appStateSelector, state => state.risks);
+
+export const getDependencies = createSelector(appStateSelector, state => state.dependencies);

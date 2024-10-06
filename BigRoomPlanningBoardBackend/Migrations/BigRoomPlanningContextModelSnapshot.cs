@@ -230,6 +230,22 @@ namespace BigRoomPlanningBoardBackend.Migrations
                     b.ToTable("Tickets");
                 });
 
+            modelBuilder.Entity("BigRoomPlanningBoardBackend.Events.Types.AddDependencyEvent", b =>
+                {
+                    b.HasBaseType("BigRoomPlanningBoardBackend.Events.Event");
+
+                    b.Property<int>("DependantTicketId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("DependencyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DependencyTicketId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasDiscriminator().HasValue("AddDependencyEvent");
+                });
+
             modelBuilder.Entity("BigRoomPlanningBoardBackend.Events.Types.AddOrUpdateSquadSprintStatsEvent", b =>
                 {
                     b.HasBaseType("BigRoomPlanningBoardBackend.Events.Event");
@@ -403,6 +419,22 @@ namespace BigRoomPlanningBoardBackend.Migrations
                         });
 
                     b.HasDiscriminator().HasValue("AddTicketEvent");
+                });
+
+            modelBuilder.Entity("BigRoomPlanningBoardBackend.Events.Types.DeleteDependencyEvent", b =>
+                {
+                    b.HasBaseType("BigRoomPlanningBoardBackend.Events.Event");
+
+                    b.Property<int>("DependencyId")
+                        .HasColumnType("INTEGER");
+
+                    b.ToTable("Events", t =>
+                        {
+                            t.Property("DependencyId")
+                                .HasColumnName("DeleteDependencyEvent_DependencyId");
+                        });
+
+                    b.HasDiscriminator().HasValue("DeleteDependencyEvent");
                 });
 
             modelBuilder.Entity("BigRoomPlanningBoardBackend.Events.Types.DeleteRiskEvent", b =>

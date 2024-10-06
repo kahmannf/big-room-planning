@@ -9,6 +9,7 @@ import {
 import {
   Component,
   Input,
+  NgZone,
   OnChanges,
   OnDestroy,
   OnInit,
@@ -76,7 +77,8 @@ export class BacklogColumnComponent implements OnInit, OnChanges, OnDestroy {
     private store$: Store<any>,
     private matDialog: MatDialog,
     private dragDropService: DragDropService,
-    private createEventService: CreatEventService
+    private createEventService: CreatEventService,
+    private ngZone: NgZone
   ) {
 
   }
@@ -86,7 +88,7 @@ export class BacklogColumnComponent implements OnInit, OnChanges, OnDestroy {
 
     this.dropListId = crypto.randomUUID()
     this.subscription.add(this.dragDropService.registerTicketDropList(this.dropListId));
-    this.connectedDropLists$ = this.dragDropService.availableTicketDropLists$;
+    this.connectedDropLists$ = this.dragDropService.getDropListIds(this.ngZone);
   }
 
   ngOnChanges(simpleChanges: SimpleChanges) {

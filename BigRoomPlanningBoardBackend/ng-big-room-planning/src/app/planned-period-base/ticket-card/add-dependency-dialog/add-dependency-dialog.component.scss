@@ -1,0 +1,50 @@
+.filter {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden;
+
+    .filter-item {
+        width: 100%;
+
+        > * {
+            width: 100%;
+        }
+    }
+
+    .filter-item + .filter-item {
+        margin-top: .5rem;
+    }
+}
+
+.ticket-list {
+    height: 300px;
+    overflow: auto;
+
+    .ticket {
+        display: flex;
+        align-items: center;
+
+        .title {
+            width: 150px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            margin-right: .25rem;
+        }
+
+        .iteration {
+            width: 100px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            margin-right: auto;
+        }
+
+        .active {
+            color: rgb(255, 180, 171);
+
+            &.fullfilled {
+                color:  rgb(174, 241, 97);
+            }
+        }
+    }
+}

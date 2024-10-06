@@ -1,0 +1,88 @@
+<h2 mat-dialog-title i18n>Add Depenendy to {{data.title}}</h2>
+<mat-dialog-content>
+    <div class="filter" [formGroup]="formGroup">
+        <div class="filter-item">
+            <mat-form-field>
+                <mat-label i18n>Title</mat-label>
+                <input matInput [formControlName]="'title'">
+            </mat-form-field>
+        </div>
+        <div class="filter-item">
+            <mat-form-field>
+
+                <mat-label i18n>Squad</mat-label>
+                <mat-select [formControlName]="'squad'">
+                    @for (squad of squadFilter$ | async; track squad.squadId) {
+                    <mat-option [value]="squad.squadId">{{squad.name}}</mat-option>
+                    }
+                </mat-select>
+                @if(formGroup.controls.squad.value) {
+
+                    <button mat-icon-button matIconSuffix (click)="clearSquadSelection($event)">
+                        <mat-icon >
+                            close
+                        </mat-icon>
+                    </button>
+                }
+            </mat-form-field>
+        </div>
+        <div class="filter-item">
+            <mat-form-field>
+                <mat-label i18n>Iteration</mat-label>
+                <mat-select [formControlName]="'sprints'" multiple>
+
+                    <mat-select-trigger>
+                        @if (formGroup.controls.sprints.value?.length) {
+                        <ng-container i18n>{{formGroup.controls.sprints.value?.length}} selected</ng-container>
+                        }
+                    </mat-select-trigger>
+                    @for (sprint of sprintFilter$ | async; track sprint.sprintId) {
+                    <mat-option [value]="sprint.sprintId">{{sprint.name}}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div class="ticket-list">
+        <div class="ticket" *ngFor="let ticket of ticketList$ | async">
+            <div class="title">
+                {{ticket.title}}
+            </div>
+            <div class="iteration">
+                {{ ticket.sprintId | iterationName | async }}
+            </div>
+            @if (ticket.dependencyType === 'none') {
+
+                <button mat-icon-button [matTooltip]="getDependencyTooltip(ticket)" (click)="addAsDependency(ticket)">
+                    <mat-icon>
+                        keyboard_tab
+                    </mat-icon>
+                </button>
+                <button mat-icon-button [matTooltip]="getDependantTooltip(ticket)" (click)="addAsDependant(ticket)">
+                    <mat-icon>
+                        start
+                    </mat-icon>
+                </button>
+            } @else {
+                
+                @if(ticket.dependencyType === 'dependant') {
+                    <mat-icon class="active" [class.fullfilled]="ticket.fullfilled" [matTooltip]="getDependencyTooltip(ticket)">
+                        keyboard_tab
+                    </mat-icon>
+                } @else {
+                    <mat-icon class="active" [class.fullfilled]="ticket.fullfilled" [matTooltip]="getDependantTooltip(ticket)">
+                        start
+                    </mat-icon>
+                }
+
+                <button class="active" [class.fullfilled]="ticket.fullfilled" mat-icon-button (click)="deleteDependency(ticket.dependencyId)">
+                    <mat-icon>close</mat-icon>
+                </button>
+            }
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button (click)="close()">Cancel</button>
+</mat-dialog-actions>

@@ -1,14 +1,34 @@
-import { Component, OnInit, Signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { select, Store } from '@ngrx/store';
-import { map, Observable } from 'rxjs';
-import { getConnectionError, getCurrentSession, getIsConnected } from './store/app.selectors';
-import { Session } from './client';
 import { AsyncPipe } from '@angular/common';
-import { ConnectionLostComponent } from "./connection-lost/connection-lost.component";
-import { CreateSessionComponent } from "./create-session/create-session.component";
+import {
+  Component,
+  OnInit,
+} from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
+import {
+  map,
+  Observable,
+} from 'rxjs';
+
+import {
+  select,
+  Store,
+} from '@ngrx/store';
+
+import { Session } from './client';
+import {
+  ConnectionLostComponent,
+} from './connection-lost/connection-lost.component';
+import {
+  CreateSessionComponent,
+} from './create-session/create-session.component';
 import { DataService } from './data.service';
-import { HomeComponent } from "./home/home.component";
+import { HomeComponent } from './home/home.component';
+import {
+  getConnectionError,
+  getCurrentSession,
+  getIsConnected,
+} from './store/app.selectors';
 
 @Component({
   selector: 'app-root',
@@ -46,7 +66,5 @@ export class AppComponent implements OnInit {
       map(x => !x)
     );
     this.connectionError$ = this.store$.pipe(select(getConnectionError));
-
-    this.connectionError$.subscribe(a => console.log('hello', a))
   }
 }

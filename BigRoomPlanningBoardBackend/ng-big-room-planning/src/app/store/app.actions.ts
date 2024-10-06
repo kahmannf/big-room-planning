@@ -5,6 +5,7 @@ import {
 
 import {
   BRPFullData,
+  Dependency,
   PlannedPeriod,
   Risk,
   Session,
@@ -17,6 +18,8 @@ import {
 export const applyFullData = createAction('applyFullData', props<{ fullData: BRPFullData }>())
 
 export const connectionStateChange = createAction('connectionStateChange', props<{ isConnected: boolean, error?: string }>());
+
+export const eventAddDependency = createAction('eventAddDependency', props<{ dependency: Dependency }>());
 
 export const eventAddOrUpdateSquadSprintStats = createAction('eventAddOrUpdateSquadSprintStats', props<{ squadSprintStats: SquadSprintStats }>());
 
@@ -31,6 +34,8 @@ export const eventAddSprint = createAction('eventAddSprint', props<{ sprint: Spr
 export const eventAddSquad = createAction('eventAddSquad', props<{ squad: Squad }>());
 
 export const eventAddTicket = createAction('eventAddTicket', props<{ ticket: Ticket }>());
+
+export const eventDeleteDependency = createAction('eventDeleteDependency', props<{ dependencyId: number }>());
 
 export const eventDeleteRisk = createAction('eventDeleteRisk', props<{ riskId: number }>());
 

@@ -1,15 +1,32 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatError, MatFormField } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { DataService } from '../data.service';
-import { CreatEventService } from '../create-event.service';
-import { MatButton } from '@angular/material/button';
-import { Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
-import { select, Store } from '@ngrx/store';
-import { getCreateSessionFailed } from '../store/app.selectors';
+import {
+  AfterViewInit,
+  Component,
+  OnInit,
+} from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import {
+  MatError,
+  MatFormField,
+} from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+
+import { Observable } from 'rxjs';
+
+import {
+  select,
+  Store,
+} from '@ngrx/store';
+
+import { CreatEventService } from '../create-event.service';
 import { setCreateSessionFailed } from '../store/app.actions';
+import { getCreateSessionFailed } from '../store/app.selectors';
 
 @Component({
   selector: 'app-create-session',
@@ -25,7 +42,7 @@ import { setCreateSessionFailed } from '../store/app.actions';
   templateUrl: './create-session.component.html',
   styleUrl: './create-session.component.scss'
 })
-export class CreateSessionComponent implements OnInit {
+export class CreateSessionComponent implements OnInit, AfterViewInit {
 
   formGroup = new FormGroup({
     name: new FormControl<string>(null, Validators.required) 
@@ -46,8 +63,12 @@ export class CreateSessionComponent implements OnInit {
     this.failed$ = this.store$.pipe(
       select(getCreateSessionFailed)
     );
+  }
 
-    this.failed$.subscribe(console.log)
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      document.getElementById('createSessionInputId').focus();
+    }, 0);
   }
 
   startSession() {

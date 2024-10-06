@@ -80,12 +80,9 @@ export class HomeComponent implements OnInit {
       select(getCurrentSession)
     );
 
-    this.store$.subscribe(console.log)
-
     this.periods$ = this.store$.pipe(
       select(getPlannedPeriods),
       map(periods => {
-        console.log(periods)
         return create(periods).sort(x => x.startDay.getTime(), 'desc').toArray()
       })
     );

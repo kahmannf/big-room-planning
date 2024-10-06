@@ -156,6 +156,11 @@ export abstract class Event implements IEvent {
 
     static fromJS(data: any): Event {
         data = typeof data === 'object' ? data : {};
+        if (data["discriminator"] === "AddDependencyEvent") {
+            let result = new AddDependencyEvent();
+            result.init(data);
+            return result;
+        }
         if (data["discriminator"] === "AddOrUpdateSquadSprintStatsEvent") {
             let result = new AddOrUpdateSquadSprintStatsEvent();
             result.init(data);
@@ -188,6 +193,11 @@ export abstract class Event implements IEvent {
         }
         if (data["discriminator"] === "AddTicketEvent") {
             let result = new AddTicketEvent();
+            result.init(data);
+            return result;
+        }
+        if (data["discriminator"] === "DeleteDependencyEvent") {
+            let result = new DeleteDependencyEvent();
             result.init(data);
             return result;
         }
@@ -251,6 +261,48 @@ export interface IEvent {
     processedAt?: Date;
     isProcessed?: boolean;
     isSuccessful?: boolean;
+}
+
+export class AddDependencyEvent extends Event implements IAddDependencyEvent {
+    dependencyId?: number | undefined;
+    dependantTicketId?: number;
+    dependencyTicketId?: number;
+
+    constructor(data?: IAddDependencyEvent) {
+        super(data);
+        this._discriminator = "AddDependencyEvent";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.dependencyId = _data["dependencyId"];
+            this.dependantTicketId = _data["dependantTicketId"];
+            this.dependencyTicketId = _data["dependencyTicketId"];
+        }
+    }
+
+    static override fromJS(data: any): AddDependencyEvent {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddDependencyEvent();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["dependencyId"] = this.dependencyId;
+        data["dependantTicketId"] = this.dependantTicketId;
+        data["dependencyTicketId"] = this.dependencyTicketId;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IAddDependencyEvent extends IEvent {
+    dependencyId?: number | undefined;
+    dependantTicketId?: number;
+    dependencyTicketId?: number;
 }
 
 export class AddOrUpdateSquadSprintStatsEvent extends Event implements IAddOrUpdateSquadSprintStatsEvent {
@@ -577,6 +629,40 @@ export interface IAddTicketEvent extends IEvent {
     title?: string | undefined;
     columnOrder?: number;
     predecessorId?: number | undefined;
+}
+
+export class DeleteDependencyEvent extends Event implements IDeleteDependencyEvent {
+    dependencyId?: number;
+
+    constructor(data?: IDeleteDependencyEvent) {
+        super(data);
+        this._discriminator = "DeleteDependencyEvent";
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.dependencyId = _data["dependencyId"];
+        }
+    }
+
+    static override fromJS(data: any): DeleteDependencyEvent {
+        data = typeof data === 'object' ? data : {};
+        let result = new DeleteDependencyEvent();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["dependencyId"] = this.dependencyId;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IDeleteDependencyEvent extends IEvent {
+    dependencyId?: number;
 }
 
 export class DeleteRiskEvent extends Event implements IDeleteRiskEvent {

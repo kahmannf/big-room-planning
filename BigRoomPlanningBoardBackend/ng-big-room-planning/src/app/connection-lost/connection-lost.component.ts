@@ -1,6 +1,10 @@
-import { Component, Input } from '@angular/core';
+import {
+  Component,
+  Input,
+} from '@angular/core';
+import { MatButton } from '@angular/material/button';
+
 import { DataService } from '../data.service';
-import { MatButton } from '@angular/material/button'
 
 @Component({
   selector: 'app-connection-lost',
@@ -19,10 +23,6 @@ export class ConnectionLostComponent {
   constructor (
     private dataService: DataService
   ) {
-  }
-
-  ngOnChange(a) {
-    console.log(a)
   }
 
   reconnect() {

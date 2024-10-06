@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import {
+  AddDependencyEvent,
   AddOrUpdateSquadSprintStatsEvent,
   AddPlannedPeriodEvent,
   AddRiskEvent,
@@ -8,6 +9,7 @@ import {
   AddSprintEvent,
   AddSquadEvent,
   AddTicketEvent,
+  DeleteDependencyEvent,
   DeleteRiskEvent,
   DeleteTicketEvent,
   EditPlannedPeriodEvent,
@@ -16,6 +18,7 @@ import {
   EditSquadEvent,
   EditTicketEvent,
   Event,
+  IDependency,
   IEvent,
   IPlannedPeriod,
   IRisk,
@@ -42,6 +45,21 @@ export class CreatEventService {
     })
 
     event.sessionName = name;
+
+    this.dataService.sendEvent(event);
+  }
+
+  addDependency (dependency: IDependency) {
+    const event = this.getBaseEvent(AddDependencyEvent);
+    event.dependantTicketId = dependency.dependantTicketId;
+    event.dependencyTicketId = dependency.dependencyTicketId;
+
+    this.dataService.sendEvent(event);
+  }
+
+  deleteDependency (dependency: IDependency) {
+    const event = this.getBaseEvent(DeleteDependencyEvent);
+    event.dependencyId = dependency.dependencyId;
 
     this.dataService.sendEvent(event);
   }

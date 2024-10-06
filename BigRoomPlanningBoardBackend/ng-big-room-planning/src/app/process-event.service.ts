@@ -10,6 +10,7 @@ import {
 } from '@ngrx/store';
 
 import {
+  AddDependencyEvent,
   AddOrUpdateSquadSprintStatsEvent,
   AddPlannedPeriodEvent,
   AddRiskEvent,
@@ -17,8 +18,10 @@ import {
   AddSprintEvent,
   AddSquadEvent,
   AddTicketEvent,
+  DeleteDependencyEvent,
   DeleteRiskEvent,
   DeleteTicketEvent,
+  Dependency,
   EditPlannedPeriodEvent,
   EditRiskEvent,
   EditSprintEvent,
@@ -36,6 +39,7 @@ import {
 } from './client';
 import { HandleErrorService } from './handle-error.service';
 import {
+  eventAddDependency,
   eventAddOrUpdateSquadSprintStats,
   eventAddPlannedPeriod,
   eventAddRisk,
@@ -43,6 +47,7 @@ import {
   eventAddSprint,
   eventAddSquad,
   eventAddTicket,
+  eventDeleteDependency,
   eventDeleteRisk,
   eventDeleteTicket,
   eventEditPlannedPeriod,
@@ -137,6 +142,12 @@ export class ProcessEventService {
       return;
     }
 
+    if (event instanceof AddDependencyEvent) {
+      const dependency = Dependency.fromJS(event)
+
+      this.store$.dispatch(eventAddDependency({ dependency }));
+      return;
+    }
 
     if (event instanceof AddOrUpdateSquadSprintStatsEvent) {
       const squadSprintStats = SquadSprintStats.fromJS(event)
@@ -188,6 +199,11 @@ export class ProcessEventService {
     if (event instanceof AddTicketEvent) {
       const ticket = Ticket.fromJS(event);
       this.store$.dispatch(eventAddTicket({ ticket }))
+      return;
+    }
+
+    if (event instanceof DeleteDependencyEvent) {
+      this.store$.dispatch(eventDeleteDependency({ dependencyId: event.dependencyId }))
       return;
     }
 
@@ -254,7 +270,8 @@ export class ProcessEventService {
    * Determines whether we can process this event locally or show a loading spinner until we get the answer from the server
    */
   private isServerRequiredEvent(event: Event): boolean {
-    return event instanceof AddOrUpdateSquadSprintStatsEvent
+    return event instanceof AddDependencyEvent
+      || event instanceof AddOrUpdateSquadSprintStatsEvent
       || event instanceof AddPlannedPeriodEvent
       || event instanceof AddRiskEvent
       || event instanceof AddSessionEvent

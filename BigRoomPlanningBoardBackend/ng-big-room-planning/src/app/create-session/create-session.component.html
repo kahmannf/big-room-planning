@@ -17,7 +17,7 @@
     }
     <form class="form-column" [formGroup]="formGroup" (ngSubmit)="startSession()">
         <mat-form-field class="w-100">
-            <input type="text" matInput [formControlName]="'name'">
+            <input type="text" matInput [formControlName]="'name'" id="createSessionInputId">
             @if (formGroup.hasError('required', 'name')) {
             <mat-error i18n>Required</mat-error>
             }

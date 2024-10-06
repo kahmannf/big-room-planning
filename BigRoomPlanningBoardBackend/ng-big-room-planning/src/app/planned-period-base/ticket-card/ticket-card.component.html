@@ -1,8 +1,39 @@
-
-<mat-card appearance="outlined">
+<mat-card appearance="outlined" [cdkContextMenuTriggerFor]="contextMenu">
     <mat-card-header>{{ ticket?.title }}</mat-card-header>
-    <mat-card-actions>
-        <button mat-button (click)="edit()" i18n>Edit</button>
-        <button mat-button (click)="delete()" i18n>Delete</button>
-    </mat-card-actions>
+    <mat-card-content>
+        <div class="dependency-container">
+            <div class="item-container">
+                @if(dependenciesCount$ | async) {
+                <div class="item" [class.fullfilled]="dependenciesFullfilled$ | async" (click)="addDependency()">
+                    <mat-icon>
+                        keyboard_tab
+                    </mat-icon>
+                    <span>
+                        {{ dependenciesCount$ | async }}
+                    </span>
+                </div>
+                }
+            </div>
+            <div class="item-container">
+                @if(dependantsCount$ | async) {
+                <div class="item" [class.fullfilled]="dependantsFullfilled$ | async" (click)="addDependency()">
+                    <mat-icon>
+                        start
+                    </mat-icon>
+                    <span>
+                        {{ dependantsCount$ | async }}
+                    </span>
+                </div>
+                }
+            </div>
+        </div>
+    </mat-card-content>
 </mat-card>
+
+<ng-template #contextMenu>
+    <div class="example-menu" cdkMenu>
+        <button class="example-menu-item" cdkMenuItem (click)="edit()" i18n>Edit</button>
+        <button class="example-menu-item" cdkMenuItem (click)="addDependency()" i18n>Edit Dependencies</button>
+        <button class="example-menu-item" cdkMenuItem (click)="delete()" i18n>Delete</button>
+    </div>
+</ng-template>
