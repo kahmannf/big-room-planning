@@ -5,7 +5,7 @@ namespace BigRoomPlanningBoardBackend
     public class ApiSettings
     {
         /// <summary>
-        /// Controls at which point the api will respoond with the full data instead of an event lsit
+        /// Controls at which point the api will respond with the full data instead of an event list
         /// to save processing power on the client
         /// </summary>
         public int MaxEventsPerUpdate { get; set; }

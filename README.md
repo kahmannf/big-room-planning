@@ -24,10 +24,42 @@ Provide a free, self-hostable web-application that can be used to conduct a Big 
     - Tickets that are are conflicting because of the arrangement in the sprints will be marked on the board
     - Mitigate risks
         - define mitigations for each risk if necessary 
-        - accept a risk together (or let management decide, i dont care)
+        - accept a risk
 
 ## Installation
-TBD
+
+A container iamge of the project is available at Docker Hub: `kahmannf/bigroomplanning:latest`.
+
+Bind the container ports 8080 (http, optional) and 8081 (https). If you want to use https you will have to provide a certificate to the cotnainer using [ASP.NETs environment variables](https://learn.microsoft.com/en-us/aspnet/core/security/docker-https?view=aspnetcore-8.0).
+
+If you want to test around without creating som Data you can set the environment-variable `APISETTINGS__CREATEDEBUGDATA` to `true`
+
+The container will use SQLite the internal debug.db file to store any data. If you want to persist changes you will have to choose one of the following options:
+- Mount a directory for a SQLite-File
+- Use a PostgresSql DataBase or a MongoDb Database
+
+### Mount a directory for a SQLite-File
+
+Mount a directory containing a file called `prod.db` (name can be customized) that has the correct schema. Either
+- copy and rename the current debug.db file from the image (located at `/app/debug.db`) or this repository at the correct tag (located at `BigroomPlanningBackend/debug.db`).
+- or create a new file using the EntityFramework tooling (`dotnet ef database update --connection "Data Source=<your-file-name>"`), see below for more information.
+
+Also set the environment variable `APISETTINGS__DBPATH` to the new file path of you BdFile in the container (e.g. `/app/db/prod.db`).
+
+### Use a PostgresSql DataBase or a MongoDb Database (untested)
+
+Set environment variable `APISETTINGS__DATABASEPROVIDER` to `MongoDB` or `Postgress`.
+Set environment variable `APISETTINGS__CONNECTIONSTRING` to a connection string that can be reached from inside the container. 
+
+### List of Container environment variables
+
+|Variable|Description|Possible Values|Default Value|
+|-|-|-|-|
+|APISETTINGS__CONNECTIONSTRING|Connection string if APISETTINGS__DATABASEPROVIDER = "MongoDB" or "Postgress"|||
+|APISETTINGS__CREATEDEBUGDATA|Will generate a few Tickets, Planned Periods and Sprints if set to true|true, false|false
+|APISETTINGS__DATABASEPROVIDER|Defines which Database should be used|Sqlite, MongoDB, Postgress|Sqlite|
+|APISETTINGS__DBPATH|Used to find the database file if APISETTINGS__DATABASEPROVIDER = "Sqlite"||./debug.db|
+|APISETTINGS__MAXEVENTSPERUPDATE|Controls at which point the api will respond with the full data instead of an event list to save processing power on the client ||100|
 
 ## Structure
 
